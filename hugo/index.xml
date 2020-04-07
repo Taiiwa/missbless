@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on Missty</title>
+    <link>/hugo/</link>
+    <description>Recent content in Hugo on Missty</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 07 Apr 2020 23:20:16 +0800</lastBuildDate>
+    
+	<atom:link href="/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>轨迹</title>
+      <link>/hugo/%E8%BD%A8%E8%BF%B9/</link>
+      <pubDate>Tue, 07 Apr 2020 23:20:16 +0800</pubDate>
+      
+      <guid>/hugo/%E8%BD%A8%E8%BF%B9/</guid>
+      <description>轨迹 创建新项目
+hugo new site missbless
+下载主题
+https://themes.gohugo.io/
+如果是手动下载，解压缩后删除文件夹后面的 -master
+进入\themes\hugo-future-imperfect-slim\exampleSite，复制 data, resources, static, config.toml 到根目录
+启动项目
+hugo server
+不要手动创建文件或文件夹
+hugo new 文件夹/文件名.md</description>
+    </item>
+    
+  </channel>
+</rss>
