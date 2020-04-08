@@ -6,10 +6,19 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Apr 2020 15:06:36 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 08 Apr 2020 15:39:45 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Contents</title>
+      <link>/blog/</link>
+      <pubDate>Wed, 08 Apr 2020 15:39:45 +0800</pubDate>
+      
+      <guid>/blog/</guid>
+      <description>Django Django介绍 Django创建工程 Django常用的工具方法 Django操作Mysql Django的请求与响应 Django的配置 Django配置MySql 数据库 数据库Redis操作 数据库Redis配置 git git常用指令 git解决push问题 git配置代理 Hugo Hugo博客编撰日志 MarkDown MarkDown语法简介 其他 虚拟环境 </description>
+    </item>
     
     <item>
       <title>数据库Redis操作</title>
@@ -32,15 +41,6 @@ r.setex(name, time, value)
 r.mget(&#39;name&#39;, &#39;age&#39;, &#39;height&#39;)
   设置新值并获取原来的值
 print(r.getset(&amp;quot;name&amp;quot;, &amp;quot;Missty&amp;quot;)) # 设置的新值是Missty 设置前的值是Issac</description>
-    </item>
-    
-    <item>
-      <title>Contents</title>
-      <link>/blog/</link>
-      <pubDate>Wed, 08 Apr 2020 15:06:36 +0800</pubDate>
-      
-      <guid>/blog/</guid>
-      <description>Django Django介绍 Django创建工程 Django常用的工具方法 Django操作Mysql Django的请求与响应 Django的配置 Django配置MySql 数据库 数据库Redis配置 Hugo Hugo博客编撰日志 MarkDown MarkDown语法简介 其他 虚拟环境 </description>
     </item>
     
     <item>
@@ -221,6 +221,51 @@ Markdown中有两种方式，实现链接，分别为内联方式和引用方式
  创建文件 hugo new 文件夹/文件名.md
  MarkDown语法 MarkDown语法
  修改默认设置 修改archetypes/default.md，来编辑默认的模板</description>
+    </item>
+    
+    <item>
+      <title>Git常用指令</title>
+      <link>/django/git%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/</link>
+      <pubDate>Mon, 06 Apr 2020 20:35:10 +0800</pubDate>
+      
+      <guid>/django/git%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/</guid>
+      <description>git config --system --unset credential.helper
+清空账户密码配置
+git config --global credential.helper store
+保存账户密码
+git checkout .
+没有add的时候回退修改
+git reset HEAD
+add到暂存区之后回退
+git log
+复制第二个id
+git reset --hard
+粘贴
+git commit之后回退</description>
+    </item>
+    
+    <item>
+      <title>Git配置代理</title>
+      <link>/django/git%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/</link>
+      <pubDate>Mon, 06 Apr 2020 20:30:12 +0800</pubDate>
+      
+      <guid>/django/git%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/</guid>
+      <description>配置代理：
+git config --global http.proxy http://127.0.0.1:1087
+git config --global https.proxy https://127.0.0.1:1087
+解除配置
+git config --global --unset http.proxy
+git config --global --unset https.proxy</description>
+    </item>
+    
+    <item>
+      <title>git解决push问题</title>
+      <link>/django/git%E8%A7%A3%E5%86%B3push%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Mon, 06 Apr 2020 19:00:52 +0800</pubDate>
+      
+      <guid>/django/git%E8%A7%A3%E5%86%B3push%E9%97%AE%E9%A2%98/</guid>
+      <description>&#39;&amp;rsquo;&amp;rsquo; hint: Updates were rejected because the tip of your current branch is behind hint: its remote counterpart. Integrate the remote changes (e.g. hint: &amp;lsquo;git pull &amp;hellip;&#39;) before pushing again. hint: See the &amp;lsquo;Note about fast-forwards&amp;rsquo; in &amp;lsquo;git push &amp;ndash;help&amp;rsquo; for details.
+解决办法： git push -u origin master -f</description>
     </item>
     
   </channel>
