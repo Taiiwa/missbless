@@ -211,7 +211,12 @@
       <pubDate>Thu, 09 Apr 2020 01:24:50 +0800</pubDate>
       
       <guid>/blog/pygame/08-pygame%E4%B8%AD%E7%9A%84image/</guid>
-      <description> </description>
+      <description>从文件加载新图像pygame.image.load
+将图像保存到磁盘pygame.image.save
+测试是否可以加载扩展图像格式pygame.image.get_extended
+将图像传输到字符串缓冲区pygame.image.tostring
+从字符串缓冲区创建新的Surfacepygame.image.fromstring
+创建一个在字符串缓冲区内共享数据的新Surfacepygame.image.frombuffer</description>
     </item>
     
     <item>
