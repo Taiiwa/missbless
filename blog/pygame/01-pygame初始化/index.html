@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+<title>01 Pygame初始化 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="01 Pygame初始化">
+<meta itemprop="description" content="这是一套pygame的自用初始化模板，这个“游戏”的唯一功能就是按方向键的时候，“退出游戏”按钮可以动。
+#初始化 import pygame,sys,configparser from pygame.locals import * pygame.init() #载入脚本 parser = configparser.ConfigParser() parser.read(&#39;rules.ini&#39;, encoding=&#39;gbk&#39;) #设置帧率 Fps = 60 fpsClock = pygame.time.Clock() #创建窗口 WindowsWidth = 1920 WindowsHeight = 1080 DisplaySurf = pygame.display.set_mode((WindowsWidth,WindowsHeight),FULLSCREEN|HWSURFACE,32) pygame.set_caption = &#39;初始化&#39; #颜色管理 White = (255,255,255,0) Green = (100,210,100,0) Blue = (100,100,210,50) Black = (0,0,0,0) Orange = (210,150,50,0) #设置背景 DisplaySurf.fill(White) #导入图片 coverImg = pygame.image.load(&#39;cover.png&#39;).convert_alpha() btStartGame = pygame.image.load(&#39;bt001.png&#39;).convert_alpha() btExitGame = pygame.image.load(&#39;bt002.png&#39;) CoverGlass = pygame.image.load(&#39;glass.png&#39;) cursorImg = pygame.image.load(&#39;cursor.png&#39;).convert_alpha() cursorLinkImg = pygame.">
+<meta itemprop="datePublished" content="2020-04-08T19:51:49&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-08T19:51:49&#43;08:00" />
+<meta itemprop="wordCount" content="407">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="01 Pygame初始化" />
+<meta property="og:description" content="这是一套pygame的自用初始化模板，这个“游戏”的唯一功能就是按方向键的时候，“退出游戏”按钮可以动。
+#初始化 import pygame,sys,configparser from pygame.locals import * pygame.init() #载入脚本 parser = configparser.ConfigParser() parser.read(&#39;rules.ini&#39;, encoding=&#39;gbk&#39;) #设置帧率 Fps = 60 fpsClock = pygame.time.Clock() #创建窗口 WindowsWidth = 1920 WindowsHeight = 1080 DisplaySurf = pygame.display.set_mode((WindowsWidth,WindowsHeight),FULLSCREEN|HWSURFACE,32) pygame.set_caption = &#39;初始化&#39; #颜色管理 White = (255,255,255,0) Green = (100,210,100,0) Blue = (100,100,210,50) Black = (0,0,0,0) Orange = (210,150,50,0) #设置背景 DisplaySurf.fill(White) #导入图片 coverImg = pygame.image.load(&#39;cover.png&#39;).convert_alpha() btStartGame = pygame.image.load(&#39;bt001.png&#39;).convert_alpha() btExitGame = pygame.image.load(&#39;bt002.png&#39;) CoverGlass = pygame.image.load(&#39;glass.png&#39;) cursorImg = pygame.image.load(&#39;cursor.png&#39;).convert_alpha() cursorLinkImg = pygame." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/" />
+<meta property="article:published_time" content="2020-04-08T19:51:49+08:00" />
+<meta property="article:modified_time" content="2020-04-08T19:51:49+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="01 Pygame初始化"/>
+<meta name="twitter:description" content="这是一套pygame的自用初始化模板，这个“游戏”的唯一功能就是按方向键的时候，“退出游戏”按钮可以动。
+#初始化 import pygame,sys,configparser from pygame.locals import * pygame.init() #载入脚本 parser = configparser.ConfigParser() parser.read(&#39;rules.ini&#39;, encoding=&#39;gbk&#39;) #设置帧率 Fps = 60 fpsClock = pygame.time.Clock() #创建窗口 WindowsWidth = 1920 WindowsHeight = 1080 DisplaySurf = pygame.display.set_mode((WindowsWidth,WindowsHeight),FULLSCREEN|HWSURFACE,32) pygame.set_caption = &#39;初始化&#39; #颜色管理 White = (255,255,255,0) Green = (100,210,100,0) Blue = (100,100,210,50) Black = (0,0,0,0) Orange = (210,150,50,0) #设置背景 DisplaySurf.fill(White) #导入图片 coverImg = pygame.image.load(&#39;cover.png&#39;).convert_alpha() btStartGame = pygame.image.load(&#39;bt001.png&#39;).convert_alpha() btExitGame = pygame.image.load(&#39;bt002.png&#39;) CoverGlass = pygame.image.load(&#39;glass.png&#39;) cursorImg = pygame.image.load(&#39;cursor.png&#39;).convert_alpha() cursorLinkImg = pygame."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96&amp;url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f&amp;title=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f&amp;title=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f&amp;description=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/">01 Pygame初始化</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-08 19:51:49 &#43;0800 CST">
+      April 8, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96&amp;url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f&amp;title=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f&amp;title=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f&amp;description=01%20Pygame%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpygame%2f01-pygame%25E5%2588%259D%25E5%25A7%258B%25E5%258C%2596%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p>这是一套pygame的自用初始化模板，这个“游戏”的唯一功能就是按方向键的时候，“退出游戏”按钮可以动。</p>
+<pre><code>#初始化
+import pygame,sys,configparser
+from pygame.locals import *
+
+pygame.init()
+
+#载入脚本
+parser = configparser.ConfigParser()
+parser.read('rules.ini', encoding='gbk')
+
+#设置帧率
+Fps = 60
+fpsClock = pygame.time.Clock()
+
+#创建窗口
+WindowsWidth = 1920
+WindowsHeight = 1080
+DisplaySurf = pygame.display.set_mode((WindowsWidth,WindowsHeight),FULLSCREEN|HWSURFACE,32)
+pygame.set_caption = '初始化'
+
+#颜色管理
+White = (255,255,255,0)
+Green = (100,210,100,0)
+Blue = (100,100,210,50)
+Black = (0,0,0,0)
+Orange = (210,150,50,0)
+
+#设置背景
+DisplaySurf.fill(White)
+
+#导入图片
+coverImg = pygame.image.load('cover.png').convert_alpha()
+btStartGame = pygame.image.load('bt001.png').convert_alpha()
+btExitGame = pygame.image.load('bt002.png')
+CoverGlass = pygame.image.load('glass.png')
+cursorImg = pygame.image.load('cursor.png').convert_alpha()
+cursorLinkImg = pygame.image.load('cursorLink.png').convert_alpha()
+cursorTextImg = pygame.image.load('cursorText.png').convert_alpha()
+
+#设置图片
+DisplaySurf.blit(coverImg,(0,0))
+
+#字体管理
+fontObj = pygame.font.Font('FZXHJW.TTF', 32)
+
+#禁用鼠标
+# pygame.mouse.set_visible(False)
+
+#鼠标初始化
+pygame.mouse.set_cursor((8, 8), (0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0),(0, 0, 0, 0, 0, 0, 0, 0))
+
+
+
+#主干
+def main():
+    # '主进程开始了'
+    fpsTime = 0
+    mousex = 0
+    mousey = 0
+    exitx = 1000
+    exity = 800
+    mousePressing = False
+    mouseClickedTextArea = False
+    getCursorImg = cursorImg
+    # &quot;主进程初始化完毕&quot;
+    while True:         #main game loop
+        if fpsTime &lt; Fps:
+            fpsTime += 1
+        else:
+            fpsTime = 0
+        mouseClicked = False
+        DisplaySurf.fill(White)
+        DisplaySurf.blit(coverImg, (500, -100))
+
+        #显示文字
+        # for i in range(len(aData()) - 1):       #数据库导入字符串
+        #     textSurfaceObj = fontObj.render(aData()[i][1], True, Green, Blue)
+        #     textRectObj = textSurfaceObj.get_rect()
+        #     textRectObj.center = (1320, 240 + (i * 50))
+        #     DisplaySurf.blit(textSurfaceObj, textRectObj)
+
+        #贴图
+        DisplaySurf.blit(btStartGame,(400,800))
+        DisplaySurf.blit(btExitGame, (exitx, exity))
+
+
+        #退出游戏
+        for event in pygame.event.get():        #设置监听
+            if event.type == QUIT or (keyPressed(pygame.K_LALT) and keyPressed(pygame.K_F4)):
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == MOUSEBUTTONDOWN:           #获取鼠标按下
+                mousex,mousey = event.pos
+                getCursorImg = cursorLinkImg
+                mousePressing = True
+
+            elif event.type == MOUSEBUTTONUP:           #获取鼠标放开
+                mousex,mousey = event.pos
+                getCursorImg = cursorImg
+                mouseClicked = True
+                mousePressing = False
+
+            elif event.type == MOUSEMOTION:         #获取鼠标动作
+                mousex,mousey = event.pos
+                if not mousePressing:
+                    getCursorImg = cursorImg
+                elif mousePressing:
+                    getCursorImg = cursorLinkImg
+
+            elif keyPressed(pygame.K_SPACE):            #获取一次性键盘操作
+                pass
+
+        #获取按住键盘操作
+        if keyPressed(pygame.K_d):
+            exitx += 10
+        if keyPressed(pygame.K_a):
+            exitx -= 10
+        if keyPressed(pygame.K_w):
+            exity -= 10
+        if keyPressed(pygame.K_s):
+            exity += 10
+
+        #画姓名框
+        nameTextarea(nameTextParameter())
+
+        #判断光标在姓名框里
+        mouseInTextArea = False
+        if mousey in range(int(nameTextParameter()[1]),int(nameTextParameter()[1] + nameTextParameter()[3])):
+            if mousex in range(int(nameTextParameter()[0]),int(nameTextParameter()[0] + nameTextParameter()[2])):
+                getCursorImg = cursorTextImg
+                mouseInTextArea = True
+        #鼠标在姓名框里单击
+
+        if mouseClicked:
+            if mouseInTextArea:
+                mouseClickedTextArea = True
+            else:
+                mouseClickedTextArea = False
+        if mouseClickedTextArea:
+            if fpsTime &lt; 30:
+                drawNameI(nameTextParameter())
+
+        # anotherSurface = DisplaySurf.convert_alpha(CoverGlass)
+        # DisplaySurf.blit(anotherSurface, (0,0))
+        # DisplaySurf.blit(CoverGlass, (0,0))
+        DisplaySurf.blit(getCursorImg, (mousex - 6, mousey - 2))
+        pygame.display.update()
+        fpsClock.tick(60)
+
+#重要：捕获键盘函数
+def keyPressed(inputKey):
+    keysPressed = pygame.key.get_pressed()
+    if keysPressed[inputKey]:
+        return True
+    else:
+        return False
+
+
+#画文本框矩形
+def nameTextParameter():
+    startX = 0.3 * WindowsWidth
+    startY = 0.618 * WindowsHeight
+    height = 0.07 * WindowsHeight
+    lenth = 0.4 * WindowsWidth
+    return startX,startY,lenth,height
+
+def nameTextarea(parameter):
+    pygame.draw.rect(DisplaySurf,Blue,parameter)
+
+def drawNameI(parameter):
+    pygame.draw.line(DisplaySurf,Orange,(parameter[0] + 15,parameter[1] + 15),(parameter[0] + 15,(parameter[1] + parameter[3]- 15)),5)
+
+
+
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E5%85%B6%E4%BB%96/04-py%E8%BD%ACexe/" class="button"><div class="previous"><div>Py转exe</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/">01 Pygame初始化</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E5%85%B6%E4%BB%96/04-py%E8%BD%ACexe/">Py转exe</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/02-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/">数据库Redis操作</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/01-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/">Redis配置</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/07-django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/">Django常用的工具方法</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

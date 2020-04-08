@@ -6,10 +6,47 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Apr 2020 15:08:30 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 08 Apr 2020 19:51:49 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>01 Pygame初始化</title>
+      <link>/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/</link>
+      <pubDate>Wed, 08 Apr 2020 19:51:49 +0800</pubDate>
+      
+      <guid>/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/</guid>
+      <description>这是一套pygame的自用初始化模板，这个“游戏”的唯一功能就是按方向键的时候，“退出游戏”按钮可以动。
+#初始化 import pygame,sys,configparser from pygame.locals import * pygame.init() #载入脚本 parser = configparser.ConfigParser() parser.read(&#39;rules.ini&#39;, encoding=&#39;gbk&#39;) #设置帧率 Fps = 60 fpsClock = pygame.time.Clock() #创建窗口 WindowsWidth = 1920 WindowsHeight = 1080 DisplaySurf = pygame.display.set_mode((WindowsWidth,WindowsHeight),FULLSCREEN|HWSURFACE,32) pygame.set_caption = &#39;初始化&#39; #颜色管理 White = (255,255,255,0) Green = (100,210,100,0) Blue = (100,100,210,50) Black = (0,0,0,0) Orange = (210,150,50,0) #设置背景 DisplaySurf.fill(White) #导入图片 coverImg = pygame.image.load(&#39;cover.png&#39;).convert_alpha() btStartGame = pygame.image.load(&#39;bt001.png&#39;).convert_alpha() btExitGame = pygame.image.load(&#39;bt002.png&#39;) CoverGlass = pygame.image.load(&#39;glass.png&#39;) cursorImg = pygame.image.load(&#39;cursor.png&#39;).convert_alpha() cursorLinkImg = pygame.</description>
+    </item>
+    
+    <item>
+      <title>Py转exe</title>
+      <link>/blog/%E5%85%B6%E4%BB%96/04-py%E8%BD%ACexe/</link>
+      <pubDate>Wed, 08 Apr 2020 19:44:46 +0800</pubDate>
+      
+      <guid>/blog/%E5%85%B6%E4%BB%96/04-py%E8%BD%ACexe/</guid>
+      <description>py是解释型语言，只能在配有python的环境下才能运行，只有将py文件打包，才能在更多系统中运行。
+py转exe pyinstaller -F --icon=my.ico XXXX.py
+ –icon=图标路径（）
+-F 打包成一个exe文件
+-w 使用窗口，无控制台
+-c 使用控制台，无窗口
+-D 创建一个目录，里面包含exe以及其他一些依赖性文件
+ pyqt5写完win32 应用程序后，经过pyinstaller打包成单个文件，运行弹出错误提示框：
+failed to execute script main
+pycharm中pyinstaller打包参数：
+Program:C:\Python\Python35\Scripts\pyinstaller.exe
+Parameters: -w -F $FileName$
+Working directory: $FileDir$
+分析： 经google，发现pyinstaller 有&amp;ndash;hidden-import 选项 &amp;ndash;hidden-import MODULENAME, &amp;ndash;hiddenimport MODULENAME Name an import not visible in the code of the script(s). This option can be used multiple times.
+解决： 打包时加上 --hidden-import=queue
+即Parameters配置修改为：
+Parameters:--hidden-import=queue -w -F $FileName$
+eg:
+pyinstaller --hidden-import=queue -w -F main.</description>
+    </item>
     
     <item>
       <title>数据库Redis操作</title>
@@ -222,7 +259,8 @@ Markdown中有两种方式，实现链接，分别为内联方式和引用方式
  启动项目 hugo server
  创建文件 hugo new 文件夹/文件名.md
  MarkDown语法 MarkDown语法
- 修改默认设置 修改archetypes/default.md，来编辑默认的模板</description>
+ 修改默认设置 修改archetypes/default.md，来编辑默认的模板
+ 自动生成目录 import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &amp;quot;%sT%s&amp;quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] + &#39;+08:00&#39; head = &amp;quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&amp;quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f.</description>
     </item>
     
     <item>
