@@ -1,23 +1,188 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Missty</title>
+    <title>Issac Loveless</title>
     <link>/</link>
-    <description>Recent content on Missty</description>
+    <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Apr 2020 00:22:21 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 08 Apr 2020 15:06:36 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Blog</title>
+      <title>数据库Redis操作</title>
+      <link>/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Wed, 08 Apr 2020 15:08:30 +0800</pubDate>
+      
+      <guid>/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/</guid>
+      <description>String 字符串类型的数据存取
+set(name, value, ex=None, px=None, nx=False, xx=False)
+ 相关参数：
+ ex，过期时间（秒）
+px，过期时间（毫秒）
+nx，如果设置为True，则只有name不存在时，当前set操作才执行
+xx，如果设置为True，则只有name存在时，当前set操作才执行
+  r.set(&#39;name&#39;, &#39;Issac&#39;) # key是&amp;quot;foo&amp;quot; value是&amp;quot;bar&amp;quot; 将键值对存入redis缓存 r.get(&#39;name&#39;)    只有name不存在时，才执行set操作（添加）
+ r.setnx(name, value) print(r.setnx(&#39;name&#39;, &#39;Issac&#39;)) # fruit1不存在，输出为True，存在输出为None    time，过期时间（int秒 或 timedelta对象）,psetex()的参数相同，单位是毫秒。
+r.setex(name, time, value)
+  批量设置
+ r.mget({&#39;k1&#39;: &#39;v1&#39;, &#39;k2&#39;: &#39;v2&#39;}) r.mset(name = &amp;quot;issac&amp;quot;, age=26, height=190)    批量获取
+r.mget(&#39;name&#39;, &#39;age&#39;, &#39;height&#39;)
+  设置新值并获取原来的值
+print(r.getset(&amp;quot;name&amp;quot;, &amp;quot;Missty&amp;quot;)) # 设置的新值是Missty 设置前的值是Issac</description>
+    </item>
+    
+    <item>
+      <title>Contents</title>
       <link>/blog/</link>
-      <pubDate>Wed, 08 Apr 2020 00:22:21 +0800</pubDate>
+      <pubDate>Wed, 08 Apr 2020 15:06:36 +0800</pubDate>
       
       <guid>/blog/</guid>
-      <description>博客目录 MARKDOWN语法简介 hugo博客编撰日志 数据库操作 </description>
+      <description>Django Django介绍 Django创建工程 Django常用的工具方法 Django操作Mysql Django的请求与响应 Django的配置 Django配置MySql 数据库 数据库Redis配置 Hugo Hugo博客编撰日志 MarkDown MarkDown语法简介 其他 虚拟环境 </description>
+    </item>
+    
+    <item>
+      <title>Redis配置</title>
+      <link>/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Wed, 08 Apr 2020 14:47:44 +0800</pubDate>
+      
+      <guid>/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/</guid>
+      <description> Redis是一个开源的使用ANSIC语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。
+特点  redis最大的特点在于其效率极高。
+   读的速度是110000次/s
+写的速度是81000次/s。
+   支持多种数据结构
+   string（字符串）
+list(双向链表)
+dict(hash表)
+set(集合）
+zset(有序集合)
+   支持持久化操作
+ 局限性  Redis只能使用单线程，性能受限于CPU性能 Mc和Redis都是Key-Value类型，不适合在不同数据集之间建立关系，也不适合进行查询搜索。
+ Python与Redis的交互操作，借用python中的redis模块。
+import redis
+该模块中封装的方法名称、使用规则与原生的redis语法几乎一致。
+定义地址和端口 host = &#39;127.0.0.1&#39; port = 6379  建立redis连接 r = redis.Redis(host=host,port=port)  </description>
+    </item>
+    
+    <item>
+      <title>Django常用的工具方法</title>
+      <link>/django/django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Wed, 08 Apr 2020 13:54:16 +0800</pubDate>
+      
+      <guid>/django/django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/</guid>
+      <description>Django中复用率较高的代码
+针对原生sql语句的结果集美化方法 from pymongo import MongoClient m = MongoClient() md_db = m.mdshop # 对结果集美化方法 def dict_fetchall(cursor): # 获取游标描述 desc = cursor.description return [ dict(zip( [col[0] for col in desc], row )) for row in cursor.fetchall() ]  获取ip # 获取ip def getIp(request): # 获取IP if &#39;HTTP_X_FORWARDED_FOR&#39; in request.META: ip = request.META(&#39;HTTP_X_FORWARDED_FOR&#39;) else: ip = request.META.get(&#39;REMOTE_ADDR&#39;) return ip  redis链接 import redis # 定义ip 和端口 host = &#39;127.0.0.1&#39; port = 6379 # 建立连接 r = redis.</description>
+    </item>
+    
+    <item>
+      <title>Django操作Mysql</title>
+      <link>/django/django%E6%93%8D%E4%BD%9Cmysql/</link>
+      <pubDate>Wed, 08 Apr 2020 12:08:08 +0800</pubDate>
+      
+      <guid>/django/django%E6%93%8D%E4%BD%9Cmysql/</guid>
+      <description>数据库的增删改查，在orm下的实现方法
+1. 增加   save()  user = User(username=&#39;Issac&#39;, password=&#39;123&#39;) user.save()    create()  User.objects.create(username=&#39;Missty&#39;, password=&#39;456&#39;)     2. 删除   delete()  User.objects.get(id=1).delete()     3. 修改   save()  user = User.objects.filter(name=&#39;Issac&#39;).first() user.name=&#39;Loveless&#39; user.save()    update()  User.objects.filter(name=&#39;Arissa&#39;).update(name=&#39;Inverse&#39;)    4. 查询 4.1 基本查询   get()    如果不存在会抛出模型类.DoesNotExist异常
+  User.objects.get(id=1)    all()  User.</description>
+    </item>
+    
+    <item>
+      <title>Django配置MySql</title>
+      <link>/django/django%E9%85%8D%E7%BD%AEmysql/</link>
+      <pubDate>Wed, 08 Apr 2020 10:23:18 +0800</pubDate>
+      
+      <guid>/django/django%E9%85%8D%E7%BD%AEmysql/</guid>
+      <description>1. 数据库配置 在settings.py中的DATABASE里保存了数据库的连接配置信息。
+使用MySQL数据库首先需要安装驱动程序。 pip install PyMySQL
+在Django的工程同名子目录的__init__.py文件中添加如下语句 from pymysql import install_as_MySQLdb install_as_MySQLdb()  作用是让Django的ORM能以mysqldb的方式来调用PyMySQL。
+修改DATABASES配置信息 DATABASES = { &#39;default&#39;: { &#39;ENGINE&#39;: &#39;django.db.backends.mysql&#39;, &#39;HOST&#39;: &#39;127.0.0.1&#39;, # 数据库主机 &#39;PORT&#39;: 3306, # 数据库端口 &#39;USER&#39;: &#39;root&#39;, # 数据库用户名 &#39;PASSWORD&#39;: &#39;mysql&#39;, # 数据库用户密码 &#39;NAME&#39;: &#39;django_demo&#39; # 数据库名字 } }  在MySQL中创建数据库 create database django_demo default charset=utf8;   2. Models 定义模型类
+ 模型类被定义在&amp;quot;应用/models.py&amp;quot;文件中。 模型类必须继承自Model类，位于包django.db.models中。  1) 定义 在models.py中定义模型 orm框架：创建表和字段
+from django.db import models #定义用户模型类User class User(models.</description>
+    </item>
+    
+    <item>
+      <title>Django的请求与响应</title>
+      <link>/django/django%E7%9A%84%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94/</link>
+      <pubDate>Wed, 08 Apr 2020 09:22:50 +0800</pubDate>
+      
+      <guid>/django/django%E7%9A%84%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94/</guid>
+      <description>1, 请求 GET和POST请求 request中包含GET和POST属性，来接收相应请求方法传来的数据。
+from django.views import View class Sample(View): def get(self, request): # 获取参数 params = request.GET params.get(key) def post(self, request): # 获取参数 data = request.POST params.get(key)  其他请求 这种方式是解析request.body，泛用性很高。
+from django.views import View class Sample(View): def put(self,request): # 整理数据 put = QueryDict(request.body) put_str = list(put.items())[0][0] put_dict = eval(put_str).get(&#39;data&#39;) # 获取参数 put_dict.get(key)  请求头  CONTENT_LENGTH – The length of the request body (as a string). CONTENT_TYPE – The MIME type of the request body.</description>
+    </item>
+    
+    <item>
+      <title>Django的配置</title>
+      <link>/django/django%E7%9A%84%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Wed, 08 Apr 2020 09:07:05 +0800</pubDate>
+      
+      <guid>/django/django%E7%9A%84%E9%85%8D%E7%BD%AE/</guid>
+      <description> 1. 配置文件 Django将环境变量集成在settings.py中，可以在该文件里修改相关的配置。
+1) BASE_DIR BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+当前工程的根目录，Django会依此来定位工程内的相关文件，我们也可以使用该参数来构造文件路径。
+2) DEBUG 调试模式，创建工程后初始值为True，即默认工作在调试模式下。
+ 修改代码文件，程序自动重启 Django程序出现异常时，向前端显示详细的错误追踪信息 注意：部署线上运行的Django不要运行在调式模式下，记得修改DEBUG=False。  3) 语言与时区 Django支持本地化处理，即显示语言与时区支持本地化。初始化的工程默认语言和时区为英语和UTC标准时区，中国大陆地区使用简体中文，时区使用亚洲/上海时区，注意这里不使用北京时区表示。
+LANGUAGE_CODE = &#39;zh-hans&#39; TIME_ZONE = &#39;Asia/Shanghai&#39;   2. 静态文件 项目中的CSS、图片、js都是静态文件。一般会将静态文件放到一个单独的目录中，以方便管理。
+在html页面中调用时，也需要指定静态文件的路径，Django中提供了一种解析的方式配置静态文件路径。静态文件可以放在项目根目录下，也可以放在应用的目录下，由于有些静态文件在项目中是通用的，所以推荐放在项目的根目录下，方便管理。
+为了提供静态文件，需要配置两个参数：
+  STATICFILES_DIRS 存放查找静态文件的目录
+  STATIC_URL 访问静态文件的URL前缀
+STATIC_URL = &amp;lsquo;/static/&amp;rsquo; STATICFILES_DIRS = [ os.path.join(BASE_DIR, &amp;lsquo;static_files&amp;rsquo;), ]
+  此时在static_files添加的任何静态文件都可以使用网址/static/文件在static_files中的路径来访问。
+例如： http://localhost:8000/static/logo.png
+ 注意
+  Django 仅在调试模式下（DEBUG=True）能对外提供静态文件。
+  当DEBUG=False工作在生产模式时，Django不再对外提供静态文件，需要是用collectstatic命令来收集静态文件并交由其他静态文件服务器来提供。
+  </description>
+    </item>
+    
+    <item>
+      <title>Django初始化</title>
+      <link>/django/django%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B/</link>
+      <pubDate>Wed, 08 Apr 2020 08:36:40 +0800</pubDate>
+      
+      <guid>/django/django%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B/</guid>
+      <description>1. 创建项目 创建工程的命令为：
+django-admin startproject 工程名称
+运行开发服务器 在开发阶段，为了能够快速预览到开发的效果，django提供了一个纯python编写的轻量级web服务器，仅在开发阶段使用。
+运行服务器命令为：
+python manage.py runserver ip:端口 或： python manage.py runserver  可以不写IP和端口，默认IP是127.0.0.1，默认端口为8000。
+ django默认工作在调式Debug模式下，如果增加、修改、删除文件，服务器会自动重启。 按ctrl+c停止服务器。   2. 创建子应用 在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。
+类似于Flask中的蓝图Blueprint。
+Django的视图编写是放在子应用中的。
+创建 python manage.py startapp 子应用名称
+manage.py 为上述创建工程时自动生成的管理文件。
+ admin.py 文件跟网站的后台管理站点配置相关。 apps.py 文件用于配置当前子应用的相关信息。 migrations 目录用于存放数据库迁移历史文件。 models.py 文件用户保存数据库模型类。 tests.py 文件用于开发测试用例，编写单元测试。 views.py 文件用于编写Web应用视图。  注册安装子应用 创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。
+在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用。注册安装一个子应用的方法，即是将子应用的配置信息文件apps.py中的Config类添加到INSTALLED_APPS列表中。
+例如，将刚创建的users子应用添加到工程中，可在INSTALLED_APPS列表中添加&amp;rsquo;users.apps.UsersConfig&amp;rsquo;。
+ 3. 创建视图 Django的视图是定义在子应用的views.py中的。
+创建 打开刚创建的users模块，在views.py中编写视图代码。
+from django.http import HttpResponse def index(request): &amp;quot;&amp;quot;&amp;quot; :request: 包含了请求信息的请求对象 :return: 响应对象 &amp;quot;&amp;quot;&amp;quot; return HttpResponse(&amp;quot;hello the world!</description>
+    </item>
+    
+    <item>
+      <title>虚拟环境</title>
+      <link>/django/%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83/</link>
+      <pubDate>Wed, 08 Apr 2020 08:27:39 +0800</pubDate>
+      
+      <guid>/django/%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83/</guid>
+      <description>虚拟环境是在计算机硬盘中独立开辟出的一部分空间，在这里可以安装和外部环境不同版本的框架，不与外界冲突。针对于需要不同版本环境的项目，可以搭建相应的虚拟环境。
+1. 创建虚拟环境 mkvirtualenv django_py3_1.11 -p python3
+2. 虚拟环境常用指令 # 虚拟环境 mkvirtualenv # 创建虚拟环境 rmvirtualenv # 删除虚拟环境 workon # 进入虚拟环境、查看所有虚拟环境 deactivate # 退出虚拟环境 </description>
+    </item>
+    
+    <item>
+      <title>Django介绍</title>
+      <link>/django/django%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Wed, 08 Apr 2020 08:13:14 +0800</pubDate>
+      
+      <guid>/django/django%E4%BB%8B%E7%BB%8D/</guid>
+      <description> 1. 简介 Django，发音为[`dʒæŋɡəʊ]，是用python语言写的开源web开发框架，并遵循MVC设计。劳伦斯出版集团为了开发以新闻内容为主的网站，而开发出来了这个框架，于2005年7月在BSD许可证下发布。这个名称来源于比利时的爵士音乐家DjangoReinhardt，他是一个吉普赛人，主要以演奏吉它为主，还演奏过小提琴等。由于Django在近年来的迅速发展，应用越来越广泛，被著名IT开发杂志SDTimes评选为2013SDTimes100，位列&amp;quot;API、库和框架&amp;quot;分类第6位，被认为是该领域的佼佼者。
+Django的主要目的是简便、快速的开发数据库驱动的网站。它强调代码复用，多个组件可以很方便的以&amp;quot;插件&amp;quot;形式服务于整个框架，Django有许多功能强大的第三方插件，你甚至可以很方便的开发出自己的工具包。这使得Django具有很强的可扩展性。它还强调快速开发和DRY(DoNotRepeatYourself)原则。
+ 2. 特点  提供项目工程管理的自动化脚本工具 数据库ORM支持（对象关系映射，英语：Object Relational Mapping） 模板 表单 Admin管理站点 文件管理 认证权限 session机制 缓存   本博客提供的Django教程为前后端开发。结合vue使用的部分，且为no_session系统。于此无关者一切从简。
+# 点击查看Django文档 </description>
     </item>
     
     <item>
@@ -28,49 +193,34 @@
       <guid>/django/markdown%E8%AF%AD%E6%B3%95%E7%AE%80%E4%BB%8B/</guid>
       <description>Markdown 的超简短语法介绍 标题 普通文字
 图片 本地图片 网络图片 链接 本站
-代码 code</description>
+代码 code
+MarkDown 的 11 种基本语法   标题设置（让字体变大，和word的标题意思一样） 在Markdown当中设置标题，有两种方式： 第一种：通过在文字下方添加“=”和“-”，他们分别表示一级标题和二级标题。 第二种：在文字开头加上 “#”，通过“#”数量表示几级标题。（一共只有1~6级标题，1级标题字体最大）
+  块注释（blockquote） 通过在文字开头添加“&amp;gt;”表示块注释。（当&amp;gt;和文字之间添加五个blank时，块注释的文字会有变化。）
+  斜体 将需要设置为斜体的文字两端使用1个“*”或者“_”夹起来
+  粗体 将需要设置为斜体的文字两端使用2个“*”或者“_”夹起来
+  无序列表 在文字开头添加(, +, and -)实现无序列表。但是要注意在(, +, and -)和文字之间需要添加空格。（建议：一个文档中只是用一种无序列表的表示方式）
+  有序列表 使用数字后面跟上句号。（还要有空格）
+  链接（Links）
+Markdown中有两种方式，实现链接，分别为内联方式和引用方式。
+内联方式：This is an example link.
+引用方式：
+ I get 10 times more traffic from [Google][1] than from [Yahoo][2] or [MSN][3].</description>
     </item>
     
     <item>
-      <title>轨迹</title>
-      <link>/django/%E8%BD%A8%E8%BF%B9/</link>
+      <title>Hugo博客编撰日志</title>
+      <link>/django/hugo%E5%8D%9A%E5%AE%A2%E7%BC%96%E6%92%B0%E6%97%A5%E5%BF%97/</link>
       <pubDate>Tue, 07 Apr 2020 23:20:16 +0800</pubDate>
       
-      <guid>/django/%E8%BD%A8%E8%BF%B9/</guid>
+      <guid>/django/hugo%E5%8D%9A%E5%AE%A2%E7%BC%96%E6%92%B0%E6%97%A5%E5%BF%97/</guid>
       <description>轨迹 创建新项目 hugo new site missbless
  下载主题 https://themes.gohugo.io/
 如果是手动下载，解压缩后删除文件夹后面的 -master
  配置主题 进入\themes\hugo-future-imperfect-slim\exampleSite，复制 data, resources, static, config.toml 到根目录
  启动项目 hugo server
  创建文件 hugo new 文件夹/文件名.md
- MarkDown语法 MarkDown语法</description>
-    </item>
-    
-    <item>
-      <title>轨迹</title>
-      <link>/hugo/%E8%BD%A8%E8%BF%B9/</link>
-      <pubDate>Tue, 07 Apr 2020 23:20:16 +0800</pubDate>
-      
-      <guid>/hugo/%E8%BD%A8%E8%BF%B9/</guid>
-      <description>轨迹 创建新项目
-hugo new site missbless
-下载主题
-https://themes.gohugo.io/
-如果是手动下载，解压缩后删除文件夹后面的 -master
-进入\themes\hugo-future-imperfect-slim\exampleSite，复制 data, resources, static, config.toml 到根目录
-启动项目
-hugo server
-不要手动创建文件或文件夹
-hugo new 文件夹/文件名.md</description>
-    </item>
-    
-    <item>
-      <title>数据库操作</title>
-      <link>/django/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C/</link>
-      <pubDate>Tue, 07 Apr 2020 23:09:18 +0800</pubDate>
-      
-      <guid>/django/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C/</guid>
-      <description>数据库操作</description>
+ MarkDown语法 MarkDown语法
+ 修改默认设置 修改archetypes/default.md，来编辑默认的模板</description>
     </item>
     
   </channel>

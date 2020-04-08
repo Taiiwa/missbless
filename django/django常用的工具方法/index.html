@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+<title>Django常用的工具方法 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django常用的工具方法">
+<meta itemprop="description" content="原生sql结果集美化，获取ip，redis链接，验证token，类方法装饰器，七牛云秘钥接口，立体中文水印，PIL绘制验证码，MD5加密方法">
+<meta itemprop="datePublished" content="2020-04-08T13:54:16&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-08T13:54:16&#43;08:00" />
+<meta itemprop="wordCount" content="653">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django常用的工具方法" />
+<meta property="og:description" content="原生sql结果集美化，获取ip，redis链接，验证token，类方法装饰器，七牛云秘钥接口，立体中文水印，PIL绘制验证码，MD5加密方法" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/django/django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/" />
+<meta property="article:published_time" content="2020-04-08T13:54:16+08:00" />
+<meta property="article:modified_time" content="2020-04-08T13:54:16+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django常用的工具方法"/>
+<meta name="twitter:description" content="原生sql结果集美化，获取ip，redis链接，验证token，类方法装饰器，七牛云秘钥接口，立体中文水印，PIL绘制验证码，MD5加密方法"/>
+<meta name="twitter:site" content="@example"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            django
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/about/" class="link"><i class='far fa-id-card'></i> About</a>
+          
+        
+      
+        
+          
+          
+            <a href="/blog/" class="link"><i class='far fa-newspaper'></i> Blog</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    <a href="#lang-menu" class="lang-toggle" lang="en">en</a>
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95&amp;url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f&amp;title=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f&amp;title=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f&amp;description=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>这条路，没有什么成就感可言，但我内心的渴望还是太过强烈。</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        <li><a href="//github.com/pacollins/hugo-future-imperfect-slim" target="_blank" rel="noopener" title="GitHub" class="fab fa-github"></a></li>
+
+
+
+
+
+
+<li><a href="//flickr.com/photos/example" target="_blank" rel="noopener" title="Flickr" class="fab fa-flickr"></a></li>
+
+
+
+
+<li><a href="//linkedin.com/in/example" target="_blank" rel="noopener" title="LinkedIn" class="fab fa-linkedin"></a></li>
+<li><a href="//linkedin.com/company/examplebusiness" target="_blank" rel="noopener" title="LinkedIn Company" class="fab fa-linkedin"></a></li>
+
+
+
+<li><a href="//facebook.com/example" target="_blank" rel="noopener" title="Facebook" class="fab fa-facebook"></a></li>
+<li><a href="//reddit.com/user/example" target="_blank" rel="noopener" title="Reddit" class="fab fa-reddit"></a></li>
+
+
+
+
+
+
+
+<li><a href="//instagram.com/example" target="_blank" rel="noopener" title="Instagram" class="fab fa-instagram"></a></li>
+
+<li><a href="//twitter.com/example" target="_blank" rel="noopener" title="Twitter" class="fab fa-twitter"></a></li>
+
+
+<li><a href="//pinterest.com/example" target="_blank" rel="noopener" title="Pinterest" class="fab fa-pinterest-p"></a></li>
+<li><a href="//telegram.me/example" target="_blank" rel="noopener" title="telegram" class="fab fa-telegram"></a></li>
+
+
+
+<li><a href="//researchgate.net/profile/example" target="_blank" rel="noopener" title="Research Gate"><i class="ai ai-researchgate"></i></a></li>
+<li><a href="//keybase.io/example" target="_blank" rel="noopener" title="keybase" class="fab fa-keybase"></a></li>
+<li><a href="//example.com/@example" target="_blank" rel="noopener" title="mastodon" class="fab fa-mastodon"></a></li>
+<li><a href="mailto:example" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/django/django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/">Django常用的工具方法</a></h2>
+    
+    
+      <p>原生sql结果集美化，获取ip，redis链接，验证token，类方法装饰器，七牛云秘钥接口，立体中文水印，PIL绘制验证码，MD5加密方法</p>
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-08 13:54:16 &#43;0800 CST">
+      April 8, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>4 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95&amp;url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f&amp;title=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f&amp;title=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f&amp;description=Django%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7%e6%96%b9%e6%b3%95" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fdjango%2fdjango%25E5%25B8%25B8%25E7%2594%25A8%25E7%259A%2584%25E5%25B7%25A5%25E5%2585%25B7%25E6%2596%25B9%25E6%25B3%2595%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p>Django中复用率较高的代码</p>
+<h3 id="针对原生sql语句的结果集美化方法">针对原生sql语句的结果集美化方法</h3>
+<pre><code>from pymongo import MongoClient
+
+m = MongoClient()
+md_db = m.mdshop
+
+# 对结果集美化方法
+def dict_fetchall(cursor):
+    # 获取游标描述
+    desc = cursor.description
+
+    return [
+        dict(zip(
+            [col[0] for col in desc], row
+        ))
+        for row in cursor.fetchall()
+    ]
+</code></pre>
+<h3 id="获取ip">获取ip</h3>
+<pre><code># 获取ip
+def getIp(request):
+    # 获取IP
+    if 'HTTP_X_FORWARDED_FOR' in request.META:
+        ip = request.META('HTTP_X_FORWARDED_FOR')
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+</code></pre>
+<h3 id="redis链接">redis链接</h3>
+<pre><code>import redis
+# 定义ip 和端口
+host = '127.0.0.1'
+port = 6379
+# 建立连接
+r = redis.Redis(host=host, port=port)
+</code></pre>
+<h3 id="验证token装饰器">验证token装饰器</h3>
+<pre><code>def jwt_identity(func):
+    def wrapper(request, *args, **kwargs):
+        uid = request.GET.get('uid')
+        client_jwt = request.GET.get('token', None)
+        try:
+            decode_jwt = jwt.decode(client_jwt, token_SK, algorithms=['HS256'])
+        except:
+            return HttpResponse('参数错误')
+
+        if str(decode_jwt['uid']) != str(uid):
+            return HttpResponse('异常操作')
+        print('验证通过')
+        return func(request, *args, **kwargs)
+    return wrapper
+</code></pre>
+<h3 id="类方法装饰器">类方法装饰器</h3>
+<pre><code>from django.utils.decorators import method_decorator
+
+class UserInfo(APIView):
+    @method_decorator(jwt_identity)
+    def get(self, request):
+        res = {}
+        return Response(res)
+</code></pre>
+<h3 id="七牛云密钥接口">七牛云密钥接口</h3>
+<pre><code>from qiniu import Auth
+
+
+class QiNiu(APIView):
+    def get(self, request):
+        # 声明密钥对象
+        q = Auth(AK, SK)
+        # 生成令牌
+        token = q.upload_token('missty')
+        return Response({'up_token': token})
+</code></pre>
+<h3 id="立体中文水印">立体中文水印</h3>
+<pre><code># 立体中文水印
+def water_mark(img, text):
+    '''打开图像'''
+    im = Image.open(img)
+    '定义字号'
+    font_size = 15
+    '''获取图像尺寸，根据图像尺寸将下标设置到右下角'''
+    x = im.size[0] - (15 + (font_size * len(text)))
+    y = im.size[1] - (15 + font_size)
+    '''判断，如果图像过小的话，就不要加水印'''
+    if x &gt; 50 and y &gt; 25:
+        '''定义画笔'''
+        draw = ImageDraw.Draw(im)
+        '''定义字体'''
+        font = ImageFont.truetype(
+            'C:\\Windows\\Fonts\\msyh.ttc',
+            font_size
+        )
+        '''绘制阴影'''
+        draw.text(
+            (x, y),
+            text,
+            fill=(70, 70, 70, 255),
+            font=font
+        )
+        '''绘制实体'''
+        draw.text(
+            (x - 1, y - 1),
+            text,
+            fill=(220, 220, 220, 255),
+            font=font
+        )
+        '''保存图片'''
+        im.save(img)
+</code></pre>
+<h3 id="新浪微博回调视图">新浪微博回调视图</h3>
+<pre><code># 新浪微博回调视图
+def weibo_back(request):
+    # 获取code
+    code = request.GET.get('code')
+
+    # 获取网址
+    access_token_url = &quot;https://api.weibo.com/oauth2/access_token&quot;
+
+    # 发送请求进行换取
+    re_dict = requests.post(
+        access_token_url,
+        data={
+            &quot;client_id&quot;: '2936282766',
+            &quot;client_secret&quot;: '50bf8917a9666f6e010029f4c1d72f52',
+            # &quot;client_id&quot;: '3440988304',
+            # &quot;client_secret&quot;: &quot;15dde1e8af983da29490e5ac5de10f55&quot;,
+            &quot;grant_type&quot;: &quot;authorization_code&quot;,
+            &quot;code&quot;: code,
+            &quot;redirect_uri&quot;: &quot;http://127.0.0.1:8000/md_admin/weibo&quot;
+        }
+    )
+
+    # 转换类型
+    res = json.loads(re_dict.text)
+
+    # 获取新浪微博昵称
+    result = requests.get('https://api.weibo.com/2/users/show.json', params={
+        'access_token': res['access_token'],
+        'uid': res['uid']
+    })
+
+    # 获取相关登录信息，拼接用户名
+    # uid = json.loads(re_dict.text).get('uid')
+    username = json.loads(result.text).get('screen_name')
+    # 检查该用户名是否登陆过，如果没有，创建新用户
+    user = User.objects.filter(username=username).first()
+    if not user:
+        user_weibo = User(username=username, password='', img='', type=0)
+        user_weibo.save()
+    res = {}
+    res['code'] = 200
+
+    res['username'] = username
+
+    id = User.objects.filter(username=username).first().id
+
+    res['uid'] = id
+
+    return HttpResponseRedirect('http://localhost:8080/weibo?uid=%s&amp;username=%s/' % (id, username))
+</code></pre>
+<h3 id="钉钉登录回调视图">钉钉登录回调视图</h3>
+<pre><code># 钉钉登录回调视图
+def ding_back(request):
+    # 获取code
+    code = request.GET.get(&quot;code&quot;)
+
+    t = time.time()
+    # 时间戳
+    timestamp = str((int(round(t * 1000))))
+    appSecret = 'ly-AzMKMmCKQP3geaILT_An32kEfKO3HeOtApy5CgKwjytevVZC0WYsT2gxMB160'
+    # 构造签名
+    signature = base64.b64encode(
+        hmac.new(appSecret.encode('utf-8'), timestamp.encode('utf-8'), digestmod=hashlib.sha256).digest())
+    # 请求接口，换取钉钉用户名
+    payload = {'tmp_auth_code': code}
+    headers = {'Content-Type': 'application/json'}
+    res = requests.post('https://oapi.dingtalk.com/sns/getuserinfo_bycode?signature=' + urllib.parse.quote(
+        signature.decode(&quot;utf-8&quot;)) + &quot;&amp;timestamp=&quot; + timestamp + &quot;&amp;accessKey=dingoaukgkwqknzjvamdqh&quot;,
+                        data=json.dumps(payload), headers=headers)
+
+    res_dict = json.loads(res.text)
+
+    # 获取相关登录信息，拼接用户名
+    # 业务逻辑：一般平台的账号（用户名）和昵称是分离的。一般账号是英文数字下划线组成，百度支持中文账号，但不可修改。昵称支持中文，可以修改或重复。所以应该有账号（唯一字段）和昵称（不唯一字段）两个字段。这里为实验项目，暂不考虑重名，将昵称作为账号存入。
+    # uid = res_dict.get('user_info).get('unionid')
+
+    username = res_dict.get('user_info').get('nick')
+    # 检查该用户名是否登陆过，如果没有，创建新用户
+    user = User.objects.filter(username=username).first()
+    if not user:
+        user_ding = User(username=username, password=&quot;&quot;, img='', type=0)
+        user_ding.save()
+    res = {}
+    res['code'] = 200
+
+    res['username'] = username
+
+    id = User.objects.filter(username=username).first().id
+
+    res['uid'] = id
+    return HttpResponseRedirect('http://localhost:8080/dingding?username=%s&amp;uid=%s/' % (username, id))
+
+
+# 微博登录跳转页面
+class WeiBo(APIView):
+    def get(self, request):
+        uid = request.GET.get('uid')
+        user = User.objects.filter(id=uid).first()
+        res = {}
+        if user:
+            res['code'] = 200
+            res['username'] = user.username
+            res['uid'] = user.id
+            res['message'] = '登录成功'
+        else:
+            res['code'] = 400
+            res['message'] = '出现未知错误'
+        return Response(res)
+</code></pre>
+<h3 id="pil绘制验证码">PIL绘制验证码</h3>
+<pre><code># 定义验证码类
+class MyCode(View):
+    # 定义随机颜色
+    def get_random_color(self):
+        R = random.randrange(255)
+        G = random.randrange(255)
+        B = random.randrange(255)
+        return (R, G, B)
+
+    # 试验CMYK
+    def cmyk(self):
+        C = random.randrange(100)
+        M = random.randrange(100)
+        Y = random.randrange(100)
+        K = random.randrange(100)
+        return (C, M, Y, K)
+
+    # 定义获取验证码视图
+    def get(self, request):
+        # 定义画布
+        img_size = (150, 60)
+        # 定义图像对象
+        image = Image.new('CMYK', img_size, 'white')
+        # 定义画笔对象
+        draw = ImageDraw.Draw(image, 'CMYK')
+        # 定义随机字符串
+        source = '0123456789abcdefghijklmnopqrstuvwxyz'
+        # 容器
+        code_str = ''
+        times = random.randrange(3, 5)
+        for i in range(times):
+            # 获取随机颜色
+            text_color = self.cmyk()
+            # 获取随机字符串下标
+            tmp_num = random.randrange(len(source))
+            # 获取字符集
+            random_str = source[tmp_num]
+            # 拼接到容器中
+            code_str += random_str
+            # 将字符串添加到画布上
+            # 定义字体
+            ft = ImageFont.truetype(font='C:\\Windows\\Fonts\\Corbel.ttf', size=20)
+
+            draw.text((10 + 30 * i + random.randint(-7, 7), 20 + random.randint(-7, 7)), random_str, text_color,
+                    font=ft)
+
+        # 存入redis
+        r.set('code', code_str)
+        # 写入session
+        request.session['code'] = code_str
+
+        # 建立缓存区
+        buf = io.BytesIO()
+        # 保存图片
+        image.save(buf, 'jpeg')
+        # 带头部信息返回
+        return HttpResponse(buf.getvalue(), 'image/jpeg')
+</code></pre>
+<h3 id="md5加密方法">MD5加密方法</h3>
+<pre><code># md5加密方法
+def make_password(mypass):
+    # 生成md5对象
+    md5 = hashlib.md5()
+
+    # 定义加密对象
+    sign_str = str(mypass)
+
+    # 转码
+    sign_utf8 = sign_str.encode(encoding='utf-8')
+
+    # 加密
+    md5.update(sign_utf8)
+
+    # 生成秘钥
+    md5_server = md5.hexdigest()
+
+    return md5_server</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/django/django%E6%93%8D%E4%BD%9Cmysql/" class="button"><div class="previous"><div>Django操作Mysql</div></div></a>
+  
+  
+  <a href="/blog" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/" class="button"><div class="next"><div>Redis配置</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/">数据库Redis操作</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/django/%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/">Redis配置</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/django/django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/">Django常用的工具方法</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/django/django%E6%93%8D%E4%BD%9Cmysql/">Django操作Mysql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/django/django%E9%85%8D%E7%BD%AEmysql/">Django配置MySql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/blog/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        <li><a href="//github.com/pacollins/hugo-future-imperfect-slim" target="_blank" rel="noopener" title="GitHub" class="fab fa-github"></a></li>
+
+
+
+
+
+
+<li><a href="//flickr.com/photos/example" target="_blank" rel="noopener" title="Flickr" class="fab fa-flickr"></a></li>
+
+
+
+
+<li><a href="//linkedin.com/in/example" target="_blank" rel="noopener" title="LinkedIn" class="fab fa-linkedin"></a></li>
+<li><a href="//linkedin.com/company/examplebusiness" target="_blank" rel="noopener" title="LinkedIn Company" class="fab fa-linkedin"></a></li>
+
+
+
+<li><a href="//facebook.com/example" target="_blank" rel="noopener" title="Facebook" class="fab fa-facebook"></a></li>
+<li><a href="//reddit.com/user/example" target="_blank" rel="noopener" title="Reddit" class="fab fa-reddit"></a></li>
+
+
+
+
+
+
+
+<li><a href="//instagram.com/example" target="_blank" rel="noopener" title="Instagram" class="fab fa-instagram"></a></li>
+
+<li><a href="//twitter.com/example" target="_blank" rel="noopener" title="Twitter" class="fab fa-twitter"></a></li>
+
+
+<li><a href="//pinterest.com/example" target="_blank" rel="noopener" title="Pinterest" class="fab fa-pinterest-p"></a></li>
+<li><a href="//telegram.me/example" target="_blank" rel="noopener" title="telegram" class="fab fa-telegram"></a></li>
+
+
+
+<li><a href="//researchgate.net/profile/example" target="_blank" rel="noopener" title="Research Gate"><i class="ai ai-researchgate"></i></a></li>
+<li><a href="//keybase.io/example" target="_blank" rel="noopener" title="keybase" class="fab fa-keybase"></a></li>
+<li><a href="//example.com/@example" target="_blank" rel="noopener" title="mastodon" class="fab fa-mastodon"></a></li>
+<li><a href="mailto:example" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    Theme: <a href='https://github.com/pacollins/hugo-future-imperfect-slim' target='_blank' rel='noopener'>Hugo Future Imperfect Slim</a><br>A <a href='https://html5up.net/future-imperfect' target='_blank' rel='noopener'>HTML5 UP port</a> | Powered by <a href='https://gohugo.io/' title='0.68.3' target='_blank' rel='noopener'>Hugo</a>
+  </p>
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
