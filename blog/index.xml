@@ -6,13 +6,270 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Apr 2020 19:51:49 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 09 Apr 2020 01:31:53 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>01 Pygame初始化</title>
+      <title>Pygame中的Surface</title>
+      <link>/blog/pygame/11-pygame%E4%B8%AD%E7%9A%84surface/</link>
+      <pubDate>Thu, 09 Apr 2020 01:31:53 +0800</pubDate>
+      
+      <guid>/blog/pygame/11-pygame%E4%B8%AD%E7%9A%84surface/</guid>
+      <description>&amp;mdash;将一个图像绘制到另一个pygame.Surface.blit
+将许多图像绘制到另一个pygame.Surface.blits
+更改图像的像素格式pygame.Surface.convert
+改变包括每像素α的图像的像素格式pygame.Surface.convert_alpha
+创建Surface的新副本pygame.Surface.copy
+用纯色填充Surfacepygame.Surface.fill
+将表面图像移动到位pygame.Surface.scroll
+设置透明颜色键pygame.Surface.set_colorkey
+获取当前透明的colorkeypygame.Surface.get_colorkey
+设置完整Surface图像的Alpha值pygame.Surface.set_alpha
+获取当前的Surface透明度值pygame.Surface.get_alpha
+锁定Surface内存以进行像素访问pygame.Surface.lock
+从像素访问中解锁Surface存储器pygame.Surface.unlock
+测试Surface是否需要锁定pygame.Surface.mustlock
+测试Surface是否被当前锁定pygame.Surface.get_locked
+获取Surface的锁pygame.Surface.get_locks
+获取单个像素的颜色值pygame.Surface.get_at
+设置单个像素的颜色值pygame.Surface.set_at
+获取单个像素的映射颜色值pygame.Surface.get_at_mapped
+获取8位Surface的颜色索引调色板pygame.Surface.get_palette
+获取调色板中单个条目的颜色pygame.Surface.get_palette_at
+设置8位Surface的调色板pygame.Surface.set_palette
+在8位Surface调色板中设置单个索引的颜色pygame.Surface.set_palette_at
+将颜色转换为映射的颜色值pygame.Surface.map_rgb
+将映射的整数颜色值转换为颜色pygame.Surface.unmap_rgb
+设置Surface的当前剪切区域pygame.Surface.set_clip
+获取Surface的当前剪切区域pygame.Surface.get_clip
+创建一个引用其父级的新表面pygame.Surface.subsurface
+找到地下的父母pygame.Surface.get_parent
+找到地下的顶级父级pygame.Surface.get_abs_parent
+在父母中找到子地下的位置pygame.Surface.get_offset
+在其顶级父级中查找子级子表面的绝对位置pygame.Surface.get_abs_offset
+获取Surface的尺寸pygame.Surface.get_size
+获取Surface的宽度pygame.Surface.get_width
+获得Surface的高度pygame.Surface.get_height
+得到Surface的矩形区域pygame.Surface.get_rect
+获取Surface像素格式的位深度pygame.Surface.get_bitsize
+获取每个Surface像素使用的字节数pygame.Surface.get_bytesize 
+获取用于Surface的其他标志pygame.Surface.get_flags
+获取每个Surface行使用的字节数pygame.Surface.get_pitch
+位掩码需要在颜色和映射的整数之间进行转换pygame.Surface.get_masks
+设置在颜色和映射整数之间转换所需的位掩码pygame.Surface.set_masks
+在颜色和映射的整数之间转换所需的位移pygame.Surface.get_shifts
+设置在颜色和映射整数之间转换所需的位移pygame.Surface.set_shifts
+用于在颜色和映射整数之间进行转换的有效位pygame.Surface.get_losses
+找到包含数据的最小rectpygame.Surface.get_bounding_rect
+返回Surface像素的缓冲区视图。pygame.Surface.get_view
+获取Surface的像素的缓冲对象。pygame.Surface.get_buffer
+像素缓冲地址pygame.Surface._pixels_address</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的event</title>
+      <link>/blog/pygame/06-pygame%E4%B8%AD%E7%9A%84event/</link>
+      <pubDate>Thu, 09 Apr 2020 01:29:09 +0800</pubDate>
+      
+      <guid>/blog/pygame/06-pygame%E4%B8%AD%E7%9A%84event/</guid>
+      <description>&amp;mdash;内部处理pygame事件处理程序pygame.event.pump
+从队列中获取事件pygame.event.get
+从队列中获取单个事件pygame.event.poll
+等待队列中的单个事件pygame.event.wait
+测试事件类型是否在队列中等待pygame.event.peek
+从队列中删除所有事件pygame.event.clear
+从中获取字符串名称和事件IDpygame.event.event_name
+控制队列中允许哪些事件pygame.event.set_blocked
+控制队列中允许哪些事件pygame.event.set_allowed
+测试是否从队列中阻止了某种类型的事件pygame.event.get_blocked 
+控制与其他应用程序共享输入设备pygame.event.set_grab
+测试程序是否共享输入设备pygame.event.get_grab
+在队列上放置一个新事件pygame.event.post
+创建一个新的事件对象pygame.event.Event 
+用于表示SDL事件的pygame对象pygame.event.EventType</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的display</title>
+      <link>/blog/pygame/04-pygame%E4%B8%AD%E7%9A%84display/</link>
+      <pubDate>Thu, 09 Apr 2020 01:27:58 +0800</pubDate>
+      
+      <guid>/blog/pygame/04-pygame%E4%B8%AD%E7%9A%84display/</guid>
+      <description>&amp;mdash;初始化显示模块pygame.display.init
+取消初始化显示模块pygame.display.quit
+如果已初始化显示模块，则返回Truepygame.display.get_init
+初始化窗口或屏幕以进行显示pygame.display.set_mode
+获取当前设置的显示表面的参考pygame.display.get_surface
+将完整显示Surface更新到屏幕pygame.display.flip
+更新屏幕的部分以显示软件pygame.display.update
+获取pygame显示后端的名称pygame.display.get_driver
+创建视频显示信息对象pygame.display.Info
+获取有关当前窗口系统的信息pygame.display.get_wm_info
+获取可用的全屏模式列表pygame.display.list_modes
+为显示模式选择最佳颜色深度pygame.display.mode_ok
+获取当前显示的OpenGL标志的值pygame.display.gl_get_attribute
+请求显示模式的OpenGL显示属性pygame.display.gl_set_attribute
+当显示器在显示器上处于活动状态时返回Truepygame.display.get_active
+图标化显示表面pygame.display.iconify
+在全屏和窗口显示之间切换pygame.display.toggle_fullscreen
+更改硬件伽玛斜坡pygame.display.set_gamma
+使用自定义查找更改硬件伽玛斜坡pygame.display.set_gamma_ramp
+更改显示窗口的系统图像pygame.display.set_icon
+设置当前窗口标题pygame.display.set_caption
+获取当前窗口标题pygame.display.get_caption
+设置索引显示的显示调色板pygame.display.set_palette</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的font</title>
+      <link>/blog/pygame/07-pygame%E4%B8%AD%E7%9A%84font/</link>
+      <pubDate>Thu, 09 Apr 2020 01:27:09 +0800</pubDate>
+      
+      <guid>/blog/pygame/07-pygame%E4%B8%AD%E7%9A%84font/</guid>
+      <description>&amp;mdash;初始化字体模块pygame.font.init
+取消初始化字体模块pygame.font.quit
+如果字体模块已初始化，则为truepygame.font.get_init
+获取默认字体的文件名pygame.font.get_default_font
+获取所有可用的字体pygame.font.get_fonts
+在系统上找到特定的字体pygame.font.match_font
+从系统字体创建一个Font对象pygame.font.SysFont
+从文件创建一个新的Font对象pygame.font.Font</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的key</title>
+      <link>/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/</link>
+      <pubDate>Thu, 09 Apr 2020 01:26:24 +0800</pubDate>
+      
+      <guid>/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/</guid>
+      <description>&amp;mdash;是否显示正在接收来自系统的键盘输入pygame.key.get_focused
+获得所有键盘按钮的状态pygame.key.get_pressed
+确定哪些修饰符被持有pygame.key.get_mods
+临时设置哪些修饰符键被按下pygame.key.set_mods
+控件如何重复控制键pygame.key.set_repeat
+查看持有的键是如何重复的pygame.key.get_repeat
+得到一个键标识符的名称r(63, 63, 63, 0)pygame.key.name</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的draw</title>
+      <link>/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/</link>
+      <pubDate>Thu, 09 Apr 2020 01:25:13 +0800</pubDate>
+      
+      <guid>/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/</guid>
+      <description>&amp;mdash;画一个矩形的形状pygame.draw.rect
+绘制具有任意数量边的形状pygame.draw.polygon
+围绕一个点画一个圆圈pygame.draw.circle
+在矩形内绘制圆形pygame.draw.ellipse
+绘制椭圆的局部剖面pygame.draw.arc
+绘制一条直线段pygame.draw.line
+绘制多个连续的线段pygame.draw.lines
+绘制精细的抗锯齿线pygame.draw.aaline
+绘制连接的抗锯齿线序列pygame.draw.aalines</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的image</title>
+      <link>/blog/pygame/08-pygame%E4%B8%AD%E7%9A%84image/</link>
+      <pubDate>Thu, 09 Apr 2020 01:24:50 +0800</pubDate>
+      
+      <guid>/blog/pygame/08-pygame%E4%B8%AD%E7%9A%84image/</guid>
+      <description> </description>
+    </item>
+    
+    <item>
+      <title>Pygame中的mouse</title>
+      <link>/blog/pygame/10-pygame%E4%B8%AD%E7%9A%84mouse/</link>
+      <pubDate>Thu, 09 Apr 2020 01:22:29 +0800</pubDate>
+      
+      <guid>/blog/pygame/10-pygame%E4%B8%AD%E7%9A%84mouse/</guid>
+      <description>&amp;mdash;得到鼠标按钮的状态信息pygame.mouse.get_pressed
+得到鼠标箭头的位置坐标pygame.mouse.get_pos
+获取鼠标移动的数量pygame.mouse.get_rel
+设置鼠标箭头的位置坐标pygame.mouse.set_pos
+隐藏或者显示鼠标箭头pygame.mouse.set_visible
+检查程序是否正在接收来自鼠标的数据pygame.mouse.get_focused
+为系统鼠标光标设置图像pygame.mouse.set_cursor
+获取系统鼠标光标的图像pygame.mouse.get_cursor</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的color</title>
+      <link>/blog/pygame/03-pygame%E4%B8%AD%E7%9A%84color/</link>
+      <pubDate>Thu, 09 Apr 2020 01:21:24 +0800</pubDate>
+      
+      <guid>/blog/pygame/03-pygame%E4%B8%AD%E7%9A%84color/</guid>
+      <description>&amp;mdash;得到或设置颜色的红色值pygame.Color.r
+得到或设置颜色的绿色值pygame.Color.g
+得到或设置颜色的蓝色值pygame.Color.b
+得到或设置颜色的透明度pygame.Color.a
+获取或设置cmy表示颜色pygame.Color.cmy
+获取或设置hsva表示的颜色pygame.Color.hsva
+获取或设置hsla表示颜色pygame.Color.hsla
+获取或设置i1i2i3表示颜色pygame.Color.i1i2i3
+返回规范化的RGBA值pygame.Color.normalize
+对颜色应用一个特定的伽马值pygame.Color.correct_gamma
+将颜色的元素设置为1,2,3或4pygame.Color.set_length</description>
+    </item>
+    
+    <item>
+      <title>Pygame中的music</title>
+      <link>/blog/pygame/02-pygame%E4%B8%AD%E7%9A%84music/</link>
+      <pubDate>Thu, 09 Apr 2020 01:20:17 +0800</pubDate>
+      
+      <guid>/blog/pygame/02-pygame%E4%B8%AD%E7%9A%84music/</guid>
+      <description>&amp;mdash;加载一个用于播放的音乐文件pygame.mixer.music.load
+开始播放音乐流pygame.mixer.music.play
+重新启动音乐pygame.mixer.music.rewind
+停止播放音乐pygame.mixer.music.stop
+暂停音乐播放pygame.mixer.music.pause
+恢复暂停的音乐pygame.mixer.music.unpause
+在淡出后停止播放音乐pygame.mixer.music.fadeout
+设置音量pygame.mixer.music.set_volume
+获取音乐音量pygame.mixer.music.get_volume
+检查音乐流是否在播放pygame.mixer.music.get_busy
+设置的位置pygame.mixer.music.set_pos
+获得音乐播放时间pygame.mixer.music.get_pos
+队列一个音乐文件以跟随当前pygame.mixer.music.queue
+当播放停止时，音乐会发送一个事件pygame.mixer.music.set_endevent
+当播放停止时，获取一个通道发送的事件pygame.mixer.music.get_endevent</description>
+    </item>
+    
+    <item>
+      <title>05 键值对应关系表</title>
+      <link>/blog/%E5%85%B6%E4%BB%96/05-%E9%94%AE%E5%80%BC%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB%E8%A1%A8/</link>
+      <pubDate>Thu, 09 Apr 2020 00:40:45 +0800</pubDate>
+      
+      <guid>/blog/%E5%85%B6%E4%BB%96/05-%E9%94%AE%E5%80%BC%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB%E8%A1%A8/</guid>
+      <description>KeyASCII ASCII Common Name     KeyASCII ASCII Common Name   K_BACKSPACE \b backspace   K_TAB \t tab   K_CLEAR  clear   K_RETURN \r return   K_PAUSE  pause   K_ESCAPE ^[ escape   K_SPACE  space   K_EXCLAIM ! exclaim   K_QUOTEDBL &amp;quot; quotedbl   K_HASH # hash   K_DOLLAR $ dollar   K_AMPERSAND &amp;amp; ampersand   K_QUOTE  quote   K_LEFTPAREN ( left parenthesis   K_RIGHTPAREN ) right parenthesis   K_ASTERISK * asterisk   K_PLUS + plus sign   K_COMMA , comma   K_MINUS - minus sign   K_PERIOD .</description>
+    </item>
+    
+    <item>
+      <title>Random模块</title>
+      <link>/blog/python/random%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Thu, 09 Apr 2020 00:27:13 +0800</pubDate>
+      
+      <guid>/blog/python/random%E6%A8%A1%E5%9D%97/</guid>
+      <description>random 是 Python 内置的一个模块，包括以下方法：
+ 初始化伪随机数生成器。如果未提供as或者a=None，则使用系统时间为种子。如果a是一个整数，则作为种子。  random.seed(a=None, version=2)
+ 返回一个当前生成器的内部状态的对象  random.getstate()
+ 传入一个先前利用getstate方法获得的状态对象，使得生成器恢复到这个状态。  random.setstate(state)
+ 返回range(0,2k)之间的一个整数，相当于randrange(0,2k)  random.getrandbits(k)
+ 返回range(0,stop)之间的一个整数  random.randrange(stop)
+ 返回range[start,stop)之间的一个整数，可加step，跟range(0,10,2)类似  random.randrange(start, stop[, step])
+ 返回range[a,b]之间的一个整数，等价于然的range(a,b+1)  random.randint(a, b)
+ 从非空序列seq中随机选取一个元素。如果seq为空则弹出 IndexError异常。  random.choice(seq)
+ 3.6版本新增。从population集群中随机抽取K个元素（可重复）。weights是相对权重列表，cum_weights是累计权重，两个参数不能同时存在。  random.choices(population, weights=None, *, cum_weights=None, k=1)
+ 随机打乱序列x内元素的排列顺序。只能针对可变的序列，对于不可变序列，请使用下面的sample()方法。  random.shuffle(x[, random])
+ 从population样本或集合中随机抽取K个不重复的元素形成新的序列。常用于不重复的随机抽样。返回的是一个新的序列，不会破坏原有序列。要从一个整数区间随机抽取一定数量的整数，请使用sample(range(10000000), k=60)类似的方法，这非常有效和节省空间。如果k大于population的长度，则弹出ValueError异常。  random.sample(population, k)
+ 返回一个介于左闭右开[0.0, 1.0)区间的浮点数  random.random()
+ 返回一个介于a和b之间的浮点数。如果a&amp;gt;b，则是b到a之间的浮点数。这里的a和b都有可能出现在结果中。  random.uniform(a, b)</description>
+    </item>
+    
+    <item>
+      <title>Pygame初始化</title>
       <link>/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/</link>
       <pubDate>Wed, 08 Apr 2020 19:51:49 +0800</pubDate>
       

@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>05 键值对应关系表 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="05 键值对应关系表">
+<meta itemprop="description" content="KeyASCII ASCII Common Name     KeyASCII ASCII Common Name   K_BACKSPACE \b backspace   K_TAB \t tab   K_CLEAR  clear   K_RETURN \r return   K_PAUSE  pause   K_ESCAPE ^[ escape   K_SPACE  space   K_EXCLAIM ! exclaim   K_QUOTEDBL &quot; quotedbl   K_HASH # hash   K_DOLLAR $ dollar   K_AMPERSAND &amp; ampersand   K_QUOTE  quote   K_LEFTPAREN ( left parenthesis   K_RIGHTPAREN ) right parenthesis   K_ASTERISK * asterisk   K_PLUS &#43; plus sign   K_COMMA , comma   K_MINUS - minus sign   K_PERIOD .">
+<meta itemprop="datePublished" content="2020-04-09T00:40:45&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-09T00:40:45&#43;08:00" />
+<meta itemprop="wordCount" content="395">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="05 键值对应关系表" />
+<meta property="og:description" content="KeyASCII ASCII Common Name     KeyASCII ASCII Common Name   K_BACKSPACE \b backspace   K_TAB \t tab   K_CLEAR  clear   K_RETURN \r return   K_PAUSE  pause   K_ESCAPE ^[ escape   K_SPACE  space   K_EXCLAIM ! exclaim   K_QUOTEDBL &quot; quotedbl   K_HASH # hash   K_DOLLAR $ dollar   K_AMPERSAND &amp; ampersand   K_QUOTE  quote   K_LEFTPAREN ( left parenthesis   K_RIGHTPAREN ) right parenthesis   K_ASTERISK * asterisk   K_PLUS &#43; plus sign   K_COMMA , comma   K_MINUS - minus sign   K_PERIOD ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E5%85%B6%E4%BB%96/05-%E9%94%AE%E5%80%BC%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB%E8%A1%A8/" />
+<meta property="article:published_time" content="2020-04-09T00:40:45+08:00" />
+<meta property="article:modified_time" content="2020-04-09T00:40:45+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="05 键值对应关系表"/>
+<meta name="twitter:description" content="KeyASCII ASCII Common Name     KeyASCII ASCII Common Name   K_BACKSPACE \b backspace   K_TAB \t tab   K_CLEAR  clear   K_RETURN \r return   K_PAUSE  pause   K_ESCAPE ^[ escape   K_SPACE  space   K_EXCLAIM ! exclaim   K_QUOTEDBL &quot; quotedbl   K_HASH # hash   K_DOLLAR $ dollar   K_AMPERSAND &amp; ampersand   K_QUOTE  quote   K_LEFTPAREN ( left parenthesis   K_RIGHTPAREN ) right parenthesis   K_ASTERISK * asterisk   K_PLUS &#43; plus sign   K_COMMA , comma   K_MINUS - minus sign   K_PERIOD ."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8&amp;url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f&amp;title=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f&amp;title=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f&amp;description=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E5%85%B6%E4%BB%96/05-%E9%94%AE%E5%80%BC%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB%E8%A1%A8/">05 键值对应关系表</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-09 00:40:45 &#43;0800 CST">
+      April 9, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8&amp;url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f&amp;title=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f&amp;title=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f&amp;description=05%20%e9%94%ae%e5%80%bc%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb%e8%a1%a8" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f05-%25E9%2594%25AE%25E5%2580%25BC%25E5%25AF%25B9%25E5%25BA%2594%25E5%2585%25B3%25E7%25B3%25BB%25E8%25A1%25A8%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<table>
+<thead>
+<tr>
+<th align="left">KeyASCII</th>
+<th align="left">ASCII</th>
+<th align="left">Common Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">KeyASCII</td>
+<td align="left">ASCII</td>
+<td align="left">Common Name</td>
+</tr>
+<tr>
+<td align="left">K_BACKSPACE</td>
+<td align="left">\b</td>
+<td align="left">backspace</td>
+</tr>
+<tr>
+<td align="left">K_TAB</td>
+<td align="left">\t</td>
+<td align="left">tab</td>
+</tr>
+<tr>
+<td align="left">K_CLEAR</td>
+<td align="left"></td>
+<td align="left">clear</td>
+</tr>
+<tr>
+<td align="left">K_RETURN</td>
+<td align="left">\r</td>
+<td align="left">return</td>
+</tr>
+<tr>
+<td align="left">K_PAUSE</td>
+<td align="left"></td>
+<td align="left">pause</td>
+</tr>
+<tr>
+<td align="left">K_ESCAPE</td>
+<td align="left">^[</td>
+<td align="left">escape</td>
+</tr>
+<tr>
+<td align="left">K_SPACE</td>
+<td align="left"></td>
+<td align="left">space</td>
+</tr>
+<tr>
+<td align="left">K_EXCLAIM</td>
+<td align="left">!</td>
+<td align="left">exclaim</td>
+</tr>
+<tr>
+<td align="left">K_QUOTEDBL</td>
+<td align="left">&quot;</td>
+<td align="left">quotedbl</td>
+</tr>
+<tr>
+<td align="left">K_HASH</td>
+<td align="left">#</td>
+<td align="left">hash</td>
+</tr>
+<tr>
+<td align="left">K_DOLLAR</td>
+<td align="left">$</td>
+<td align="left">dollar</td>
+</tr>
+<tr>
+<td align="left">K_AMPERSAND</td>
+<td align="left">&amp;</td>
+<td align="left">ampersand</td>
+</tr>
+<tr>
+<td align="left">K_QUOTE</td>
+<td align="left"></td>
+<td align="left">quote</td>
+</tr>
+<tr>
+<td align="left">K_LEFTPAREN</td>
+<td align="left">(</td>
+<td align="left">left parenthesis</td>
+</tr>
+<tr>
+<td align="left">K_RIGHTPAREN</td>
+<td align="left">)</td>
+<td align="left">right parenthesis</td>
+</tr>
+<tr>
+<td align="left">K_ASTERISK</td>
+<td align="left">*</td>
+<td align="left">asterisk</td>
+</tr>
+<tr>
+<td align="left">K_PLUS</td>
+<td align="left">+</td>
+<td align="left">plus sign</td>
+</tr>
+<tr>
+<td align="left">K_COMMA</td>
+<td align="left">,</td>
+<td align="left">comma</td>
+</tr>
+<tr>
+<td align="left">K_MINUS</td>
+<td align="left">-</td>
+<td align="left">minus sign</td>
+</tr>
+<tr>
+<td align="left">K_PERIOD</td>
+<td align="left">.</td>
+<td align="left">period</td>
+</tr>
+<tr>
+<td align="left">K_SLASH</td>
+<td align="left">/</td>
+<td align="left">forward slash</td>
+</tr>
+<tr>
+<td align="left">K_0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">K_1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">K_2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">K_3</td>
+<td align="left">3</td>
+<td align="left">3</td>
+</tr>
+<tr>
+<td align="left">K_4</td>
+<td align="left">4</td>
+<td align="left">4</td>
+</tr>
+<tr>
+<td align="left">K_5</td>
+<td align="left">5</td>
+<td align="left">5</td>
+</tr>
+<tr>
+<td align="left">K_6</td>
+<td align="left">6</td>
+<td align="left">6</td>
+</tr>
+<tr>
+<td align="left">K_7</td>
+<td align="left">7</td>
+<td align="left">7</td>
+</tr>
+<tr>
+<td align="left">K_8</td>
+<td align="left">8</td>
+<td align="left">8</td>
+</tr>
+<tr>
+<td align="left">K_9</td>
+<td align="left">9</td>
+<td align="left">9</td>
+</tr>
+<tr>
+<td align="left">K_COLON</td>
+<td align="left">:</td>
+<td align="left">colon</td>
+</tr>
+<tr>
+<td align="left">K_SEMICOLON</td>
+<td align="left">;</td>
+<td align="left">semicolon</td>
+</tr>
+<tr>
+<td align="left">K_LESS</td>
+<td align="left">&lt;</td>
+<td align="left">less-than sign</td>
+</tr>
+<tr>
+<td align="left">K_EQUALS</td>
+<td align="left">=</td>
+<td align="left">equals sign</td>
+</tr>
+<tr>
+<td align="left">K_GREATER</td>
+<td align="left">&gt;</td>
+<td align="left">greater-than sign</td>
+</tr>
+<tr>
+<td align="left">K_QUESTION</td>
+<td align="left">?</td>
+<td align="left">question mark</td>
+</tr>
+<tr>
+<td align="left">K_AT</td>
+<td align="left">@</td>
+<td align="left">at</td>
+</tr>
+<tr>
+<td align="left">K_LEFTBRACKET</td>
+<td align="left">[</td>
+<td align="left">left bracket</td>
+</tr>
+<tr>
+<td align="left">K_BACKSLASH</td>
+<td align="left">\</td>
+<td align="left">backslash</td>
+</tr>
+<tr>
+<td align="left">K_RIGHTBRACKET</td>
+<td align="left">]</td>
+<td align="left">right bracket</td>
+</tr>
+<tr>
+<td align="left">K_CARET</td>
+<td align="left">^</td>
+<td align="left">caret</td>
+</tr>
+<tr>
+<td align="left">K_UNDERSCORE</td>
+<td align="left">_</td>
+<td align="left">underscore</td>
+</tr>
+<tr>
+<td align="left">K_BACKQUOTE</td>
+<td align="left">`</td>
+<td align="left">grave</td>
+</tr>
+<tr>
+<td align="left">K_a</td>
+<td align="left">a</td>
+<td align="left">a</td>
+</tr>
+<tr>
+<td align="left">K_b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+</tr>
+<tr>
+<td align="left">K_c</td>
+<td align="left">c</td>
+<td align="left">c</td>
+</tr>
+<tr>
+<td align="left">K_d</td>
+<td align="left">d</td>
+<td align="left">d</td>
+</tr>
+<tr>
+<td align="left">K_e</td>
+<td align="left">e</td>
+<td align="left">e</td>
+</tr>
+<tr>
+<td align="left">K_f</td>
+<td align="left">f</td>
+<td align="left">f</td>
+</tr>
+<tr>
+<td align="left">K_g</td>
+<td align="left">g</td>
+<td align="left">g</td>
+</tr>
+<tr>
+<td align="left">K_h</td>
+<td align="left">h</td>
+<td align="left">h</td>
+</tr>
+<tr>
+<td align="left">K_i</td>
+<td align="left">i</td>
+<td align="left">i</td>
+</tr>
+<tr>
+<td align="left">K_j</td>
+<td align="left">j</td>
+<td align="left">j</td>
+</tr>
+<tr>
+<td align="left">K_k</td>
+<td align="left">k</td>
+<td align="left">k</td>
+</tr>
+<tr>
+<td align="left">K_l</td>
+<td align="left">l</td>
+<td align="left">l</td>
+</tr>
+<tr>
+<td align="left">K_m</td>
+<td align="left">m</td>
+<td align="left">m</td>
+</tr>
+<tr>
+<td align="left">K_n</td>
+<td align="left">n</td>
+<td align="left">n</td>
+</tr>
+<tr>
+<td align="left">K_o</td>
+<td align="left">o</td>
+<td align="left">o</td>
+</tr>
+<tr>
+<td align="left">K_p</td>
+<td align="left">p</td>
+<td align="left">p</td>
+</tr>
+<tr>
+<td align="left">K_q</td>
+<td align="left">q</td>
+<td align="left">q</td>
+</tr>
+<tr>
+<td align="left">K_r</td>
+<td align="left">r</td>
+<td align="left">r</td>
+</tr>
+<tr>
+<td align="left">K_s</td>
+<td align="left">s</td>
+<td align="left">s</td>
+</tr>
+<tr>
+<td align="left">K_t</td>
+<td align="left">t</td>
+<td align="left">t</td>
+</tr>
+<tr>
+<td align="left">K_u</td>
+<td align="left">u</td>
+<td align="left">u</td>
+</tr>
+<tr>
+<td align="left">K_v</td>
+<td align="left">v</td>
+<td align="left">v</td>
+</tr>
+<tr>
+<td align="left">K_w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+</tr>
+<tr>
+<td align="left">K_x</td>
+<td align="left">x</td>
+<td align="left">x</td>
+</tr>
+<tr>
+<td align="left">K_y</td>
+<td align="left">y</td>
+<td align="left">y</td>
+</tr>
+<tr>
+<td align="left">K_z</td>
+<td align="left">z</td>
+<td align="left">z</td>
+</tr>
+<tr>
+<td align="left">K_DELETE</td>
+<td align="left"></td>
+<td align="left">delete</td>
+</tr>
+<tr>
+<td align="left">K_KP0</td>
+<td align="left"></td>
+<td align="left">keypad 0</td>
+</tr>
+<tr>
+<td align="left">K_KP1</td>
+<td align="left"></td>
+<td align="left">keypad 1</td>
+</tr>
+<tr>
+<td align="left">K_KP2</td>
+<td align="left"></td>
+<td align="left">keypad 2</td>
+</tr>
+<tr>
+<td align="left">K_KP3</td>
+<td align="left"></td>
+<td align="left">keypad 3</td>
+</tr>
+<tr>
+<td align="left">K_KP4</td>
+<td align="left"></td>
+<td align="left">keypad 4</td>
+</tr>
+<tr>
+<td align="left">K_KP5</td>
+<td align="left"></td>
+<td align="left">keypad 5</td>
+</tr>
+<tr>
+<td align="left">K_KP6</td>
+<td align="left"></td>
+<td align="left">keypad 6</td>
+</tr>
+<tr>
+<td align="left">K_KP7</td>
+<td align="left"></td>
+<td align="left">keypad 7</td>
+</tr>
+<tr>
+<td align="left">K_KP8</td>
+<td align="left"></td>
+<td align="left">keypad 8</td>
+</tr>
+<tr>
+<td align="left">K_KP9</td>
+<td align="left"></td>
+<td align="left">keypad 9</td>
+</tr>
+<tr>
+<td align="left">K_KP_PERIOD</td>
+<td align="left">.</td>
+<td align="left">keypad period</td>
+</tr>
+<tr>
+<td align="left">K_KP_DIVIDE</td>
+<td align="left">/</td>
+<td align="left">keypad divide</td>
+</tr>
+<tr>
+<td align="left">K_KP_MULTIPLY</td>
+<td align="left">*</td>
+<td align="left">keypad multiply</td>
+</tr>
+<tr>
+<td align="left">K_KP_MINUS</td>
+<td align="left">-</td>
+<td align="left">keypad minus</td>
+</tr>
+<tr>
+<td align="left">K_KP_PLUS</td>
+<td align="left">+</td>
+<td align="left">keypad plus</td>
+</tr>
+<tr>
+<td align="left">K_KP_ENTER</td>
+<td align="left">\r</td>
+<td align="left">keypad enter</td>
+</tr>
+<tr>
+<td align="left">K_KP_EQUALS</td>
+<td align="left">=</td>
+<td align="left">keypad equals</td>
+</tr>
+<tr>
+<td align="left">K_UP</td>
+<td align="left"></td>
+<td align="left">up arrow</td>
+</tr>
+<tr>
+<td align="left">K_DOWN</td>
+<td align="left"></td>
+<td align="left">down arrow</td>
+</tr>
+<tr>
+<td align="left">K_RIGHT</td>
+<td align="left"></td>
+<td align="left">right arrow</td>
+</tr>
+<tr>
+<td align="left">K_LEFT</td>
+<td align="left"></td>
+<td align="left">left arrow</td>
+</tr>
+<tr>
+<td align="left">K_INSERT</td>
+<td align="left"></td>
+<td align="left">insert</td>
+</tr>
+<tr>
+<td align="left">K_HOME</td>
+<td align="left"></td>
+<td align="left">home</td>
+</tr>
+<tr>
+<td align="left">K_END</td>
+<td align="left"></td>
+<td align="left">end</td>
+</tr>
+<tr>
+<td align="left">K_PAGEUP</td>
+<td align="left"></td>
+<td align="left">page up</td>
+</tr>
+<tr>
+<td align="left">K_PAGEDOWN</td>
+<td align="left"></td>
+<td align="left">page down</td>
+</tr>
+<tr>
+<td align="left">K_F1</td>
+<td align="left"></td>
+<td align="left">F1</td>
+</tr>
+<tr>
+<td align="left">K_F2</td>
+<td align="left"></td>
+<td align="left">F2</td>
+</tr>
+<tr>
+<td align="left">K_F3</td>
+<td align="left"></td>
+<td align="left">F3</td>
+</tr>
+<tr>
+<td align="left">K_F4</td>
+<td align="left"></td>
+<td align="left">F4</td>
+</tr>
+<tr>
+<td align="left">K_F5</td>
+<td align="left"></td>
+<td align="left">F5</td>
+</tr>
+<tr>
+<td align="left">K_F6</td>
+<td align="left"></td>
+<td align="left">F6</td>
+</tr>
+<tr>
+<td align="left">K_F7</td>
+<td align="left"></td>
+<td align="left">F7</td>
+</tr>
+<tr>
+<td align="left">K_F8</td>
+<td align="left"></td>
+<td align="left">F8</td>
+</tr>
+<tr>
+<td align="left">K_F9</td>
+<td align="left"></td>
+<td align="left">F9</td>
+</tr>
+<tr>
+<td align="left">K_F10</td>
+<td align="left"></td>
+<td align="left">F10</td>
+</tr>
+<tr>
+<td align="left">K_F11</td>
+<td align="left"></td>
+<td align="left">F11</td>
+</tr>
+<tr>
+<td align="left">K_F12</td>
+<td align="left"></td>
+<td align="left">F12</td>
+</tr>
+<tr>
+<td align="left">K_F13</td>
+<td align="left"></td>
+<td align="left">F13</td>
+</tr>
+<tr>
+<td align="left">K_F14</td>
+<td align="left"></td>
+<td align="left">F14</td>
+</tr>
+<tr>
+<td align="left">K_F15</td>
+<td align="left"></td>
+<td align="left">F15</td>
+</tr>
+<tr>
+<td align="left">K_NUMLOCK</td>
+<td align="left"></td>
+<td align="left">numlock</td>
+</tr>
+<tr>
+<td align="left">K_CAPSLOCK</td>
+<td align="left"></td>
+<td align="left">capslock</td>
+</tr>
+<tr>
+<td align="left">K_SCROLLOCK</td>
+<td align="left"></td>
+<td align="left">scrollock</td>
+</tr>
+<tr>
+<td align="left">K_RSHIFT</td>
+<td align="left"></td>
+<td align="left">right shift</td>
+</tr>
+<tr>
+<td align="left">K_LSHIFT</td>
+<td align="left"></td>
+<td align="left">left shift</td>
+</tr>
+<tr>
+<td align="left">K_RCTRL</td>
+<td align="left"></td>
+<td align="left">right control</td>
+</tr>
+<tr>
+<td align="left">K_LCTRL</td>
+<td align="left"></td>
+<td align="left">left control</td>
+</tr>
+<tr>
+<td align="left">K_RALT</td>
+<td align="left"></td>
+<td align="left">right alt</td>
+</tr>
+<tr>
+<td align="left">K_LALT</td>
+<td align="left"></td>
+<td align="left">left alt</td>
+</tr>
+<tr>
+<td align="left">K_RMETA</td>
+<td align="left"></td>
+<td align="left">right meta</td>
+</tr>
+<tr>
+<td align="left">K_LMETA</td>
+<td align="left"></td>
+<td align="left">left meta</td>
+</tr>
+<tr>
+<td align="left">K_LSUPER</td>
+<td align="left"></td>
+<td align="left">left Windows key</td>
+</tr>
+<tr>
+<td align="left">K_RSUPER</td>
+<td align="left"></td>
+<td align="left">right Windows key</td>
+</tr>
+<tr>
+<td align="left">K_MODE</td>
+<td align="left"></td>
+<td align="left">mode shift</td>
+</tr>
+<tr>
+<td align="left">K_HELP</td>
+<td align="left"></td>
+<td align="left">help</td>
+</tr>
+<tr>
+<td align="left">K_PRINT</td>
+<td align="left"></td>
+<td align="left">print screen</td>
+</tr>
+<tr>
+<td align="left">K_SYSREQ</td>
+<td align="left"></td>
+<td align="left">sysrq</td>
+</tr>
+<tr>
+<td align="left">K_BREAK</td>
+<td align="left"></td>
+<td align="left">break</td>
+</tr>
+<tr>
+<td align="left">K_MENU</td>
+<td align="left"></td>
+<td align="left">menu</td>
+</tr>
+<tr>
+<td align="left">K_POWER</td>
+<td align="left"></td>
+<td align="left">power</td>
+</tr>
+<tr>
+<td align="left">K_EURO</td>
+<td align="left"></td>
+<td align="left">Euro</td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/random%E6%A8%A1%E5%9D%97/" class="button"><div class="previous"><div>Random模块</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/pygame/02-pygame%E4%B8%AD%E7%9A%84music/" class="button"><div class="next"><div>Pygame中的music</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/pygame/11-pygame%E4%B8%AD%E7%9A%84surface/">Pygame中的Surface</a></h1>
+          <time class="published" datetime="">April 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/pygame/06-pygame%E4%B8%AD%E7%9A%84event/">Pygame中的event</a></h1>
+          <time class="published" datetime="">April 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/pygame/04-pygame%E4%B8%AD%E7%9A%84display/">Pygame中的display</a></h1>
+          <time class="published" datetime="">April 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/pygame/07-pygame%E4%B8%AD%E7%9A%84font/">Pygame中的font</a></h1>
+          <time class="published" datetime="">April 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/">Pygame中的key</a></h1>
+          <time class="published" datetime="">April 9, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

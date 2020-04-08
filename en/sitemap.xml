@@ -4,12 +4,12 @@
   
   <url>
     <loc>/contents/</loc>
-    <lastmod>2020-04-08T21:52:26+08:00</lastmod>
+    <lastmod>2020-04-09T01:38:55+08:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-04-08T21:52:26+08:00</lastmod>
+    <lastmod>2020-04-09T01:38:55+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
@@ -58,12 +58,72 @@
   </url>
   
   <url>
-    <loc>/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/</loc>
-    <lastmod>2020-04-08T19:51:49+08:00</lastmod>
+    <loc>/blog/</loc>
+    <lastmod>2020-04-09T01:31:53+08:00</lastmod>
   </url>
   
   <url>
-    <loc>/blog/</loc>
+    <loc>/blog/pygame/11-pygame%E4%B8%AD%E7%9A%84surface/</loc>
+    <lastmod>2020-04-09T01:31:53+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/06-pygame%E4%B8%AD%E7%9A%84event/</loc>
+    <lastmod>2020-04-09T01:29:09+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/04-pygame%E4%B8%AD%E7%9A%84display/</loc>
+    <lastmod>2020-04-09T01:27:58+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/07-pygame%E4%B8%AD%E7%9A%84font/</loc>
+    <lastmod>2020-04-09T01:27:09+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/</loc>
+    <lastmod>2020-04-09T01:26:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/</loc>
+    <lastmod>2020-04-09T01:25:13+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/08-pygame%E4%B8%AD%E7%9A%84image/</loc>
+    <lastmod>2020-04-09T01:24:50+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/10-pygame%E4%B8%AD%E7%9A%84mouse/</loc>
+    <lastmod>2020-04-09T01:22:29+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/03-pygame%E4%B8%AD%E7%9A%84color/</loc>
+    <lastmod>2020-04-09T01:21:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/02-pygame%E4%B8%AD%E7%9A%84music/</loc>
+    <lastmod>2020-04-09T01:20:17+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/%E5%85%B6%E4%BB%96/05-%E9%94%AE%E5%80%BC%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB%E8%A1%A8/</loc>
+    <lastmod>2020-04-09T00:40:45+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/python/random%E6%A8%A1%E5%9D%97/</loc>
+    <lastmod>2020-04-09T00:27:13+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/pygame/01-pygame%E5%88%9D%E5%A7%8B%E5%8C%96/</loc>
     <lastmod>2020-04-08T19:51:49+08:00</lastmod>
   </url>
   
