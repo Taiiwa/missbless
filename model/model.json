@@ -1,0 +1,78 @@
+{
+  "version": "1.0.0",
+  "model": "model.moc",
+  "textures": [
+    "texture_00.png",
+    "texture_01.png",
+    "texture_02.png"
+  ],
+  "layout": {
+    "center_x": 0.0,
+    "center_y": -0.05,
+    "width": 2.0
+  },
+  "hit_areas_custom": {
+    "head_x": [-1, 1],
+    "head_y": [1, -1],
+    "body_x": [-1, -1],
+    "body_y": [1, -1]
+  },
+  "motions": {
+    "idle": [{
+        "file": "idle_00.mtn"
+      }, {
+        "file": "idle_01.mtn"
+      }, {
+        "file": "idle_02.mtn"
+      }
+    ],
+    "sleepy": [{
+        "file": "shake.mtn"
+      }
+    ],
+    "flick_head": [{
+        "file": "refuse.mtn"
+      }, {
+        "file": "nep_slide_head_2.mtn"
+      }, {
+        "file": "nep_touch_belly_2.mtn"
+      }, {
+        "file": "nep_touch_boobs_1.mtn"
+      }
+    ],
+    "tap_body": [{
+        "file": "smile.mtn"
+      }
+
+    ],
+    "talk": [{
+        "file": "nep_touch_belly_1.mtn"
+      }, {
+        "file": "nep_slide_head_2.mtn"
+      }, {
+        "file": "nep_touch_head_1.mtn"
+      }
+
+    ],
+    "rest": [{
+        "file": "tilt_head.mtn"
+      }, {
+        "file": "idle_00.mtn"
+      }, {
+        "file": "idle_01.mtn"
+      }, {
+        "file": "idle_02.mtn"
+      }
+    ],
+    "": [{
+        "file": "nep_touch_belly_1.mtn"
+      }, {
+        "file": "nep_slide_head_2.mtn"
+      }, {
+        "file": "nep_touch_head_1.mtn"
+      }, {
+        "file": "nep_touch_boobs_1.mtn"
+      }
+    ]
+  }
+}
