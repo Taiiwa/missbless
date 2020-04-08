@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+<title>Django的配置 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django的配置">
+<meta itemprop="description" content="配置文件settings中的一些基础设置。
+ 1. 配置文件 Django将环境变量集成在settings.py中，可以在该文件里修改相关的配置。
+1) BASE_DIR BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+当前工程的根目录，Django会依此来定位工程内的相关文件，我们也可以使用该参数来构造文件路径。
+2) DEBUG 调试模式，创建工程后初始值为True，即默认工作在调试模式下。
+ 修改代码文件，程序自动重启 Django程序出现异常时，向前端显示详细的错误追踪信息 注意：部署线上运行的Django不要运行在调式模式下，记得修改DEBUG=False。  3) 语言与时区 Django支持本地化处理，即显示语言与时区支持本地化。初始化的工程默认语言和时区为英语和UTC标准时区，中国大陆地区使用简体中文，时区使用亚洲/上海时区，注意这里不使用北京时区表示。
+LANGUAGE_CODE = &#39;zh-hans&#39; TIME_ZONE = &#39;Asia/Shanghai&#39;   2. 静态文件 项目中的CSS、图片、js都是静态文件。一般会将静态文件放到一个单独的目录中，以方便管理。
+在html页面中调用时，也需要指定静态文件的路径，Django中提供了一种解析的方式配置静态文件路径。静态文件可以放在项目根目录下，也可以放在应用的目录下，由于有些静态文件在项目中是通用的，所以推荐放在项目的根目录下，方便管理。
+为了提供静态文件，需要配置两个参数：
+  STATICFILES_DIRS 存放查找静态文件的目录
+  STATIC_URL 访问静态文件的URL前缀
+STATIC_URL = &lsquo;/static/&rsquo; STATICFILES_DIRS = [ os.path.join(BASE_DIR, &lsquo;static_files&rsquo;), ]
+  此时在static_files添加的任何静态文件都可以使用网址/static/文件在static_files中的路径来访问。
+例如： http://localhost:8000/static/logo.png
+ 注意
+  Django 仅在调试模式下（DEBUG=True）能对外提供静态文件。
+  当DEBUG=False工作在生产模式时，Django不再对外提供静态文件，需要是用collectstatic命令来收集静态文件并交由其他静态文件服务器来提供。
+  ">
+<meta itemprop="datePublished" content="2020-04-08T09:07:05&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-08T09:07:05&#43;08:00" />
+<meta itemprop="wordCount" content="50">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django的配置" />
+<meta property="og:description" content="配置文件settings中的一些基础设置。
+ 1. 配置文件 Django将环境变量集成在settings.py中，可以在该文件里修改相关的配置。
+1) BASE_DIR BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+当前工程的根目录，Django会依此来定位工程内的相关文件，我们也可以使用该参数来构造文件路径。
+2) DEBUG 调试模式，创建工程后初始值为True，即默认工作在调试模式下。
+ 修改代码文件，程序自动重启 Django程序出现异常时，向前端显示详细的错误追踪信息 注意：部署线上运行的Django不要运行在调式模式下，记得修改DEBUG=False。  3) 语言与时区 Django支持本地化处理，即显示语言与时区支持本地化。初始化的工程默认语言和时区为英语和UTC标准时区，中国大陆地区使用简体中文，时区使用亚洲/上海时区，注意这里不使用北京时区表示。
+LANGUAGE_CODE = &#39;zh-hans&#39; TIME_ZONE = &#39;Asia/Shanghai&#39;   2. 静态文件 项目中的CSS、图片、js都是静态文件。一般会将静态文件放到一个单独的目录中，以方便管理。
+在html页面中调用时，也需要指定静态文件的路径，Django中提供了一种解析的方式配置静态文件路径。静态文件可以放在项目根目录下，也可以放在应用的目录下，由于有些静态文件在项目中是通用的，所以推荐放在项目的根目录下，方便管理。
+为了提供静态文件，需要配置两个参数：
+  STATICFILES_DIRS 存放查找静态文件的目录
+  STATIC_URL 访问静态文件的URL前缀
+STATIC_URL = &lsquo;/static/&rsquo; STATICFILES_DIRS = [ os.path.join(BASE_DIR, &lsquo;static_files&rsquo;), ]
+  此时在static_files添加的任何静态文件都可以使用网址/static/文件在static_files中的路径来访问。
+例如： http://localhost:8000/static/logo.png
+ 注意
+  Django 仅在调试模式下（DEBUG=True）能对外提供静态文件。
+  当DEBUG=False工作在生产模式时，Django不再对外提供静态文件，需要是用collectstatic命令来收集静态文件并交由其他静态文件服务器来提供。
+  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/03-django%E7%9A%84%E9%85%8D%E7%BD%AE/" />
+<meta property="article:published_time" content="2020-04-08T09:07:05+08:00" />
+<meta property="article:modified_time" content="2020-04-08T09:07:05+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django的配置"/>
+<meta name="twitter:description" content="配置文件settings中的一些基础设置。
+ 1. 配置文件 Django将环境变量集成在settings.py中，可以在该文件里修改相关的配置。
+1) BASE_DIR BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+当前工程的根目录，Django会依此来定位工程内的相关文件，我们也可以使用该参数来构造文件路径。
+2) DEBUG 调试模式，创建工程后初始值为True，即默认工作在调试模式下。
+ 修改代码文件，程序自动重启 Django程序出现异常时，向前端显示详细的错误追踪信息 注意：部署线上运行的Django不要运行在调式模式下，记得修改DEBUG=False。  3) 语言与时区 Django支持本地化处理，即显示语言与时区支持本地化。初始化的工程默认语言和时区为英语和UTC标准时区，中国大陆地区使用简体中文，时区使用亚洲/上海时区，注意这里不使用北京时区表示。
+LANGUAGE_CODE = &#39;zh-hans&#39; TIME_ZONE = &#39;Asia/Shanghai&#39;   2. 静态文件 项目中的CSS、图片、js都是静态文件。一般会将静态文件放到一个单独的目录中，以方便管理。
+在html页面中调用时，也需要指定静态文件的路径，Django中提供了一种解析的方式配置静态文件路径。静态文件可以放在项目根目录下，也可以放在应用的目录下，由于有些静态文件在项目中是通用的，所以推荐放在项目的根目录下，方便管理。
+为了提供静态文件，需要配置两个参数：
+  STATICFILES_DIRS 存放查找静态文件的目录
+  STATIC_URL 访问静态文件的URL前缀
+STATIC_URL = &lsquo;/static/&rsquo; STATICFILES_DIRS = [ os.path.join(BASE_DIR, &lsquo;static_files&rsquo;), ]
+  此时在static_files添加的任何静态文件都可以使用网址/static/文件在static_files中的路径来访问。
+例如： http://localhost:8000/static/logo.png
+ 注意
+  Django 仅在调试模式下（DEBUG=True）能对外提供静态文件。
+  当DEBUG=False工作在生产模式时，Django不再对外提供静态文件，需要是用collectstatic命令来收集静态文件并交由其他静态文件服务器来提供。
+  "/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume.html/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e7%9a%84%e9%85%8d%e7%bd%ae&amp;url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f&amp;title=Django%e7%9a%84%e9%85%8d%e7%bd%ae" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f&amp;title=Django%e7%9a%84%e9%85%8d%e7%bd%ae" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f&amp;description=Django%e7%9a%84%e9%85%8d%e7%bd%ae" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/03-django%E7%9A%84%E9%85%8D%E7%BD%AE/">Django的配置</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-08 09:07:05 &#43;0800 CST">
+      April 8, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e7%9a%84%e9%85%8d%e7%bd%ae&amp;url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f&amp;title=Django%e7%9a%84%e9%85%8d%e7%bd%ae" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f&amp;title=Django%e7%9a%84%e9%85%8d%e7%bd%ae" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f&amp;description=Django%e7%9a%84%e9%85%8d%e7%bd%ae" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f03-django%25E7%259A%2584%25E9%2585%258D%25E7%25BD%25AE%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <p>配置文件settings中的一些基础设置。</p>
+<hr>
+<h1 id="1-配置文件">1. 配置文件</h1>
+<p>Django将环境变量集成在<code>settings.py</code>中，可以在该文件里修改相关的配置。</p>
+<h2 id="1-base_dir">1) BASE_DIR</h2>
+<p><code>BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))</code></p>
+<p>当前工程的根目录，Django会依此来定位工程内的相关文件，我们也可以使用该参数来构造文件路径。</p>
+<h2 id="2-debug">2) DEBUG</h2>
+<p>调试模式，创建工程后初始值为True，即默认工作在调试模式下。</p>
+<ul>
+<li>修改代码文件，程序自动重启</li>
+<li>Django程序出现异常时，向前端显示详细的错误追踪信息
+<strong>注意：部署线上运行的Django不要运行在调式模式下，记得修改DEBUG=False。</strong></li>
+</ul>
+<h2 id="3-语言与时区">3) 语言与时区</h2>
+<p>Django支持本地化处理，即显示语言与时区支持本地化。初始化的工程默认语言和时区为英语和UTC标准时区，中国大陆地区使用简体中文，时区使用亚洲/上海时区，注意这里不使用北京时区表示。</p>
+<pre><code>LANGUAGE_CODE = 'zh-hans'
+TIME_ZONE = 'Asia/Shanghai'
+</code></pre>
+<hr>
+<h1 id="2-静态文件">2. 静态文件</h1>
+<p>项目中的CSS、图片、js都是静态文件。一般会将静态文件放到一个单独的目录中，以方便管理。</p>
+<p><em>在html页面中调用时，也需要指定静态文件的路径，Django中提供了一种解析的方式配置静态文件路径。静态文件可以放在项目根目录下，也可以放在应用的目录下，由于有些静态文件在项目中是通用的，所以推荐放在项目的根目录下，方便管理。</em></p>
+<p>为了提供静态文件，需要配置两个参数：</p>
+<ul>
+<li>
+<p>STATICFILES_DIRS 存放查找静态文件的目录</p>
+</li>
+<li>
+<p>STATIC_URL 访问静态文件的URL前缀</p>
+<p>STATIC_URL = &lsquo;/static/&rsquo;
+STATICFILES_DIRS = [
+os.path.join(BASE_DIR, &lsquo;static_files&rsquo;),
+]</p>
+</li>
+</ul>
+<p>此时在static_files添加的任何静态文件都可以使用网址<code>/static/</code>文件在<code>static_files</code>中的路径来访问。</p>
+<p>例如：
+<code>http://localhost:8000/static/logo.png</code></p>
+<hr>
+<p><strong>注意</strong></p>
+<ul>
+<li>
+<p><em>Django 仅在调试模式下（DEBUG=True）能对外提供静态文件。</em></p>
+</li>
+<li>
+<p><em>当DEBUG=False工作在生产模式时，Django不再对外提供静态文件，需要是用collectstatic命令来收集静态文件并交由其他静态文件服务器来提供。</em></p>
+</li>
+</ul>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/django/02-django%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B/" class="button"><div class="previous"><div>Django初始化</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/django/04-django%E7%9A%84%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94/" class="button"><div class="next"><div>Django的请求与响应</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/02-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/">数据库Redis操作</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/01-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/">Redis配置</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/07-django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/">Django常用的工具方法</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/06-django%E6%93%8D%E4%BD%9Cmysql/">Django操作Mysql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/05-django%E9%85%8D%E7%BD%AEmysql/">Django配置MySql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

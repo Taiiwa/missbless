@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+<title>Django初始化 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django初始化">
+<meta itemprop="description" content="Django初始化一个项目要进行的素质三连
+ 1. 创建项目 创建工程的命令为：
+django-admin startproject 工程名称
+运行开发服务器 在开发阶段，为了能够快速预览到开发的效果，django提供了一个纯python编写的轻量级web服务器，仅在开发阶段使用。
+运行服务器命令为：
+python manage.py runserver ip:端口 或： python manage.py runserver  可以不写IP和端口，默认IP是127.0.0.1，默认端口为8000。
+ django默认工作在调式Debug模式下，如果增加、修改、删除文件，服务器会自动重启。 按ctrl&#43;c停止服务器。   2. 创建子应用 在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。
+类似于Flask中的蓝图Blueprint。
+Django的视图编写是放在子应用中的。
+创建 python manage.py startapp 子应用名称
+manage.py 为上述创建工程时自动生成的管理文件。
+ admin.py 文件跟网站的后台管理站点配置相关。 apps.py 文件用于配置当前子应用的相关信息。 migrations 目录用于存放数据库迁移历史文件。 models.py 文件用户保存数据库模型类。 tests.py 文件用于开发测试用例，编写单元测试。 views.py 文件用于编写Web应用视图。  注册安装子应用 创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。
+在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用。注册安装一个子应用的方法，即是将子应用的配置信息文件apps.py中的Config类添加到INSTALLED_APPS列表中。
+例如，将刚创建的users子应用添加到工程中，可在INSTALLED_APPS列表中添加&rsquo;users.apps.UsersConfig&rsquo;。
+ 3. 创建视图 Django的视图是定义在子应用的views.py中的。
+创建 打开刚创建的users模块，在views.py中编写视图代码。
+from django.http import HttpResponse def index(request): &quot;&quot;&quot; :request: 包含了请求信息的请求对象 :return: 响应对象 &quot;&quot;&quot; return HttpResponse(&quot;hello the world!">
+<meta itemprop="datePublished" content="2020-04-08T08:36:40&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-08T08:36:40&#43;08:00" />
+<meta itemprop="wordCount" content="173">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django初始化" />
+<meta property="og:description" content="Django初始化一个项目要进行的素质三连
+ 1. 创建项目 创建工程的命令为：
+django-admin startproject 工程名称
+运行开发服务器 在开发阶段，为了能够快速预览到开发的效果，django提供了一个纯python编写的轻量级web服务器，仅在开发阶段使用。
+运行服务器命令为：
+python manage.py runserver ip:端口 或： python manage.py runserver  可以不写IP和端口，默认IP是127.0.0.1，默认端口为8000。
+ django默认工作在调式Debug模式下，如果增加、修改、删除文件，服务器会自动重启。 按ctrl&#43;c停止服务器。   2. 创建子应用 在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。
+类似于Flask中的蓝图Blueprint。
+Django的视图编写是放在子应用中的。
+创建 python manage.py startapp 子应用名称
+manage.py 为上述创建工程时自动生成的管理文件。
+ admin.py 文件跟网站的后台管理站点配置相关。 apps.py 文件用于配置当前子应用的相关信息。 migrations 目录用于存放数据库迁移历史文件。 models.py 文件用户保存数据库模型类。 tests.py 文件用于开发测试用例，编写单元测试。 views.py 文件用于编写Web应用视图。  注册安装子应用 创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。
+在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用。注册安装一个子应用的方法，即是将子应用的配置信息文件apps.py中的Config类添加到INSTALLED_APPS列表中。
+例如，将刚创建的users子应用添加到工程中，可在INSTALLED_APPS列表中添加&rsquo;users.apps.UsersConfig&rsquo;。
+ 3. 创建视图 Django的视图是定义在子应用的views.py中的。
+创建 打开刚创建的users模块，在views.py中编写视图代码。
+from django.http import HttpResponse def index(request): &quot;&quot;&quot; :request: 包含了请求信息的请求对象 :return: 响应对象 &quot;&quot;&quot; return HttpResponse(&quot;hello the world!" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/02-django%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B/" />
+<meta property="article:published_time" content="2020-04-08T08:36:40+08:00" />
+<meta property="article:modified_time" content="2020-04-08T08:36:40+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django初始化"/>
+<meta name="twitter:description" content="Django初始化一个项目要进行的素质三连
+ 1. 创建项目 创建工程的命令为：
+django-admin startproject 工程名称
+运行开发服务器 在开发阶段，为了能够快速预览到开发的效果，django提供了一个纯python编写的轻量级web服务器，仅在开发阶段使用。
+运行服务器命令为：
+python manage.py runserver ip:端口 或： python manage.py runserver  可以不写IP和端口，默认IP是127.0.0.1，默认端口为8000。
+ django默认工作在调式Debug模式下，如果增加、修改、删除文件，服务器会自动重启。 按ctrl&#43;c停止服务器。   2. 创建子应用 在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。
+类似于Flask中的蓝图Blueprint。
+Django的视图编写是放在子应用中的。
+创建 python manage.py startapp 子应用名称
+manage.py 为上述创建工程时自动生成的管理文件。
+ admin.py 文件跟网站的后台管理站点配置相关。 apps.py 文件用于配置当前子应用的相关信息。 migrations 目录用于存放数据库迁移历史文件。 models.py 文件用户保存数据库模型类。 tests.py 文件用于开发测试用例，编写单元测试。 views.py 文件用于编写Web应用视图。  注册安装子应用 创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。
+在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用。注册安装一个子应用的方法，即是将子应用的配置信息文件apps.py中的Config类添加到INSTALLED_APPS列表中。
+例如，将刚创建的users子应用添加到工程中，可在INSTALLED_APPS列表中添加&rsquo;users.apps.UsersConfig&rsquo;。
+ 3. 创建视图 Django的视图是定义在子应用的views.py中的。
+创建 打开刚创建的users模块，在views.py中编写视图代码。
+from django.http import HttpResponse def index(request): &quot;&quot;&quot; :request: 包含了请求信息的请求对象 :return: 响应对象 &quot;&quot;&quot; return HttpResponse(&quot;hello the world!"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume.html/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e5%88%9d%e5%a7%8b%e5%8c%96&amp;url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f&amp;title=Django%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f&amp;title=Django%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f&amp;description=Django%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/02-django%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B/">Django初始化</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-08 08:36:40 &#43;0800 CST">
+      April 8, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e5%88%9d%e5%a7%8b%e5%8c%96&amp;url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f&amp;title=Django%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f&amp;title=Django%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f&amp;description=Django%e5%88%9d%e5%a7%8b%e5%8c%96" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f02-django%25E5%2588%259B%25E5%25BB%25BA%25E5%25B7%25A5%25E7%25A8%258B%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <p>Django初始化一个项目要进行的素质三连</p>
+<hr>
+<h1 id="1-创建项目">1. 创建项目</h1>
+<p>创建工程的命令为：</p>
+<p><code>django-admin startproject 工程名称</code></p>
+<h2 id="运行开发服务器">运行开发服务器</h2>
+<p>在开发阶段，为了能够快速预览到开发的效果，django提供了一个纯python编写的轻量级web服务器，仅在开发阶段使用。</p>
+<p>运行服务器命令为：</p>
+<pre><code>python manage.py runserver ip:端口
+或：
+python manage.py runserver
+</code></pre>
+<p><em>可以不写IP和端口，默认IP是127.0.0.1，默认端口为8000。</em></p>
+<ul>
+<li>django默认工作在调式Debug模式下，如果增加、修改、删除文件，服务器会自动重启。</li>
+<li>按ctrl+c停止服务器。</li>
+</ul>
+<hr>
+<h1 id="2-创建子应用">2. 创建子应用</h1>
+<p>在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。</p>
+<p>类似于Flask中的蓝图Blueprint。</p>
+<p><strong>Django的视图编写是放在子应用中的。</strong></p>
+<h2 id="创建">创建</h2>
+<p><code>python manage.py startapp 子应用名称</code></p>
+<p><em>manage.py 为上述创建工程时自动生成的管理文件。</em></p>
+<ul>
+<li>admin.py 文件跟网站的后台管理站点配置相关。</li>
+<li>apps.py 文件用于配置当前子应用的相关信息。</li>
+<li>migrations 目录用于存放数据库迁移历史文件。</li>
+<li>models.py 文件用户保存数据库模型类。</li>
+<li>tests.py 文件用于开发测试用例，编写单元测试。</li>
+<li>views.py 文件用于编写Web应用视图。</li>
+</ul>
+<h2 id="注册安装子应用">注册安装子应用</h2>
+<p>创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。</p>
+<p>在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用。注册安装一个子应用的方法，即是将子应用的配置信息文件apps.py中的Config类添加到INSTALLED_APPS列表中。</p>
+<p><em>例如，将刚创建的users子应用添加到工程中，可在INSTALLED_APPS列表中添加&rsquo;users.apps.UsersConfig&rsquo;。</em></p>
+<hr>
+<h1 id="3-创建视图">3. 创建视图</h1>
+<p><strong>Django的视图是定义在子应用的views.py中的。</strong></p>
+<h2 id="创建-1">创建</h2>
+<p>打开刚创建的users模块，在views.py中编写视图代码。</p>
+<pre><code>from django.http import HttpResponse
+
+def index(request):
+    &quot;&quot;&quot;
+    :request: 包含了请求信息的请求对象
+    :return: 响应对象
+    &quot;&quot;&quot;
+    return HttpResponse(&quot;hello the world!&quot;)
+</code></pre>
+<ul>
+<li>视图函数的第一个传入参数必须定义，用于接收Django构造的包含了请求数据的HttpReqeust对象，通常名为request。</li>
+<li>视图函数的返回值必须为一个响应对象，不能像Flask一样直接返回一个字符串，可以将要返回的字符串数据放到一个HTTPResponse对象中。</li>
+</ul>
+<h2 id="类视图">类视图</h2>
+<p>以函数的方式定义的视图称为<strong>函数视图</strong>，函数视图便于理解。但是遇到一个视图对应的路径提供了多种不同HTTP<em>请求方式</em>的支持时，便需要在一个函数中编写不同的业务逻辑，代码可读性与复用性都不佳。在Django中也可以使用类来定义一个视图，称为<strong>类视图</strong>。</p>
+<pre><code>from django.views.generic import View
+
+class RegisterView(View):
+    &quot;&quot;&quot;类视图：处理注册&quot;&quot;&quot;
+
+    def get(self, request):
+        &quot;&quot;&quot;处理GET请求，返回注册页面&quot;&quot;&quot;
+        return render(request, 'register.html')
+
+    def post(self, request):
+        &quot;&quot;&quot;处理POST请求，实现注册逻辑&quot;&quot;&quot;
+        return HttpResponse('这里实现注册逻辑')
+</code></pre>
+<h2 id="配置路由">配置路由</h2>
+<h3 id="1-在子应用中新建一个urlspy文件用于保存该应用的路由">1) 在子应用中新建一个urls.py文件用于保存该应用的路由。</h3>
+<h3 id="2-在usersurlspy文件中定义路由信息">2) 在users/urls.py文件中定义路由信息。</h3>
+<pre><code>from django.conf.urls import url
+
+from .views import *
+
+# urlpatterns是被django自动识别的路由列表变量
+urlpatterns = [
+    # 每个路由信息都需要使用url函数来构造
+    # url(路径, 视图)
+    url('index/', index),
+]
+</code></pre>
+<h3 id="3-在工程总路由demourlspy中添加子应用的路由数据">3) 在工程总路由demo/urls.py中添加子应用的路由数据。</h3>
+<pre><code>from django.conf.urls import url, include
+from django.contrib import admin
+
+urlpatterns = [
+    url('admin/', admin.site.urls),  # django默认包含的
+
+    # 添加
+    url('users/', include('users.urls')), 
+]
+</code></pre>
+<ul>
+<li>使用include来将子应用users里的全部路由包含进工程路由中；</li>
+<li>&lsquo;users/&rsquo; 决定了users子应用的所有路由都已/users/开头，如我们刚定义的视图index，其最终的完整访问路径为/users/index/。</li>
+</ul>
+<p><em>include函数除了可以传递字符串之外，也可以直接传递应用的urls模块，如</em>
+from django.conf.urls import url, include
+from django.contrib import admin
+import users.urls  # 先导入应用的urls模块</p>
+<pre><code>urlpatterns = [
+    url('admin/', admin.site.urls),
+    # url('users/', include('users.urls')),
+    url('users/', include(users.urls)),  # 添加应用的路由
+]
+</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E5%85%B6%E4%BB%96/03-%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83/" class="button"><div class="previous"><div>虚拟环境</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/django/03-django%E7%9A%84%E9%85%8D%E7%BD%AE/" class="button"><div class="next"><div>Django的配置</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/02-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/">数据库Redis操作</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/01-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/">Redis配置</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/07-django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/">Django常用的工具方法</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/06-django%E6%93%8D%E4%BD%9Cmysql/">Django操作Mysql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/05-django%E9%85%8D%E7%BD%AEmysql/">Django配置MySql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

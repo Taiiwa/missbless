@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+<title>Django配置MySql - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django配置MySql">
+<meta itemprop="description" content="Django 中的orm框架如何实现MySql数据库的增删改查，更新了自动添加创建时间的功能
+ 1. 数据库配置 在settings.py中的DATABASE里保存了数据库的连接配置信息。
+使用MySQL数据库首先需要安装驱动程序。 pip install PyMySQL
+在Django的工程同名子目录的__init__.py文件中添加如下语句 from pymysql import install_as_MySQLdb install_as_MySQLdb()  作用是让Django的ORM能以mysqldb的方式来调用PyMySQL。
+修改DATABASES配置信息 DATABASES = { &#39;default&#39;: { &#39;ENGINE&#39;: &#39;django.db.backends.mysql&#39;, &#39;HOST&#39;: &#39;127.0.0.1&#39;, # 数据库主机 &#39;PORT&#39;: 3306, # 数据库端口 &#39;USER&#39;: &#39;root&#39;, # 数据库用户名 &#39;PASSWORD&#39;: &#39;mysql&#39;, # 数据库用户密码 &#39;NAME&#39;: &#39;django_demo&#39; # 数据库名字 } }  在MySQL中创建数据库 create database django_demo default charset=utf8;   2. Models 定义模型类
+ 模型类被定义在&quot;应用/models.py&quot;文件中。 模型类必须继承自Model类，位于包django.db.models中。  1) 定义 在models.py中定义模型 orm框架：创建表和字段
+from django.db import models #定义用户模型类User class User(models.">
+<meta itemprop="datePublished" content="2020-04-08T10:23:18&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-08T10:23:18&#43;08:00" />
+<meta itemprop="wordCount" content="232">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django配置MySql" />
+<meta property="og:description" content="Django 中的orm框架如何实现MySql数据库的增删改查，更新了自动添加创建时间的功能
+ 1. 数据库配置 在settings.py中的DATABASE里保存了数据库的连接配置信息。
+使用MySQL数据库首先需要安装驱动程序。 pip install PyMySQL
+在Django的工程同名子目录的__init__.py文件中添加如下语句 from pymysql import install_as_MySQLdb install_as_MySQLdb()  作用是让Django的ORM能以mysqldb的方式来调用PyMySQL。
+修改DATABASES配置信息 DATABASES = { &#39;default&#39;: { &#39;ENGINE&#39;: &#39;django.db.backends.mysql&#39;, &#39;HOST&#39;: &#39;127.0.0.1&#39;, # 数据库主机 &#39;PORT&#39;: 3306, # 数据库端口 &#39;USER&#39;: &#39;root&#39;, # 数据库用户名 &#39;PASSWORD&#39;: &#39;mysql&#39;, # 数据库用户密码 &#39;NAME&#39;: &#39;django_demo&#39; # 数据库名字 } }  在MySQL中创建数据库 create database django_demo default charset=utf8;   2. Models 定义模型类
+ 模型类被定义在&quot;应用/models.py&quot;文件中。 模型类必须继承自Model类，位于包django.db.models中。  1) 定义 在models.py中定义模型 orm框架：创建表和字段
+from django.db import models #定义用户模型类User class User(models." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/05-django%E9%85%8D%E7%BD%AEmysql/" />
+<meta property="article:published_time" content="2020-04-08T10:23:18+08:00" />
+<meta property="article:modified_time" content="2020-04-08T10:23:18+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django配置MySql"/>
+<meta name="twitter:description" content="Django 中的orm框架如何实现MySql数据库的增删改查，更新了自动添加创建时间的功能
+ 1. 数据库配置 在settings.py中的DATABASE里保存了数据库的连接配置信息。
+使用MySQL数据库首先需要安装驱动程序。 pip install PyMySQL
+在Django的工程同名子目录的__init__.py文件中添加如下语句 from pymysql import install_as_MySQLdb install_as_MySQLdb()  作用是让Django的ORM能以mysqldb的方式来调用PyMySQL。
+修改DATABASES配置信息 DATABASES = { &#39;default&#39;: { &#39;ENGINE&#39;: &#39;django.db.backends.mysql&#39;, &#39;HOST&#39;: &#39;127.0.0.1&#39;, # 数据库主机 &#39;PORT&#39;: 3306, # 数据库端口 &#39;USER&#39;: &#39;root&#39;, # 数据库用户名 &#39;PASSWORD&#39;: &#39;mysql&#39;, # 数据库用户密码 &#39;NAME&#39;: &#39;django_demo&#39; # 数据库名字 } }  在MySQL中创建数据库 create database django_demo default charset=utf8;   2. Models 定义模型类
+ 模型类被定义在&quot;应用/models.py&quot;文件中。 模型类必须继承自Model类，位于包django.db.models中。  1) 定义 在models.py中定义模型 orm框架：创建表和字段
+from django.db import models #定义用户模型类User class User(models."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume.html/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e9%85%8d%e7%bd%aeMySql&amp;url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f&amp;title=Django%e9%85%8d%e7%bd%aeMySql" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f&amp;title=Django%e9%85%8d%e7%bd%aeMySql" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f&amp;description=Django%e9%85%8d%e7%bd%aeMySql" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20Loveless&amp;body=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/05-django%E9%85%8D%E7%BD%AEmysql/">Django配置MySql</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-08 10:23:18 &#43;0800 CST">
+      April 8, 2020
+    </time>
+    <span class="author">Issac Loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e9%85%8d%e7%bd%aeMySql&amp;url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f&amp;title=Django%e9%85%8d%e7%bd%aeMySql" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f&amp;title=Django%e9%85%8d%e7%bd%aeMySql" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f&amp;description=Django%e9%85%8d%e7%bd%aeMySql" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20Loveless&amp;body=%2fblog%2fdjango%2f05-django%25E9%2585%258D%25E7%25BD%25AEmysql%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <p>Django 中的orm框架如何实现MySql数据库的增删改查，更新了自动添加创建时间的功能</p>
+<hr>
+<h1 id="1-数据库配置">1. 数据库配置</h1>
+<p>在settings.py中的DATABASE里保存了数据库的连接配置信息。</p>
+<h3 id="使用mysql数据库首先需要安装驱动程序">使用MySQL数据库首先需要安装驱动程序。</h3>
+<p><code>pip install PyMySQL</code></p>
+<h3 id="在django的工程同名子目录的__init__py文件中添加如下语句">在Django的工程同名子目录的__init__.py文件中添加如下语句</h3>
+<pre><code>from pymysql import install_as_MySQLdb
+
+install_as_MySQLdb()
+</code></pre>
+<p>作用是让Django的ORM能以mysqldb的方式来调用PyMySQL。</p>
+<h3 id="修改databases配置信息">修改DATABASES配置信息</h3>
+<pre><code>DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',  # 数据库主机
+        'PORT': 3306,  # 数据库端口
+        'USER': 'root',  # 数据库用户名
+        'PASSWORD': 'mysql',  # 数据库用户密码
+        'NAME': 'django_demo'  # 数据库名字
+    }
+}
+</code></pre>
+<h3 id="在mysql中创建数据库">在MySQL中创建数据库</h3>
+<pre><code>create database django_demo default charset=utf8;
+</code></pre>
+<hr>
+<h1 id="2-models">2. Models</h1>
+<p>定义模型类</p>
+<ul>
+<li>模型类被定义在&quot;应用/models.py&quot;文件中。</li>
+<li>模型类必须继承自Model类，位于包django.db.models中。</li>
+</ul>
+<h2 id="1-定义">1) 定义</h2>
+<h3 id="在modelspy中定义模型">在models.py中定义模型</h3>
+<p>orm框架：创建表和字段</p>
+<pre><code>from django.db import models
+
+#定义用户模型类User
+class User(models.Model):
+    username = models.CharField(max_length=20, verbose_name='用户名')
+    password = models.CharField(verbose_name='密码')
+    level = models.IntegerField(default=0, verbose_name='等级')
+
+    class Meta:
+        db_table = 'tb_books'  # 指明数据库表名
+    
+    # 以下一般不需修改
+        verbose_name = '图书'  # 在admin站点中显示的名称
+        verbose_name_plural = verbose_name  # 显示的复数名称
+
+    def __str__(self):
+        &quot;&quot;&quot;定义每个数据对象的显示信息&quot;&quot;&quot;
+        return self.btitle
+</code></pre>
+<h3 id="继承和创建日期">继承和创建日期</h3>
+<p>借助Django中的时区系统，来实现存入数据时附带存入时间的功能</p>
+<pre><code># 基类
+class Base(models.Model):
+    # 创建时间
+    create_time = models.DateTimeField(default=timezone.now,null=True)
+
+    class Meta:
+        # 可继承
+        abstract = True
+
+# 子类
+class User(Base):
+    # 创建时间字段已经自动创建
+    ...
+</code></pre>
+<h3 id="字段类型">字段类型</h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段名</th>
+<th align="left">字段说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">AutoField</td>
+<td align="left">自动增长的IntegerField，通常不用指定，不指定时Django会自动创建属性名为id的自动增长属性</td>
+</tr>
+<tr>
+<td align="left">BooleanField</td>
+<td align="left">布尔字段，值为True或False</td>
+</tr>
+<tr>
+<td align="left">NullBooleanField</td>
+<td align="left">支持Null、True、False三种值</td>
+</tr>
+<tr>
+<td align="left">CharField</td>
+<td align="left">字符串，参数max_length表示最大字符个数</td>
+</tr>
+<tr>
+<td align="left">TextField</td>
+<td align="left">大文本字段，一般超过4000个字符时使用</td>
+</tr>
+<tr>
+<td align="left">IntegerField</td>
+<td align="left">整数</td>
+</tr>
+<tr>
+<td align="left">DecimalField</td>
+<td align="left">十进制浮点数， 参数max_digits表示总位数， 参数decimal_places表示小数位数</td>
+</tr>
+<tr>
+<td align="left">FloatField</td>
+<td align="left">浮点数</td>
+</tr>
+<tr>
+<td align="left">DateField</td>
+<td align="left">日期， 参数auto_now表示每次保存对象时，自动设置该字段为当前时间，用于&quot;最后一次修改&quot;的时间戳，它总是使用当前日期，默认为False； 参数auto_now_add表示当对象第一次被创建时自动设置当前时间，用于创建的时间</td>
+</tr>
+<tr>
+<td align="left">TimeField</td>
+<td align="left">时间，参数同DateField</td>
+</tr>
+<tr>
+<td align="left">DateTimeField</td>
+<td align="left">日期时间，参数同DateField</td>
+</tr>
+<tr>
+<td align="left">FileField</td>
+<td align="left">上传文件字段</td>
+</tr>
+<tr>
+<td align="left">ImageField</td>
+<td align="left">继承于FileField，对上传的内容进行校验，确保是有效的图片</td>
+</tr>
+</tbody>
+</table>
+<h3 id="字段属性">字段属性</h3>
+<table>
+<thead>
+<tr>
+<th align="left">属性名</th>
+<th align="left">属性说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">null</td>
+<td align="left">如果为True，表示允许为空，默认值是False</td>
+</tr>
+<tr>
+<td align="left">blank</td>
+<td align="left">如果为True，则该字段允许为空白，默认值是False</td>
+</tr>
+<tr>
+<td align="left">db_column</td>
+<td align="left">字段的名称，如果未指定，则使用属性的名称</td>
+</tr>
+<tr>
+<td align="left">db_index</td>
+<td align="left">若值为True, 则在表中会为此字段创建索引，默认值是False</td>
+</tr>
+<tr>
+<td align="left">default</td>
+<td align="left">默认</td>
+</tr>
+<tr>
+<td align="left">primary_key</td>
+<td align="left">若为True，则该字段会成为模型的主键字段，默认值是False，一般作为AutoField的选项使用</td>
+</tr>
+<tr>
+<td align="left">unique</td>
+<td align="left">如果为True, 这个字段在表中必须有唯一值，默认值是False</td>
+</tr>
+</tbody>
+</table>
+<p><em>null是数据库范畴的概念，blank是表单验证范畴的</em></p>
+<h3 id="外键">外键</h3>
+<p><strong>现在的开发中，越来越多的要使用逻辑外键而非物理外键</strong></p>
+<p>因为在网站数据库体量较大的时候，物理外键的缺点将会暴露无遗，其缓慢的插入效率严重拖跨了服务器的性能。服务器数据库维护更新的时候又要牵扯许许多多数据库关系和数据的批量删除处理。其作用似乎只剩下给您报错了。所以我们使用逻辑外键，不在models里面建立外键关系，只是查询语句略长而已。</p>
+<p>这里简述设置物理外键的方法：</p>
+<p>在设置外键时，需要通过<strong>on_delete</strong>选项指明主表删除数据时，对于外键引用表数据如何处理，在django.db.models中包含了可选常量：</p>
+<ul>
+<li>
+<p>CASCADE 级联，删除主表数据时连通一起删除外键表中数据</p>
+</li>
+<li>
+<p>PROTECT 保护，通过抛出ProtectedError异常，来阻止删除主表中被外键应用的数据</p>
+</li>
+<li>
+<p>SET_NULL 设置为NULL，仅在该字段null=True允许为null时可用</p>
+</li>
+<li>
+<p>SET_DEFAULT 设置为默认值，仅在该字段设置了默认值时可用</p>
+</li>
+<li>
+<p>SET() 设置为特定值或者调用特定方法，如</p>
+<pre><code>  from django.conf import settings
+  from django.contrib.auth import get_user_model
+  from django.db import models
+
+  def get_sentinel_user():
+      return get_user_model().objects.get_or_create(username='deleted')[0]
+
+  class MyModel(models.Model):
+      user = models.ForeignKey(
+          settings.AUTH_USER_MODEL,
+          on_delete=models.SET(get_sentinel_user),
+      )
+</code></pre>
+</li>
+</ul>
+<h2 id="2-迁移">2) 迁移</h2>
+<p>将模型类同步到数据库中。</p>
+<ul>
+<li>生成迁移文件</li>
+</ul>
+<p><code>python manage.py makemigrations 应用文件夹名</code></p>
+<ul>
+<li>同步到数据库中</li>
+</ul>
+<p><code>python manage.py migrate</code></p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/django/04-django%E7%9A%84%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94/" class="button"><div class="previous"><div>Django的请求与响应</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/django/06-django%E6%93%8D%E4%BD%9Cmysql/" class="button"><div class="next"><div>Django操作Mysql</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/02-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E6%93%8D%E4%BD%9C/">数据库Redis操作</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/01-%E6%95%B0%E6%8D%AE%E5%BA%93redis%E9%85%8D%E7%BD%AE/">Redis配置</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/07-django%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%96%B9%E6%B3%95/">Django常用的工具方法</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/06-django%E6%93%8D%E4%BD%9Cmysql/">Django操作Mysql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/05-django%E9%85%8D%E7%BD%AEmysql/">Django配置MySql</a></h1>
+          <time class="published" datetime="">April 8, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
