@@ -17,7 +17,7 @@
       <pubDate>Thu, 09 Apr 2020 01:31:53 +0800</pubDate>
       
       <guid>/blog/pygame/11-pygame%E4%B8%AD%E7%9A%84surface/</guid>
-      <description>&amp;mdash;将一个图像绘制到另一个pygame.Surface.blit
+      <description>将一个图像绘制到另一个pygame.Surface.blit
 将许多图像绘制到另一个pygame.Surface.blits
 更改图像的像素格式pygame.Surface.convert
 改变包括每像素α的图像的像素格式pygame.Surface.convert_alpha
@@ -74,7 +74,7 @@
       <pubDate>Thu, 09 Apr 2020 01:29:09 +0800</pubDate>
       
       <guid>/blog/pygame/06-pygame%E4%B8%AD%E7%9A%84event/</guid>
-      <description>&amp;mdash;内部处理pygame事件处理程序pygame.event.pump
+      <description>内部处理pygame事件处理程序pygame.event.pump
 从队列中获取事件pygame.event.get
 从队列中获取单个事件pygame.event.poll
 等待队列中的单个事件pygame.event.wait
@@ -97,7 +97,7 @@
       <pubDate>Thu, 09 Apr 2020 01:27:58 +0800</pubDate>
       
       <guid>/blog/pygame/04-pygame%E4%B8%AD%E7%9A%84display/</guid>
-      <description>&amp;mdash;初始化显示模块pygame.display.init
+      <description>初始化显示模块pygame.display.init
 取消初始化显示模块pygame.display.quit
 如果已初始化显示模块，则返回Truepygame.display.get_init
 初始化窗口或屏幕以进行显示pygame.display.set_mode
@@ -128,7 +128,7 @@
       <pubDate>Thu, 09 Apr 2020 01:27:09 +0800</pubDate>
       
       <guid>/blog/pygame/07-pygame%E4%B8%AD%E7%9A%84font/</guid>
-      <description>&amp;mdash;初始化字体模块pygame.font.init
+      <description>初始化字体模块pygame.font.init
 取消初始化字体模块pygame.font.quit
 如果字体模块已初始化，则为truepygame.font.get_init
 获取默认字体的文件名pygame.font.get_default_font
@@ -144,7 +144,7 @@
       <pubDate>Thu, 09 Apr 2020 01:26:24 +0800</pubDate>
       
       <guid>/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/</guid>
-      <description>&amp;mdash;是否显示正在接收来自系统的键盘输入pygame.key.get_focused
+      <description>是否显示正在接收来自系统的键盘输入pygame.key.get_focused
 获得所有键盘按钮的状态pygame.key.get_pressed
 确定哪些修饰符被持有pygame.key.get_mods
 临时设置哪些修饰符键被按下pygame.key.set_mods
@@ -159,7 +159,7 @@
       <pubDate>Thu, 09 Apr 2020 01:25:13 +0800</pubDate>
       
       <guid>/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/</guid>
-      <description>&amp;mdash;画一个矩形的形状pygame.draw.rect
+      <description>画一个矩形的形状pygame.draw.rect
 绘制具有任意数量边的形状pygame.draw.polygon
 围绕一个点画一个圆圈pygame.draw.circle
 在矩形内绘制圆形pygame.draw.ellipse
@@ -190,7 +190,7 @@
       <pubDate>Thu, 09 Apr 2020 01:22:29 +0800</pubDate>
       
       <guid>/blog/pygame/10-pygame%E4%B8%AD%E7%9A%84mouse/</guid>
-      <description>&amp;mdash;得到鼠标按钮的状态信息pygame.mouse.get_pressed
+      <description>得到鼠标按钮的状态信息pygame.mouse.get_pressed
 得到鼠标箭头的位置坐标pygame.mouse.get_pos
 获取鼠标移动的数量pygame.mouse.get_rel
 设置鼠标箭头的位置坐标pygame.mouse.set_pos
@@ -206,7 +206,7 @@
       <pubDate>Thu, 09 Apr 2020 01:21:24 +0800</pubDate>
       
       <guid>/blog/pygame/03-pygame%E4%B8%AD%E7%9A%84color/</guid>
-      <description>&amp;mdash;得到或设置颜色的红色值pygame.Color.r
+      <description>得到或设置颜色的红色值pygame.Color.r
 得到或设置颜色的绿色值pygame.Color.g
 得到或设置颜色的蓝色值pygame.Color.b
 得到或设置颜色的透明度pygame.Color.a
@@ -225,7 +225,7 @@
       <pubDate>Thu, 09 Apr 2020 01:20:17 +0800</pubDate>
       
       <guid>/blog/pygame/02-pygame%E4%B8%AD%E7%9A%84music/</guid>
-      <description>&amp;mdash;加载一个用于播放的音乐文件pygame.mixer.music.load
+      <description>加载一个用于播放的音乐文件pygame.mixer.music.load
 开始播放音乐流pygame.mixer.music.play
 重新启动音乐pygame.mixer.music.rewind
 停止播放音乐pygame.mixer.music.stop
