@@ -13,7 +13,7 @@
  初始化伪随机数生成器。如果未提供as或者a=None，则使用系统时间为种子。如果a是一个整数，则作为种子。  random.seed(a=None, version=2)
  返回一个当前生成器的内部状态的对象  random.getstate()
  传入一个先前利用getstate方法获得的状态对象，使得生成器恢复到这个状态。  random.setstate(state)
- 返回range(0,2k)之间的一个整数，相当于randrange(0,2k)  random.getrandbits(k)
+ 返回range(0,2**k)之间的一个整数，相当于randrange(0,\2**k)  random.getrandbits(k)
  返回range(0,stop)之间的一个整数  random.randrange(stop)
  返回range[start,stop)之间的一个整数，可加step，跟range(0,10,2)类似  random.randrange(start, stop[, step])
  返回range[a,b]之间的一个整数，等价于然的range(a,b&#43;1)  random.randint(a, b)
@@ -34,7 +34,7 @@
  初始化伪随机数生成器。如果未提供as或者a=None，则使用系统时间为种子。如果a是一个整数，则作为种子。  random.seed(a=None, version=2)
  返回一个当前生成器的内部状态的对象  random.getstate()
  传入一个先前利用getstate方法获得的状态对象，使得生成器恢复到这个状态。  random.setstate(state)
- 返回range(0,2k)之间的一个整数，相当于randrange(0,2k)  random.getrandbits(k)
+ 返回range(0,2**k)之间的一个整数，相当于randrange(0,\2**k)  random.getrandbits(k)
  返回range(0,stop)之间的一个整数  random.randrange(stop)
  返回range[start,stop)之间的一个整数，可加step，跟range(0,10,2)类似  random.randrange(start, stop[, step])
  返回range[a,b]之间的一个整数，等价于然的range(a,b&#43;1)  random.randint(a, b)
@@ -54,7 +54,7 @@
  初始化伪随机数生成器。如果未提供as或者a=None，则使用系统时间为种子。如果a是一个整数，则作为种子。  random.seed(a=None, version=2)
  返回一个当前生成器的内部状态的对象  random.getstate()
  传入一个先前利用getstate方法获得的状态对象，使得生成器恢复到这个状态。  random.setstate(state)
- 返回range(0,2k)之间的一个整数，相当于randrange(0,2k)  random.getrandbits(k)
+ 返回range(0,2**k)之间的一个整数，相当于randrange(0,\2**k)  random.getrandbits(k)
  返回range(0,stop)之间的一个整数  random.randrange(stop)
  返回range[start,stop)之间的一个整数，可加step，跟range(0,10,2)类似  random.randrange(start, stop[, step])
  返回range[a,b]之间的一个整数，等价于然的range(a,b&#43;1)  random.randint(a, b)
@@ -365,7 +365,7 @@
 </ul>
 <p><code>random.setstate(state)</code></p>
 <ul>
-<li>返回range(0,2<strong>k)之间的一个整数，相当于randrange(0,2</strong>k)</li>
+<li>返回range(0,2**k)之间的一个整数，相当于randrange(0,\2**k)</li>
 </ul>
 <p><code>random.getrandbits(k)</code></p>
 <ul>

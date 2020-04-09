@@ -18,10 +18,10 @@
  创建文件 hugo new 文件夹/文件名.md
  MarkDown语法 MarkDown语法
  修改默认设置 修改archetypes/default.md，来编辑默认的模板
- 自动生成目录 import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &quot;%sT%s&quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] &#43; &#39;&#43;08:00&#39; head = &quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f.">
+ 自动生成目录 &#39;&#39;&#39; 这个脚本用来实现自动生成分级目录，项目打包，自动替换打包后的简历文件，配置代理并上传到github &#39;&#39;&#39; import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &quot;%sT%s&quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] &#43; &#39;&#43;08:00&#39; head = &quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f.">
 <meta itemprop="datePublished" content="2020-04-07T23:20:16&#43;08:00" />
 <meta itemprop="dateModified" content="2020-04-07T23:20:16&#43;08:00" />
-<meta itemprop="wordCount" content="111">
+<meta itemprop="wordCount" content="161">
 
 
 
@@ -35,7 +35,7 @@
  创建文件 hugo new 文件夹/文件名.md
  MarkDown语法 MarkDown语法
  修改默认设置 修改archetypes/default.md，来编辑默认的模板
- 自动生成目录 import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &quot;%sT%s&quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] &#43; &#39;&#43;08:00&#39; head = &quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f." />
+ 自动生成目录 &#39;&#39;&#39; 这个脚本用来实现自动生成分级目录，项目打包，自动替换打包后的简历文件，配置代理并上传到github &#39;&#39;&#39; import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &quot;%sT%s&quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] &#43; &#39;&#43;08:00&#39; head = &quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/blog/%E5%85%B6%E4%BB%96/01-hugo%E5%8D%9A%E5%AE%A2%E7%BC%96%E6%92%B0%E6%97%A5%E5%BF%97/" />
 <meta property="article:published_time" content="2020-04-07T23:20:16+08:00" />
@@ -51,7 +51,7 @@
  创建文件 hugo new 文件夹/文件名.md
  MarkDown语法 MarkDown语法
  修改默认设置 修改archetypes/default.md，来编辑默认的模板
- 自动生成目录 import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &quot;%sT%s&quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] &#43; &#39;&#43;08:00&#39; head = &quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f."/>
+ 自动生成目录 &#39;&#39;&#39; 这个脚本用来实现自动生成分级目录，项目打包，自动替换打包后的简历文件，配置代理并上传到github &#39;&#39;&#39; import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &quot;%sT%s&quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] &#43; &#39;&#43;08:00&#39; head = &quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f."/>
 <link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
         <link rel="stylesheet" href="/css/add-on.css">
 
@@ -363,7 +363,11 @@
 <p>修改archetypes/default.md，来编辑默认的模板</p>
 <hr>
 <h3 id="自动生成目录">自动生成目录</h3>
-<pre><code>import os
+<pre><code>'''
+这个脚本用来实现自动生成分级目录，项目打包，自动替换打包后的简历文件，配置代理并上传到github
+'''
+
+import os
 
 dir_list = os.listdir('./content/blog/')
 
@@ -381,7 +385,7 @@ head = &quot;---\ntitle: 'Contents'\ndate: %s\n---\n&quot;%date
 with open('./content/Contents.md', 'w', encoding='utf-8') as f:
     f.write(head)
 
-# 写入目录
+# 生成博客目录
 with open('./content/Contents.md', 'a', encoding='utf-8') as f:
     # 遍历每个文件夹
     for dir in dir_list:
@@ -394,6 +398,26 @@ with open('./content/Contents.md', 'a', encoding='utf-8') as f:
             filename = md.split('.',-1)[0]
             content = &quot;&gt; &amp;emsp;&amp;emsp;[%s](/blog/%s/%s)&quot;%(filename, dir.lower(), filename.lower())
             f.write('%s\n&gt; \n'%content)
+            
+# 打包
+os.system('hugo')
+
+# 更新简历
+path_a = &quot;C:\\Users\\Administrator\\hub\\missbless\\missbless\\resume&quot;
+path_b = &quot;C:\\Users\\Administrator\\hub\\missbless\\missbless\\public\\resume&quot;
+
+os.system('robocopy %s %s /E'%(path_a,path_b))
+
+# 配置代理
+os.system('git config --global https.proxy https://127.0.0.1:1087')
+
+# 推送代码
+
+commit = input('commit log:')
+os.system('cd public&amp;&amp;git add -A&amp;&amp;git commit -m &quot;%s&quot;&amp;&amp;git push -u origin master -f'%commit)
+
+# 解除配置代理
+os.system('git config --global --unset https.proxy')
 </code></pre>
 <hr>
 <h3 id="配置看板娘">配置看板娘</h3>

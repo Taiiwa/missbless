@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 09 Apr 2020 15:57:27 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 09 Apr 2020 19:26:52 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Thu, 09 Apr 2020 15:57:27 +0800</pubDate>
+      <pubDate>Thu, 09 Apr 2020 19:26:52 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -296,7 +296,7 @@
  初始化伪随机数生成器。如果未提供as或者a=None，则使用系统时间为种子。如果a是一个整数，则作为种子。  random.seed(a=None, version=2)
  返回一个当前生成器的内部状态的对象  random.getstate()
  传入一个先前利用getstate方法获得的状态对象，使得生成器恢复到这个状态。  random.setstate(state)
- 返回range(0,2k)之间的一个整数，相当于randrange(0,2k)  random.getrandbits(k)
+ 返回range(0,2**k)之间的一个整数，相当于randrange(0,\2**k)  random.getrandbits(k)
  返回range(0,stop)之间的一个整数  random.randrange(stop)
  返回range[start,stop)之间的一个整数，可加step，跟range(0,10,2)类似  random.randrange(start, stop[, step])
  返回range[a,b]之间的一个整数，等价于然的range(a,b+1)  random.randint(a, b)
@@ -566,7 +566,7 @@ Markdown中有两种方式，实现链接，分别为内联方式和引用方式
  创建文件 hugo new 文件夹/文件名.md
  MarkDown语法 MarkDown语法
  修改默认设置 修改archetypes/default.md，来编辑默认的模板
- 自动生成目录 import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &amp;quot;%sT%s&amp;quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] + &#39;+08:00&#39; head = &amp;quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&amp;quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f.</description>
+ 自动生成目录 &#39;&#39;&#39; 这个脚本用来实现自动生成分级目录，项目打包，自动替换打包后的简历文件，配置代理并上传到github &#39;&#39;&#39; import os dir_list = os.listdir(&#39;./content/blog/&#39;) dir_list.remove(&#39;其他&#39;) dir_list.append(&#39;其他&#39;) from datetime import datetime # 写入头部 date = &amp;quot;%sT%s&amp;quot;%(datetime.now().date(), datetime.now().time()) date = date.split(&#39;.&#39;,-1)[0] + &#39;+08:00&#39; head = &amp;quot;---\ntitle: &#39;Contents&#39;\ndate: %s\n---\n&amp;quot;%date with open(&#39;./content/Contents.md&#39;, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f: f.</description>
     </item>
     
     <item>

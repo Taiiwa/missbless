@@ -21,6 +21,12 @@
   <!-- Custom styles for this template -->
   <link href="css/resume.min.css" rel="stylesheet">
 
+  <style>
+    .highlight{
+      color:#bd5d38
+    }
+  </style>
+
 </head>
 
 <body id="page-top">
@@ -83,28 +89,22 @@
         </h4>
         </h3>
         <br>
-        <div class="subheading mb-5">
-          <font size=4>
+        <p align=right>
+          <font size=3>
             <i>——君思见月芳心尽，君见月兮复何求？</span></i>
             <a href="mailto:issacloveless@gmail.com">issacloveless@gmail.com</a>
           </font>
-        </div>
+        </p>
         <hr>
         <br>
         <p class="lead mb-5">
             <b>身高：</b>190cm
         </p>
         <p class="lead mb-5">
-            <b>体重：</b>87kg
-        </p>
-        <p class="lead mb-5">
-            <b>特长：</b>多种开发工具、多种制图软件、绘画等
-        </p>
-        <p class="lead mb-5">
-            <b>兴趣：</b>文学、历史、音乐、绘画、游戏开发、日语、投资理财
-        </p>
-        <p class="lead mb-5">
             <b>家乡：</b>黑龙江省哈尔滨市
+        </p>
+        <p class="lead mb-5">
+            <b>工作经验：</b>5年
         </p>
         <p class="lead mb-5">
             <b>毕业院校：</b>东北林业大学
@@ -112,12 +112,11 @@
         <p class="lead mb-5">
             <b>高考成绩：</b>588
         </p>
-        <p class="lead mb-5">
-            <b>正在读的书：</b>《不疯魔，不成活》、《白云飞渡》、《三国志》、《诗经》、《经济学的思维方式》、《Pygame游戏开发》等
-        </p>
         <div>
-          <br><br><br>
-          <p>
+          <p class="lead mb-5">
+            <b>标签：</b>高、智商、悟性、3天拿下Vue、进化、完美主义、重感情、坦诚、责任心、斗兽精神、文质
+          </p>
+          <p class="lead mb-5">
             <b>求职意向：</b>全栈开发工程师
           </p>
         </div>
@@ -133,13 +132,33 @@
         <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
           <div class="resume-content">
             <h3 class="mb-0">全栈开发工程师</h3>
+            <hr>
             <div class="subheading mb-3">新加坡凯思特私人有限公司&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Capitalmaster Pte. Ltd.</div>
             <p>
-              <h5>项目：海外客户管理系统</h5>
-              项目简介：搭建一个公众平台，解决公司与海外客户之间沟通与管理的问题。
-              <ul>
-                
-              </ul>
+              <div style="padding:0px 30px">
+                <h5>主要项目：海外客户综合平台</h5>
+                <i>项目简介：搭建并维护一个公众平台，解决公司与新加坡CityHall、玛丽蒙、裕廊及马来西亚新山、吉隆坡、槟城等地区的客户之间沟通与管理的问题。</i>
+                <ul>
+                  <li>
+                    基于<b class=highlight>Django</b></b>和<b class=highlight>Vue</b>跨域搭建<b class=highlight>no-session</b>系统，用<b class=highlight>axios</b>交互。
+                  </li>
+                  <li>
+                    使用<b class=highlight>MySql</b>存储客户信息、产品信息、反馈意见等。
+                  </li>
+                  <li>
+                    使用<b class=highlight>Redis</b>集群作为缓存介质，充分掌握了客户对每种产品的亲和度，从而与领导确定产品的方向。
+                  </li>
+                  <li>
+                    与某些家投资公司签署合作协议，使用<b class=highlight>Scrapy</b>框架及<b class=highlight>Selenium</b>模块爬取其推送的新闻，存入<b class=highlight>MongoDB</b>，自动进行筛选后，推送到网站和手机app上。比起其他大区之前基于MySql的存储效率明显提高。
+                  </li>
+                  <li>
+                    使用<b class=highlight>HeyUI</b>、<b class=highlight>i18n</b>等模块，基于<b class=highlight>Vue</b>打造在线讲堂，推送讲师的讲课视频。搭建直播平台。与之前的线下授课与发布到YouTube上相比，客户的单日总听课时间提高了<b class=highlight>370%</b>！
+                  </li>
+                  <li>
+                    使用<b class=highlight>Adobe After Effect</b>, <b class=highlight>Adobe Premiere</b>, <b class=highlight>Adobe Photoshop</b>, <b class=highlight>Adobe Illustrator</b>等软件，结合一些板绘，制作片头、广告、Banner等，并自动集成到项目中，定制了公司logo主题的鼠标指针
+                  </li>
+                </ul>
+              </div>
             </p>
           </div>
           <div class="resume-date text-md-right">
@@ -148,10 +167,28 @@
         </div>
         <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
           <div class="resume-content">
-            <h3 class="mb-0">全栈开发工程师</h3>
+            <h3 class="mb-0">Python开发工程师</h3>
+            <hr>
             <div class="subheading mb-3">北京骏嘉财通科技有限公司</div>
             <p>
-            
+                <div style="padding:0px 30px">
+                  <h5>主要项目：客户管理系统</h5>
+                  <i>项目简介：为了维护公司内部客户，我参与构建一个客户管理系统，它能实现自动划分客户亲和等级、自动给业务员分配客户电话号码等功能。是公司网络销售部门的核心。</i>
+                  <ul>
+                    <li>
+                      基于<b class=highlight>flask</b>轻量级框架，构建一个用户信息统计系统。从多渠道自动或手动存入用户信息。
+                    </li>
+                    <li>
+                      以<b class=highlight>ajax</b>为桥梁实现前后端分离。
+                    </li>
+                    <li>
+                      数据存入<b class=highlight>MySql</b>。
+                    </li>
+                    <li>
+                      利用<b class=highlight>Python编写多种算法</b>，实现客户筛选、客户分配、员工日工作量统计等功能。
+                    </li>
+                  </ul>
+                </div>
             </p>
           </div>
           <div class="resume-date text-md-right">
@@ -162,12 +199,32 @@
 
         <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
           <div class="resume-content">
-            <h3 class="mb-0">Junior Web Designer</h3>
-            <div class="subheading mb-3">Shout! Media Productions</div>
-            <p>Podcasting operational change management inside of workflows to establish a framework. Taking seamless key performance indicators offline to maximise the long tail. Keeping your eye on the ball while performing a deep dive on the start-up mentality to derive convergence on cross-platform integration.</p>
+            <h3 class="mb-0">实习前端开发</h3>
+            <hr>
+            <div class="subheading mb-3">北京艺龙信息技术有限公司</div>
+            <p>
+              <div style="padding:0px 30px">
+                <h5>主要项目：官方网站页面更新</h5>
+                <i>项目简介：搭建一套前端主题模板，让公司形象焕然一新。</i>
+                <ul>
+                  <li>
+                    本人主要负责<b class=highlight>html</b>和<b class=highlight>css</b>样式的构建。
+                  </li>
+                  <li>
+                    利用<b class=highlight>Adobe Photoshop</b>，定制网页的样式、模块、按钮，打造一个全新的主页形象。
+                  </li>
+                  <li>
+                    结合公司加大推广力度等因素，网站访问量同比增长<b class=highlight>57%</b>，单次浏览滞留时间提升了<b class=highlight>72%</b>。
+                  </li>
+                  <li>
+                    利用<b class=highlight>MarkDown</b>语法维护网站文章。
+                  </li>
+                </ul>
+              </div>
+            </p>
           </div>
           <div class="resume-date text-md-right">
-            <span class="text-primary">July 2010 - December 2011</span>
+            <span class="text-primary">2016-2017</span>
           </div>
         </div>
 
@@ -184,24 +241,27 @@
 
         <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
           <div class="resume-content">
-            <h3 class="mb-0">University of Colorado Boulder</h3>
-            <div class="subheading mb-3">Bachelor of Science</div>
-            <div>Computer Science - Web Development Track</div>
-            <p>GPA: 3.23</p>
+            <h3 class="mb-0">东北林业大学</h3>
+            <hr>
+            <div class="subheading mb-3">本科,&nbsp;&nbsp;统招,&nbsp;&nbsp;211</div>
+            <div>
+              <p>
+                <b class=highlight>专业：园林(成栋实验班)</b>
+              </p>
+              <p>
+                <li>成栋实验班是国家教育部直属的985建设平台，共8届，每届30人。该实验班的理念是<span class=highlight>园林数字化，评测可视化，设计现代化</span>。所修课程与<b class=highlight>数据库</b>密切相关，成为未来工作的一个切入点。</li>
+              </p>
+              <br>
+              <p>
+                <b class=highlight>相关专业课程</b>
+              </p>
+              <p>
+                <li>Sql-Server,&nbsp;&nbsp;MySql,&nbsp;&nbsp;Redis,&nbsp;&nbsp;MongoDB,&nbsp;&nbsp;Html,&nbsp;&nbsp;CSS,&nbsp;&nbsp;JavaScript,&nbsp;&nbsp;SPSS,&nbsp;&nbsp;Photoshop,&nbsp;&nbsp;建模等</li>
+              </p>
+            </div>
           </div>
           <div class="resume-date text-md-right">
-            <span class="text-primary">August 2006 - May 2010</span>
-          </div>
-        </div>
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between">
-          <div class="resume-content">
-            <h3 class="mb-0">James Buchanan High School</h3>
-            <div class="subheading mb-3">Technology Magnet Program</div>
-            <p>GPA: 3.56</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">August 2002 - May 2006</span>
+            <span class="text-primary">Sept 2013 - Jun 2017</span>
           </div>
         </div>
 
@@ -213,7 +273,7 @@
     <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="skills">
       <div class="w-100">
         <h2 class="mb-5">Skills</h2>
-
+        <hr>
         <div class="subheading mb-3">Programming Languages &amp; Tools</div>
         <ul class="list-inline dev-icons">
           
@@ -223,16 +283,19 @@
         <ul class="fa-ul mb-0">
           <li>
             <i class="fa-li fa fa-check"></i>
-            Mobile-First, Responsive Design</li>
+            编程语言：<b class=highlight>Python</b>,&nbsp;&nbsp;JavaScript,&nbsp;&nbsp;Go-lang</li>
           <li>
             <i class="fa-li fa fa-check"></i>
-            Cross Browser Testing &amp; Debugging</li>
+            框架：<b class=highlight></b>Vue</b>,&nbsp;&nbsp;<b class=highlight>Django</b>,&nbsp;&nbsp;<b class=highlight>flask</b>,&nbsp;&nbsp;<b class=highlight>Scrapy</b>,&nbsp;&nbsp;orm,&nbsp;&nbsp;Pygame</li>
           <li>
             <i class="fa-li fa fa-check"></i>
-            Cross Functional Teams</li>
+            数据库：<b class=highlight>MySql</b>,&nbsp;&nbsp;<b class=highlight>MongoDB</b>,&nbsp;&nbsp;<b class=highlight>Redis</b>,&nbsp;&nbsp;Sql-Server</li>
           <li>
             <i class="fa-li fa fa-check"></i>
-            Agile Development &amp; Scrum</li>
+            标记语言：Html(+CSS),&nbsp;&nbsp;MarkDown</li>
+          <li>
+            <i class="fa-li fa fa-check"></i>
+            非开发软件：<b class=highlight>PhotoShop</b>,&nbsp;&nbsp;<b class=highlight>Premiere</b>,&nbsp;&nbsp;<b class=highlight>InDesign</b>,&nbsp;&nbsp;After Effect,&nbsp;&nbsp;AutoCAD,&nbsp;&nbsp;SketchUp,&nbsp;&nbsp;C4D,&nbsp;&nbsp;Illustrator</li>
         </ul>
       </div>
     </section>
@@ -242,8 +305,29 @@
     <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="interests">
       <div class="w-100">
         <h2 class="mb-5">Interests</h2>
-        <p>Apart from being a web developer, I enjoy most of my time being outdoors. In the winter, I am an avid skier and novice ice climber. During the warmer months here in Colorado, I enjoy mountain biking, free climbing, and kayaking.</p>
-        <p class="mb-0">When forced indoors, I follow a number of sci-fi and fantasy genre movies and television shows, I am an aspiring chef, and I spend a large amount of my free time exploring the latest technology advancements in the front-end web development world.</p>
+        <p>
+          <img style="border-radius: 15px" src="./img/Missty.png" height="400px" alt="作品展示">
+          &nbsp;&nbsp;
+          <img style="border-radius: 15px" src="./img/Seattle.png" height="400px" alt="作品展示">
+        </p>
+        <p class="mb-0">
+          <h5><i># 会画画的程序员。</i></h5>
+          <p>
+            编程，能做什么？编程，能让我和计算机说话。能让我的声音传之千里万里。顺风而呼，它如奔腾喷涌的洪流一泻千里。
+          </p>
+          <p>
+            绘画，能做什么？绘画，能让我和思想说话。能让我的思想自由地展现出来。诡衔窃辔，它如挣脱锁链的野马纵横驰骋。
+          </p>
+          <p>诗词，能做什么？诗词，能让我和心灵说话。能让我向表露的一点心思，含苞绽放，结出一圆小小的花朵。</p>
+          <p>读史，能做什么？读史，能让我和古人说话。能鉴古往今来华夏男儿的行德，扩我格局，找清方向。</p>
+        </p>
+        <hr>
+        <p class="lead mb-5">
+            <b># 兴趣：</b>文学、历史、音乐、绘画、游戏开发、日语、投资理财
+        </p>
+        <p class="lead mb-5">
+            <b># 正在读的书：</b>《不疯魔，不成活》、《白云飞渡》、《三国志》、《诗经》、《经济学的思维方式》、《Pygame游戏开发》等
+        </p>
       </div>
     </section>
 
@@ -252,33 +336,25 @@
     <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="awards">
       <div class="w-100">
         <h2 class="mb-5">Awards &amp; Certifications</h2>
+        <hr>
         <ul class="fa-ul mb-0">
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            Google Analytics Certified Developer</li>
+            英语：CET 6</li><br>
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            Mobile Web Specialist - Google Certification</li>
+            参与开发的产品荣获新加坡多项大奖</li><br>
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            1<sup>st</sup>
-            Place - University of Colorado Boulder - Emerging Tech Competition 2009</li>
+            集团诗词大赛一等奖</li><br>
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            1<sup>st</sup>
-            Place - University of Colorado Boulder - Adobe Creative Jam 2008 (UI Design Category)</li>
+            产品受拉瑞·威廉姆斯、戴若顾比、鸠山由纪夫等知名人士力荐、题字</li><br>
+          <li>
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            2<sup>nd</sup>
-            Place - University of Colorado Boulder - Emerging Tech Competition 2008</li>
-          <li>
-            <i class="fa-li fa fa-trophy text-warning"></i>
-            1<sup>st</sup>
-            Place - James Buchanan High School - Hackathon 2006</li>
-          <li>
-            <i class="fa-li fa fa-trophy text-warning"></i>
-            3<sup>rd</sup>
-            Place - James Buchanan High School - Hackathon 2005</li>
+            东北林业大学班徽设计大赛、海报设计大赛、吉祥物设计大赛、棋牌大赛等多项奖励</li>
+          
         </ul>
       </div>
     </section>
