@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Redis主从同步 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Redis主从同步">
+<meta itemprop="description" content=" CPA原理  CPA原理是分布式存储理论的基石： C(一致性)； A(可用性)； P(分区容忍性); 当主从网络无法连通时，修改操作无法同步到节点，所以“一致性”无法满足 除非我们牺牲“可用性”，也就是暂停分布式节点服务，不再提供修改数据功能，知道网络恢复  一句话概括CAP: 当网络分区发生时，一致性 和 可用性 两难全
+redis主从同步介绍  和MySQL主从复制的原因一样，Redis虽然读取写入的速度都特别快，但是也会产生读压力特别大的情况。 为了分担读压力，Redis支持主从复制，Redis的主从结构可以采用一主多从或者级联结构。 Redis主从复制可以根据是否是全量分为全量同步和增量同步。  注：redis主节点Master挂掉时，运维让从节点Slave接管（redis主从默认无法自动切换，需要运维手动切换）
+全量同步（快照同步） 注：Redis全量复制一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份。
+具体步骤如下：
+ 从服务器连接主服务器，发送SYNC命令； 主服务器接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令； 主服务器BGSAVE执行完后，向所有从服务器发送快照文件，并在发送期间继续记录被执行的写命令； 从服务器收到快照文件后丢弃所有旧数据，载入收到的快照； 主服务器快照发送完毕后开始向从服务器发送缓冲区中的写命令； 从服务器完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令； 完成上面几个步骤后就完成了从服务器数据初始化的所有操作，从服务器此时可以接收来自用户的读请求。  增量同步  主节点会将那些对自己状态产生修改性影响的指令记录在本地内存buffer中，然后异步将buffer中指令同步到从节点 从节点一边执行同步指令达到主节点状态，一边向主节点反馈自己同步到哪里（偏移量） 当网络状态不好时，从节点无法和主节点进行同步，当网络恢复时需要进行快照同步  Redis主从同步策略  主从刚刚连接的时候，进行全量同步；全同步结束后，进行增量同步。 当然，如果有需要，slave 在任何时候都可以发起全量同步。 redis 策略是，无论如何，首先会尝试进行增量同步，如不成功，要求从机进行全量同步。  注意点  如果多个Slave断线了，需要重启的时候，因为只要Slave启动，就会发送sync请求和主机全量同步，当多个同时出现的时候，可能会导致Master IO剧增宕机。  ">
+<meta itemprop="datePublished" content="2020-04-12T23:01:08&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T23:01:08&#43;08:00" />
+<meta itemprop="wordCount" content="40">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Redis主从同步" />
+<meta property="og:description" content=" CPA原理  CPA原理是分布式存储理论的基石： C(一致性)； A(可用性)； P(分区容忍性); 当主从网络无法连通时，修改操作无法同步到节点，所以“一致性”无法满足 除非我们牺牲“可用性”，也就是暂停分布式节点服务，不再提供修改数据功能，知道网络恢复  一句话概括CAP: 当网络分区发生时，一致性 和 可用性 两难全
+redis主从同步介绍  和MySQL主从复制的原因一样，Redis虽然读取写入的速度都特别快，但是也会产生读压力特别大的情况。 为了分担读压力，Redis支持主从复制，Redis的主从结构可以采用一主多从或者级联结构。 Redis主从复制可以根据是否是全量分为全量同步和增量同步。  注：redis主节点Master挂掉时，运维让从节点Slave接管（redis主从默认无法自动切换，需要运维手动切换）
+全量同步（快照同步） 注：Redis全量复制一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份。
+具体步骤如下：
+ 从服务器连接主服务器，发送SYNC命令； 主服务器接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令； 主服务器BGSAVE执行完后，向所有从服务器发送快照文件，并在发送期间继续记录被执行的写命令； 从服务器收到快照文件后丢弃所有旧数据，载入收到的快照； 主服务器快照发送完毕后开始向从服务器发送缓冲区中的写命令； 从服务器完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令； 完成上面几个步骤后就完成了从服务器数据初始化的所有操作，从服务器此时可以接收来自用户的读请求。  增量同步  主节点会将那些对自己状态产生修改性影响的指令记录在本地内存buffer中，然后异步将buffer中指令同步到从节点 从节点一边执行同步指令达到主节点状态，一边向主节点反馈自己同步到哪里（偏移量） 当网络状态不好时，从节点无法和主节点进行同步，当网络恢复时需要进行快照同步  Redis主从同步策略  主从刚刚连接的时候，进行全量同步；全同步结束后，进行增量同步。 当然，如果有需要，slave 在任何时候都可以发起全量同步。 redis 策略是，无论如何，首先会尝试进行增量同步，如不成功，要求从机进行全量同步。  注意点  如果多个Slave断线了，需要重启的时候，因为只要Slave启动，就会发送sync请求和主机全量同步，当多个同时出现的时候，可能会导致Master IO剧增宕机。  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5/" />
+<meta property="article:published_time" content="2020-04-12T23:01:08+08:00" />
+<meta property="article:modified_time" content="2020-04-12T23:01:08+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis主从同步"/>
+<meta name="twitter:description" content=" CPA原理  CPA原理是分布式存储理论的基石： C(一致性)； A(可用性)； P(分区容忍性); 当主从网络无法连通时，修改操作无法同步到节点，所以“一致性”无法满足 除非我们牺牲“可用性”，也就是暂停分布式节点服务，不再提供修改数据功能，知道网络恢复  一句话概括CAP: 当网络分区发生时，一致性 和 可用性 两难全
+redis主从同步介绍  和MySQL主从复制的原因一样，Redis虽然读取写入的速度都特别快，但是也会产生读压力特别大的情况。 为了分担读压力，Redis支持主从复制，Redis的主从结构可以采用一主多从或者级联结构。 Redis主从复制可以根据是否是全量分为全量同步和增量同步。  注：redis主节点Master挂掉时，运维让从节点Slave接管（redis主从默认无法自动切换，需要运维手动切换）
+全量同步（快照同步） 注：Redis全量复制一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份。
+具体步骤如下：
+ 从服务器连接主服务器，发送SYNC命令； 主服务器接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令； 主服务器BGSAVE执行完后，向所有从服务器发送快照文件，并在发送期间继续记录被执行的写命令； 从服务器收到快照文件后丢弃所有旧数据，载入收到的快照； 主服务器快照发送完毕后开始向从服务器发送缓冲区中的写命令； 从服务器完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令； 完成上面几个步骤后就完成了从服务器数据初始化的所有操作，从服务器此时可以接收来自用户的读请求。  增量同步  主节点会将那些对自己状态产生修改性影响的指令记录在本地内存buffer中，然后异步将buffer中指令同步到从节点 从节点一边执行同步指令达到主节点状态，一边向主节点反馈自己同步到哪里（偏移量） 当网络状态不好时，从节点无法和主节点进行同步，当网络恢复时需要进行快照同步  Redis主从同步策略  主从刚刚连接的时候，进行全量同步；全同步结束后，进行增量同步。 当然，如果有需要，slave 在任何时候都可以发起全量同步。 redis 策略是，无论如何，首先会尝试进行增量同步，如不成功，要求从机进行全量同步。  注意点  如果多个Slave断线了，需要重启的时候，因为只要Slave启动，就会发送sync请求和主机全量同步，当多个同时出现的时候，可能会导致Master IO剧增宕机。  "/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f&amp;title=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f&amp;title=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f&amp;description=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5/">Redis主从同步</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 23:01:08 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f&amp;title=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f&amp;title=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f&amp;description=Redis%e4%b8%bb%e4%bb%8e%e5%90%8c%e6%ad%a5" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25B8%25BB%25E4%25BB%258E%25E5%2590%258C%25E6%25AD%25A5%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="cpa原理">CPA原理</h2>
+<ol>
+<li>CPA原理是分布式存储理论的基石： C(一致性)；   A(可用性)；  P(分区容忍性);</li>
+<li>当主从网络无法连通时，修改操作无法同步到节点，所以“一致性”无法满足</li>
+<li>除非我们牺牲“可用性”，也就是暂停分布式节点服务，不再提供修改数据功能，知道网络恢复</li>
+</ol>
+<p><strong>一句话概括CAP: 当网络分区发生时，一致性 和 可用性 两难全</strong></p>
+<h2 id="redis主从同步介绍">redis主从同步介绍</h2>
+<ol>
+<li>和MySQL主从复制的原因一样，Redis虽然读取写入的速度都特别快，但是也会产生读压力特别大的情况。</li>
+<li>为了分担读压力，Redis支持主从复制，Redis的主从结构可以采用一主多从或者级联结构。</li>
+<li>Redis主从复制可以根据是否是全量分为全量同步和增量同步。</li>
+</ol>
+<p><em>注：redis主节点Master挂掉时，运维让从节点Slave接管（redis主从默认无法自动切换，需要运维手动切换）</em></p>
+<p><img src="/%E5%9B%BE%E7%89%877.png" alt="redis主从同步"></p>
+<h2 id="全量同步快照同步">全量同步（快照同步）</h2>
+<p><em>注：Redis全量复制一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份。</em></p>
+<p>具体步骤如下：</p>
+<ol>
+<li>从服务器连接主服务器，发送SYNC命令；</li>
+<li>主服务器接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令；</li>
+<li>主服务器BGSAVE执行完后，向所有从服务器发送快照文件，并在发送期间继续记录被执行的写命令；</li>
+<li>从服务器收到快照文件后丢弃所有旧数据，载入收到的快照；</li>
+<li>主服务器快照发送完毕后开始向从服务器发送缓冲区中的写命令；</li>
+<li>从服务器完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令；</li>
+<li>完成上面几个步骤后就完成了从服务器数据初始化的所有操作，从服务器此时可以接收来自用户的读请求。</li>
+</ol>
+<p><img src="/%E5%9B%BE%E7%89%878.png" alt="redis主从同步"></p>
+<h2 id="增量同步">增量同步</h2>
+<ol>
+<li>主节点会将那些对自己状态产生修改性影响的指令记录在本地内存buffer中，然后异步将buffer中指令同步到从节点</li>
+<li>从节点一边执行同步指令达到主节点状态，一边向主节点反馈自己同步到哪里（偏移量）</li>
+<li>当网络状态不好时，从节点无法和主节点进行同步，当网络恢复时需要进行快照同步</li>
+</ol>
+<h2 id="redis主从同步策略">Redis主从同步策略</h2>
+<ol>
+<li>主从刚刚连接的时候，进行全量同步；全同步结束后，进行增量同步。</li>
+<li>当然，如果有需要，slave 在任何时候都可以发起全量同步。</li>
+<li>redis 策略是，无论如何，首先会尝试进行增量同步，如不成功，要求从机进行全量同步。</li>
+</ol>
+<h2 id="注意点">注意点</h2>
+<ol>
+<li>如果多个Slave断线了，需要重启的时候，因为只要Slave启动，就会发送sync请求和主机全量同步，当多个同时出现的时候，可能会导致Master IO剧增宕机。</li>
+</ol>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E9%9B%AA%E5%B4%A9_%E7%A9%BF%E9%80%8F_%E5%87%BB%E7%A9%BF/" class="button"><div class="previous"><div>Redis雪崩_穿透_击穿</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-sentinel/" class="button"><div class="next"><div>Redis哨兵模式    Sentinel</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

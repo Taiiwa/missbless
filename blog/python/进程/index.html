@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>进程 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="进程">
+<meta itemprop="description" content="进程的定义   进程是资源分配的最小单位
+  当一个可执行程序被系统执行（分配内存等资源）时，程序就变成了一个进程
+程序并不能单独运行，程序只是指令的集合，是进程运行的静态描述文本。只有将程序装载到内存中，系统为它分配资源才能运行。程序执行，就称为进程。进程属于动态概念。
+在多道编程中，我们允许多个程序同时加载到内存中，在操作系统的调度下，可以并发地执行。
+进程的出现让每个用户感觉到自己独享CPU，因此，进程就是为了在CPU上实现多道编程而提出的。也就是说，如果没有进程这个概念，一个CPU只能同时启动一个程序，要想用多个程序，就必须来回切换。
+有了进程，就能让这些程序有各自独立的内存空间。这些进程之间不能相互访问。
+创建一个新线程很简单，创建新进程需要对父进程进行复制。
+· 多道编程：在计算机内同时存放几道相互独立的内存，他们共享资源，相互穿插进行
+· 单道编程：在计算机内存中只允许一个程序运行。
+  进程与程序  程序只是一个文件，是一个机器代码指令和数据的集合，所以，程序是一个静态的实体。 而进程是程序运行在数据集上的动态过程。进程是一个动态实体，它应创建而产生，因调度执行而运行，因等待资源或时间而被处于等待状态，因完成任务而被撤销。 进程是系统进行资源分配和调度的一个独立单位。 一个程序可以对应多个进程（多开），一个进程为多个程序服务（WeGame）。 一个程序执行在不同的数据集上就称为不同的进程，可以通过进程控制块来唯一地标识每一个进程。  进程与线程   进程优点：
+ 进程提供了多道编程，让我们感觉我们每个人都拥有自己的CPU和资源，可以提高计算机的利用率。
+   进程的两个重要缺点：
+ 进程只能在一个时间做一件事
+  进程在执行过程中如果遇到IO，无法执行
+   进程间通信   Queue
+  pipe
+  Managers
+  Redis
+  进程池  from multiprocessing import Process, Pool import time, os def foo(i): time.">
+<meta itemprop="datePublished" content="2020-04-12T20:33:12&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T20:33:12&#43;08:00" />
+<meta itemprop="wordCount" content="79">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="进程" />
+<meta property="og:description" content="进程的定义   进程是资源分配的最小单位
+  当一个可执行程序被系统执行（分配内存等资源）时，程序就变成了一个进程
+程序并不能单独运行，程序只是指令的集合，是进程运行的静态描述文本。只有将程序装载到内存中，系统为它分配资源才能运行。程序执行，就称为进程。进程属于动态概念。
+在多道编程中，我们允许多个程序同时加载到内存中，在操作系统的调度下，可以并发地执行。
+进程的出现让每个用户感觉到自己独享CPU，因此，进程就是为了在CPU上实现多道编程而提出的。也就是说，如果没有进程这个概念，一个CPU只能同时启动一个程序，要想用多个程序，就必须来回切换。
+有了进程，就能让这些程序有各自独立的内存空间。这些进程之间不能相互访问。
+创建一个新线程很简单，创建新进程需要对父进程进行复制。
+· 多道编程：在计算机内同时存放几道相互独立的内存，他们共享资源，相互穿插进行
+· 单道编程：在计算机内存中只允许一个程序运行。
+  进程与程序  程序只是一个文件，是一个机器代码指令和数据的集合，所以，程序是一个静态的实体。 而进程是程序运行在数据集上的动态过程。进程是一个动态实体，它应创建而产生，因调度执行而运行，因等待资源或时间而被处于等待状态，因完成任务而被撤销。 进程是系统进行资源分配和调度的一个独立单位。 一个程序可以对应多个进程（多开），一个进程为多个程序服务（WeGame）。 一个程序执行在不同的数据集上就称为不同的进程，可以通过进程控制块来唯一地标识每一个进程。  进程与线程   进程优点：
+ 进程提供了多道编程，让我们感觉我们每个人都拥有自己的CPU和资源，可以提高计算机的利用率。
+   进程的两个重要缺点：
+ 进程只能在一个时间做一件事
+  进程在执行过程中如果遇到IO，无法执行
+   进程间通信   Queue
+  pipe
+  Managers
+  Redis
+  进程池  from multiprocessing import Process, Pool import time, os def foo(i): time." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/python/%E8%BF%9B%E7%A8%8B/" />
+<meta property="article:published_time" content="2020-04-12T20:33:12+08:00" />
+<meta property="article:modified_time" content="2020-04-12T20:33:12+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="进程"/>
+<meta name="twitter:description" content="进程的定义   进程是资源分配的最小单位
+  当一个可执行程序被系统执行（分配内存等资源）时，程序就变成了一个进程
+程序并不能单独运行，程序只是指令的集合，是进程运行的静态描述文本。只有将程序装载到内存中，系统为它分配资源才能运行。程序执行，就称为进程。进程属于动态概念。
+在多道编程中，我们允许多个程序同时加载到内存中，在操作系统的调度下，可以并发地执行。
+进程的出现让每个用户感觉到自己独享CPU，因此，进程就是为了在CPU上实现多道编程而提出的。也就是说，如果没有进程这个概念，一个CPU只能同时启动一个程序，要想用多个程序，就必须来回切换。
+有了进程，就能让这些程序有各自独立的内存空间。这些进程之间不能相互访问。
+创建一个新线程很简单，创建新进程需要对父进程进行复制。
+· 多道编程：在计算机内同时存放几道相互独立的内存，他们共享资源，相互穿插进行
+· 单道编程：在计算机内存中只允许一个程序运行。
+  进程与程序  程序只是一个文件，是一个机器代码指令和数据的集合，所以，程序是一个静态的实体。 而进程是程序运行在数据集上的动态过程。进程是一个动态实体，它应创建而产生，因调度执行而运行，因等待资源或时间而被处于等待状态，因完成任务而被撤销。 进程是系统进行资源分配和调度的一个独立单位。 一个程序可以对应多个进程（多开），一个进程为多个程序服务（WeGame）。 一个程序执行在不同的数据集上就称为不同的进程，可以通过进程控制块来唯一地标识每一个进程。  进程与线程   进程优点：
+ 进程提供了多道编程，让我们感觉我们每个人都拥有自己的CPU和资源，可以提高计算机的利用率。
+   进程的两个重要缺点：
+ 进程只能在一个时间做一件事
+  进程在执行过程中如果遇到IO，无法执行
+   进程间通信   Queue
+  pipe
+  Managers
+  Redis
+  进程池  from multiprocessing import Process, Pool import time, os def foo(i): time."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=%e8%bf%9b%e7%a8%8b&amp;url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f&amp;title=%e8%bf%9b%e7%a8%8b" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f&amp;title=%e8%bf%9b%e7%a8%8b" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f&amp;description=%e8%bf%9b%e7%a8%8b" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/python/%E8%BF%9B%E7%A8%8B/">进程</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 20:33:12 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=%e8%bf%9b%e7%a8%8b&amp;url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f&amp;title=%e8%bf%9b%e7%a8%8b" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f&amp;title=%e8%bf%9b%e7%a8%8b" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f&amp;description=%e8%bf%9b%e7%a8%8b" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E8%25BF%259B%25E7%25A8%258B%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="进程的定义">进程的定义</h2>
+<ol>
+<li>
+<p>进程是资源分配的最小单位</p>
+</li>
+<li>
+<p>当一个可执行程序被系统执行（分配内存等资源）时，程序就变成了一个进程</p>
+<p>程序并不能单独运行，程序只是指令的集合，是进程运行的静态描述文本。只有将程序装载到内存中，系统为它分配资源才能运行。程序执行，就称为进程。进程属于动态概念。</p>
+<p>在多道编程中，我们允许多个程序同时加载到内存中，在操作系统的调度下，可以并发地执行。</p>
+<p>进程的出现让每个用户感觉到自己独享CPU，因此，进程就是为了在CPU上实现多道编程而提出的。也就是说，如果没有进程这个概念，一个CPU只能同时启动一个程序，要想用多个程序，就必须来回切换。</p>
+<p>有了进程，就能让这些程序有各自独立的内存空间。这些进程之间不能相互访问。</p>
+<p>创建一个新线程很简单，创建新进程需要对父进程进行复制。</p>
+<p>· 多道编程：在计算机内同时存放几道相互独立的内存，他们共享资源，相互穿插进行</p>
+<p>· 单道编程：在计算机内存中只允许一个程序运行。</p>
+</li>
+</ol>
+<h2 id="进程与程序">进程与程序</h2>
+<ul>
+<li>程序只是一个文件，是一个机器代码指令和数据的集合，所以，程序是一个静态的实体。</li>
+<li>而进程是程序运行在数据集上的动态过程。进程是一个动态实体，它应创建而产生，因调度执行而运行，因等待资源或时间而被处于等待状态，因完成任务而被撤销。</li>
+<li>进程是系统进行资源分配和调度的一个独立单位。</li>
+<li>一个程序可以对应多个进程（多开），一个进程为多个程序服务（WeGame）。</li>
+<li>一个程序执行在不同的数据集上就称为不同的进程，可以通过进程控制块来唯一地标识每一个进程。</li>
+</ul>
+<h2 id="进程与线程">进程与线程</h2>
+<ol>
+<li>
+<p>进程优点：</p>
+<blockquote>
+<p>进程提供了多道编程，让我们感觉我们每个人都拥有自己的CPU和资源，可以提高计算机的利用率。</p>
+</blockquote>
+</li>
+<li>
+<p>进程的两个重要缺点：</p>
+<blockquote>
+<p>进程只能在一个时间做一件事</p>
+</blockquote>
+<blockquote>
+<p>进程在执行过程中如果遇到IO，无法执行</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="进程间通信">进程间通信</h2>
+<ol>
+<li>
+<p>Queue</p>
+</li>
+<li>
+<p>pipe</p>
+</li>
+<li>
+<p>Managers</p>
+</li>
+<li>
+<p>Redis</p>
+</li>
+</ol>
+<h2 id="进程池">进程池</h2>
+<pre><code>    from multiprocessing import Process, Pool
+
+    import time, os
+
+    def foo(i):
+        time.sleep(2)
+        print('in the process', os.getpid())    # 打印子进程的pid
+        return i + 100
+
+    def call(arg):
+        print('--&gt;exec done', arg, os.getpid())
+
+
+    if __name__ = '__main__':
+        pool = Pool(3)      #进程池最多允许5个进程放入进程池
+        print(&quot;主进程pid：&quot;,os.getpid())
+        for i in range(10)
+            pool.apply_async(func= foo, args= (i,), callback= call)
+
+    print('end')
+    pool.close()
+    pool.join()
+</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/%E9%9B%86%E5%90%88%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" class="button"><div class="previous"><div>集合常用方法</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/python/%E7%BA%BF%E7%A8%8B/" class="button"><div class="next"><div>线程</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>MySQL 主从一致校验 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="MySQL 主从一致校验">
+<meta itemprop="description" content="场景需求 2020年春，由我司开发的考试系统项目，经过不懈的运营努力，用户群体每日以指数倍激增，现考虑到数据库的安全可靠和访问性能问题，决定在业务中集成部署Mysql主从复制以实现读写分离等功能；巧的是，在想要进行主从复制操作前，我们的主要业务数据库已经工作了一段时间，现在要添加一台新的从数据库进行主从复制，通过一位发量稀少同事的一番操作，两台主机已经成功部署好了主从复制，但是我们该如何检测主从服务器的数据是否一致，如果不一致怎么同步数据？
+参考答案 我们可以通过采用pt-table-checksum工具来检查主从的一致性，以下是具体流程。
+工具安装 [root@MySQL-01 ~]# wget http://www.percona.com/get/percona-toolkit.tar.gz
+安装所需依赖 [root@MySQL-01 ~]# yum install perl perl-devel perl-Time-HiRes perl-DBI perl-DBD-MySQL perl-Compress-Raw-Bzip2 perl-Compress-Raw-Zlib perl-Digest perl-Digest-MD5 perl-IO-Compress perl-IO-Socket-IP perl-IO-Socket-SSL perl-Mozilla-CA perl-Net-Daemon perl-Net-LibIDN perl-Net-SSLeay ...  安装工具 [root@MySQL-01 ~]# tar zxf percona-toolkit-2.2.13.tar.gz [root@MySQL-01 ~]# cd percona-toolkit-2.2.13 [root@MySQL-01 ~]# perl Makefile.PL [root@MySQL-01 ~]# make &amp;&amp; make install  在进行主从校验之前，我们首先需要对主从库进行授权，来看看如何来做吧 主库授权
+root@node1 12:28: [pt_check]&gt; GRANT CREATE,INSERT,SELECT,DELETE,UPDATE,LOCK TABLES,PROCESS,SUPER,REPLICATION SLAVE ON *.* TO &#39;root&#39;@&#39;47.97.218.145&#39; IDENTIFIED BY &#39;123456&#39;; Query OK, 0 rows affected (0.">
+<meta itemprop="datePublished" content="2020-04-12T22:37:38&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T22:37:38&#43;08:00" />
+<meta itemprop="wordCount" content="588">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="MySQL 主从一致校验" />
+<meta property="og:description" content="场景需求 2020年春，由我司开发的考试系统项目，经过不懈的运营努力，用户群体每日以指数倍激增，现考虑到数据库的安全可靠和访问性能问题，决定在业务中集成部署Mysql主从复制以实现读写分离等功能；巧的是，在想要进行主从复制操作前，我们的主要业务数据库已经工作了一段时间，现在要添加一台新的从数据库进行主从复制，通过一位发量稀少同事的一番操作，两台主机已经成功部署好了主从复制，但是我们该如何检测主从服务器的数据是否一致，如果不一致怎么同步数据？
+参考答案 我们可以通过采用pt-table-checksum工具来检查主从的一致性，以下是具体流程。
+工具安装 [root@MySQL-01 ~]# wget http://www.percona.com/get/percona-toolkit.tar.gz
+安装所需依赖 [root@MySQL-01 ~]# yum install perl perl-devel perl-Time-HiRes perl-DBI perl-DBD-MySQL perl-Compress-Raw-Bzip2 perl-Compress-Raw-Zlib perl-Digest perl-Digest-MD5 perl-IO-Compress perl-IO-Socket-IP perl-IO-Socket-SSL perl-Mozilla-CA perl-Net-Daemon perl-Net-LibIDN perl-Net-SSLeay ...  安装工具 [root@MySQL-01 ~]# tar zxf percona-toolkit-2.2.13.tar.gz [root@MySQL-01 ~]# cd percona-toolkit-2.2.13 [root@MySQL-01 ~]# perl Makefile.PL [root@MySQL-01 ~]# make &amp;&amp; make install  在进行主从校验之前，我们首先需要对主从库进行授权，来看看如何来做吧 主库授权
+root@node1 12:28: [pt_check]&gt; GRANT CREATE,INSERT,SELECT,DELETE,UPDATE,LOCK TABLES,PROCESS,SUPER,REPLICATION SLAVE ON *.* TO &#39;root&#39;@&#39;47.97.218.145&#39; IDENTIFIED BY &#39;123456&#39;; Query OK, 0 rows affected (0." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%A0%A1%E9%AA%8C/" />
+<meta property="article:published_time" content="2020-04-12T22:37:38+08:00" />
+<meta property="article:modified_time" content="2020-04-12T22:37:38+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL 主从一致校验"/>
+<meta name="twitter:description" content="场景需求 2020年春，由我司开发的考试系统项目，经过不懈的运营努力，用户群体每日以指数倍激增，现考虑到数据库的安全可靠和访问性能问题，决定在业务中集成部署Mysql主从复制以实现读写分离等功能；巧的是，在想要进行主从复制操作前，我们的主要业务数据库已经工作了一段时间，现在要添加一台新的从数据库进行主从复制，通过一位发量稀少同事的一番操作，两台主机已经成功部署好了主从复制，但是我们该如何检测主从服务器的数据是否一致，如果不一致怎么同步数据？
+参考答案 我们可以通过采用pt-table-checksum工具来检查主从的一致性，以下是具体流程。
+工具安装 [root@MySQL-01 ~]# wget http://www.percona.com/get/percona-toolkit.tar.gz
+安装所需依赖 [root@MySQL-01 ~]# yum install perl perl-devel perl-Time-HiRes perl-DBI perl-DBD-MySQL perl-Compress-Raw-Bzip2 perl-Compress-Raw-Zlib perl-Digest perl-Digest-MD5 perl-IO-Compress perl-IO-Socket-IP perl-IO-Socket-SSL perl-Mozilla-CA perl-Net-Daemon perl-Net-LibIDN perl-Net-SSLeay ...  安装工具 [root@MySQL-01 ~]# tar zxf percona-toolkit-2.2.13.tar.gz [root@MySQL-01 ~]# cd percona-toolkit-2.2.13 [root@MySQL-01 ~]# perl Makefile.PL [root@MySQL-01 ~]# make &amp;&amp; make install  在进行主从校验之前，我们首先需要对主从库进行授权，来看看如何来做吧 主库授权
+root@node1 12:28: [pt_check]&gt; GRANT CREATE,INSERT,SELECT,DELETE,UPDATE,LOCK TABLES,PROCESS,SUPER,REPLICATION SLAVE ON *.* TO &#39;root&#39;@&#39;47.97.218.145&#39; IDENTIFIED BY &#39;123456&#39;; Query OK, 0 rows affected (0."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f&amp;title=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f&amp;title=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f&amp;description=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%A0%A1%E9%AA%8C/">MySQL 主从一致校验</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 22:37:38 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>3 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f&amp;title=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f&amp;title=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f&amp;description=MySQL%20%e4%b8%bb%e4%bb%8e%e4%b8%80%e8%87%b4%e6%a0%a1%e9%aa%8c" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E4%25B8%25BB%25E4%25BB%258E%25E4%25B8%2580%25E8%2587%25B4%25E6%25A0%25A1%25E9%25AA%258C%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="场景需求">场景需求</h2>
+<p>2020年春，由我司开发的考试系统项目，经过不懈的运营努力，用户群体每日以指数倍激增，现考虑到数据库的安全可靠和访问性能问题，决定在业务中集成部署Mysql主从复制以实现读写分离等功能；巧的是，在想要进行主从复制操作前，我们的主要业务数据库已经工作了一段时间，现在要添加一台新的从数据库进行主从复制，通过一位发量稀少同事的一番操作，两台主机已经成功部署好了主从复制，但是我们该如何检测主从服务器的数据是否一致，如果不一致怎么同步数据？</p>
+<h2 id="参考答案">参考答案</h2>
+<p>我们可以通过采用<code>pt-table-checksum</code>工具来检查主从的一致性，以下是具体流程。</p>
+<h2 id="工具安装">工具安装</h2>
+<p><code>[root@MySQL-01 ~]# wget http://www.percona.com/get/percona-toolkit.tar.gz</code></p>
+<h2 id="安装所需依赖">安装所需依赖</h2>
+<pre><code>[root@MySQL-01 ~]# yum install perl perl-devel perl-Time-HiRes perl-DBI perl-DBD-MySQL
+perl-Compress-Raw-Bzip2
+perl-Compress-Raw-Zlib
+perl-Digest
+perl-Digest-MD5
+perl-IO-Compress
+perl-IO-Socket-IP
+perl-IO-Socket-SSL
+perl-Mozilla-CA
+perl-Net-Daemon
+perl-Net-LibIDN
+perl-Net-SSLeay
+...
+</code></pre>
+<h2 id="安装工具">安装工具</h2>
+<pre><code>[root@MySQL-01 ~]# tar zxf percona-toolkit-2.2.13.tar.gz
+[root@MySQL-01 ~]# cd percona-toolkit-2.2.13
+[root@MySQL-01 ~]# perl Makefile.PL
+[root@MySQL-01 ~]# make &amp;&amp; make install
+</code></pre>
+<h2 id="在进行主从校验之前我们首先需要对主从库进行授权来看看如何来做吧">在进行主从校验之前，我们首先需要对主从库进行授权，来看看如何来做吧</h2>
+<p>主库授权</p>
+<pre><code>root@node1 12:28:  [pt_check]&gt; GRANT CREATE,INSERT,SELECT,DELETE,UPDATE,LOCK TABLES,PROCESS,SUPER,REPLICATION SLAVE ON *.* TO 'root'@'47.97.218.145' IDENTIFIED BY '123456';
+Query OK, 0 rows affected (0.00 sec)
+root@node1 12:29:  [pt_check]&gt;  flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+root@node1 12:29:  [pt_check]&gt; select Host,User  from mysql.user;
++----------------+---------------+
+| Host         | User        |
++---------------------+--------------------+
+| localhost      | root          |
+| localhost      | mysql.session  |
+| localhost      | mysql.sys      |
+| 172.16.156.%   | rep           |
+| %            | java          |
+| 192.168.1.101   | ptuser        |
++----------------------+---------------------+
+</code></pre>
+<p>从库授权</p>
+<pre><code>MariaDB [(none)]&gt; GRANT SELECT, PROCESS, SUPER, REPLICATION SLAVE ON *.* TO 'root'@'9.106.84.122' IDENTIFIED BY '123456';
+Query OK, 0 rows affected (0.00 sec)
+MariaDB [(none)]&gt; flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+</code></pre>
+<p>授权到主从两个数据库之后呢，我们就可以开开心心的，进行主从数据一致性的校验。且看下面</p>
+<p><code>pt-table-checksum</code>是通过在主（master）上通过执行校验的查询对复制的一致性进行检查，对比主从的校验值，从而产生结果。</p>
+<p>DSN指向的是主的地址，该工具的退出状态不为零，如果发现有任何差别，或者如果出现任何警告或错误，可以查看官方资料。</p>
+<p>现在有一主库，数据如下：</p>
+<pre><code>mysql&gt; select *  from yayun.t1;
+
++----+-------+
+| id | name |
++----+-------+
+|  1 | yayun|
+|  2 | atlas |
+|  3 | mysql |
++----+-------+
+3 rows in set (0.00 sec)
+# 主库有三条数据
+</code></pre>
+<p>而从库的数据于主库是不一致的，我们来欣赏下从库不一致的数据：</p>
+<pre><code>mysql&gt; select * from yayun.t1;
+
++----+----------+
+| id | name  |
++----+----------+
+|  1 | yayun |
+|  2 | atlas  |
+|  3 | mysql  |
+|  4 | dengyy |
+|  5 | love sql |
++----+----------+
+5 rows in set (0.00 sec)
+# 从库有五条数据，多了俩条不一样的：4、5
+</code></pre>
+<hr>
+<p>接下来，我们通过工具进行检测：</p>
+<pre><code>[root@MySQL-01 ~]# pt-table-checksum --nocheck-binlog-format --nocheck-replication-filters --replicate=pt.checksums  --databases test -u'root' -p'123456' -h127.0.0.1 -P3306
+</code></pre>
+<p>命令会展示如下的结果</p>
+<pre><code>TS  ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+04-13T15:59:31        0      1         3         1        0      0.080 yayun.t1
+</code></pre>
+<p>其中如上表所示的结果中，各字段解释如下</p>
+<pre><code>TS	完成检查的时间
+ERRORS	检查时候发生错误和警告的数量
+DIFFS	0表示一致，1表示不一致
+ROWS	表的行数
+CHUNKS	被划分到表中的块的数目
+SKIPPED	由于错误或警告或过大，则跳过块的数目
+TIME	执行的时间
+TABLE	被检查的表名
+</code></pre>
+<p><em>清晰的看到，当主从之间数据不一致时，进行一致性检查看到的结果DIFF为1。此时代表一致性是错误的。</em></p>
+<p>上面命令的各参数的意思在这里也做好事做到底来解释一下：</p>
+<pre><code>--nocheck-replication-filters：不检查复制过滤器，建议启用。后面可以用--databases来指定需要检查的数据库。
+--no-check-binlog-format：	不检查复制的binlog模式，要是binlog模式是ROW，则会报错。
+--replicate-check-only :		只显示不同步的信息。
+--replicate=：				把checksum的信息写入到指定表中，建议直接写到被检查的数据库当中。 
+--databases=：				指定需要被检查的数据库，多个则用逗号隔开。
+--tables=：					指定需要被检查的表，多个用逗号隔开
+h=127.0.0.1：				Master的地址
+u=root：					用户名
+p=123456：					密码
+P=3306：					端口
+</code></pre>
+<p>通过DIFFS是1就可以看出主从的表数据不一致。怎么不一致呢？ 通过指定<code>—replicate=yayun.checksums</code> 参数，就说明把检查信息都写到了checksums表中。</p>
+<hr>
+<p>进入<code>SLAVE</code>相应的库中查看<code>checksums</code>表的信息：</p>
+<pre><code>mysql&gt; select * from checksums\G
+*************************** 1. row ***************************
+            db: yayun
+        tbl: t1
+        chunk: 1
+    chunk_time: 0.010735
+chunk_index: NULL
+lower_boundary: NULL
+upper_boundary: NULL
+    this_crc: babf1dc0    #slave
+    this_cnt: 5           #slave
+    master_crc: 8727436a    #master
+    master_cnt: 3           #master 
+# 可以发现表t1中从库比主库多2条记录
+ts: 2014-04-13 16:05:16
+1 row in set (0.00 sec)
+</code></pre>
+<p>通过上面找到了这些不一致的数据表，如何同步数据呢？即如何修复MySQL主从不一致的数据，让他们保持一致性呢？利用另外一个工具pt-table-sync。</p>
+<p>这个命令的使用很简单，他的语法是这个：pt-table-sync [OPTIONS] DSN [DSN]。pt-table-sync，高效的同步MySQL表之间的数据，他可以做单向和双向同步的表数据；他可以同步单个表，也可以同步整个库。
+它不同步表结构、索引、或任何其他模式对象。所以在修复一致性之前需要保证他们表存在</p>
+<hr>
+<p>接着上面的复制情况，主和从的t1表数据不一致，需要修复，首先执行：</p>
+<pre><code>[root@MySQL-01 ~]# pt-table-sync --replicate=pt.checksums h=47.97.218.145,u=root,p=123456 h=39.106.84.122,u=root,p=123456 --print
+
+DELETE FROM `yayun`.`t1` WHERE `id`='4' LIMIT 1 /*percona-toolkit src_db:yayun src_tbl:t1 src_dsn:h=127.0.0.1,p=...,u=root dst_db:yayun dst_tbl:t1 dst_dsn:h=192.168.0.20,p=...,u=root lock:1 transaction:1 changing_src:yayun.checksums replicate:yayun.checksums bidirectional:0 pid:2190 user:root host:MySQL-01*/;
+DELETE FROM `yayun`.`t1` WHERE `id`='5' LIMIT 1 /*percona-toolkit src_db:yayun src_tbl:t1 src_dsn:h=127.0.0.1,p=...,u=root dst_db:yayun dst_tbl:t1 dst_dsn:h=192.168.0.20,p=...,u=root lock:1 transaction:1 changing_src:yayun.checksums replicate:yayun.checksums bidirectional:0 pid:2190 user:root host:MySQL-01*/;
+</code></pre>
+<p>参数的意义：</p>
+<pre><code>--replicate=  ：指定通过pt-table-checksum得到的表，这2个工具差不多都会一直用。
+--databases=  : 指定执行同步的数据库，多个用逗号隔开。
+--tables=     ：指定执行同步的表，多个用逗号隔开。
+--sync-to-master ：指定一个DSN，即从的IP，他会通过show processlist或show slave status 去自动的找主。
+h=127.0.0.1   ：服务器地址，命令里有2个ip，第一次出现的是Master的地址，第2次是Slave的地址。
+u=root		  ：帐号。
+p=123456    ：密码。
+--print       ：打印，但不执行命令。
+--execute     ：执行命令。
+</code></pre>
+<p>命令介绍完了，一起解释下执行的效果：通过（&ndash;print）打印出来了修复数据的sql语句，可以手动的去从行执行，让他们数据保持一致性。那能否直接执行？当然可以，通过(&ndash;execute)：</p>
+<pre><code>[root@MySQL-01 ~]# pt-table-sync --replicate=pt.checksums h=47.97.218.145,u=root,p=123456 h=39.106.84.122,u=root,p=123456 --execute
+</code></pre>
+<p>没发现任何异常，然后检查主从数据的一致性：</p>
+<pre><code>[root@MySQL-01 ~]# pt-table-checksum --nocheck-binlog-format --nocheck-plan --nocheck-replication-filters --replicate=pt.checksums --set-vars innodb_lock_wait_timeout=120 --databases test -u'root' -p'123456' -h47.97.218.145 -P3306
+      TS     ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+04-13T16:27:28            0      0          3         1        0     0.097 yayun.t1
+</code></pre>
+<p>再来看看对应的数据库吧：</p>
+<pre><code>主库
+mysql&gt; select * from t1;
+
++----+-------+
+| id | name  |
++----+-------+
+|  1 | yayun |
+|  2 | atlas |
+|  3 | mysql |
++----+-------+
+3 rows in set (0.00 sec)
+mysql&gt;
+</code></pre>
+<p>从库会丢失掉之前多余的两条数据</p>
+<pre><code>mysql&gt; select * from t1;
+
++----+-------+
+| id | name  |
++----+-------+
+|  1 | yayun |
+|  2 | atlas |
+|  3 | mysql |
++----+-------+
+3 rows in set (0.00 sec)
+</code></pre>
+<p>OK，数据已经保持一致了。
+不过有人建议还是用<code>—print</code>打印出来的好，这样就可以知道那些数据有问题，可以人为的干预下。不然直接执行了，出现问题之后更不好处理。总之还是在处理之前做好数据的备份工作。</p>
+<p>注意：要是表中没有唯一索引或则主键则会报错。</p>
+<pre><code>Can't make changes on the master because no unique index exists at /usr/local/bin/pt-table-sync line 10591.
+</code></pre>
+<p>最后，这些工具很给力，工作中常常在使用。注意使用该工具需要授权，一般SELECT, PROCESS, SUPER, REPLICATION SLAVE等权限就已经足够了。</p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E6%85%A2%E6%9F%A5%E8%AF%A2%E5%BA%94%E7%94%A8/" class="button"><div class="previous"><div>MySQL 慢查询应用</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="button"><div class="next"><div>MySQL 基于Docker的主从复制</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Redis布隆过滤器 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Redis布隆过滤器">
+<meta itemprop="description" content=" 布隆过滤器是什么？（判断某个key一定不存在）  本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构 特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存在或者可能存在”。 相比于传统的 List、Set、Map 等数据结构，它更高效、占用空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。  使用：
+ 布隆过滤器在NoSQL数据库领域中应用的非常广泛 当用户来查询某一个row时，可以先通过内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询 布隆过滤器说某个值不存在时，那肯定就是不存在，可以显著降低数据库IO请求数量  应用场景  场景1（给用户推荐新闻）
+ 当用户看过的新闻，肯定会被过滤掉，对于没有看多的新闻，可能会过滤极少的一部分（误判）。
+这样可以完全保证推送给用户的新闻都是无重复的。
+ 场景2（爬虫url去重）
+ 在爬虫系统中，我们需要对url去重，已经爬取的页面不再爬取
+当url高达几千万时，如果一个集合去装下这些URL地址非常浪费空间
+使用布隆过滤器可以大幅降低去重存储消耗，只不过也会使爬虫系统错过少量页面
+  布隆过滤器原理  每个布隆过滤器对应到Redis的数据结构是一个大型的数组和几个不一样的无偏hash函数 如下图：f、g、h就是这样的hash函数（无偏差指让hash映射到数组的位置比较随机）   添加：值到布隆过滤器
+ 向布隆过滤器添加key,会使用 f、g、h hash函数对key算出一个整数索引，然后对长度取余
+每个hash函数都会算出一个不同的位置，把算出的位置都设置成1就完成了布隆过滤器添加过程
+ 查询：布隆过滤器值
+ 当查询某个key时，先用hash函数算出一个整数索引，然后对长度取余
+当你有一个不为1时肯定不存在这个key，当全部都为1时可能有这个key
+这样内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询，减少IO操作
+   删除：不支持
+ 目前我们知道布隆过滤器可以支持 add 和 isExist 操作
+如何解决这个问题，答案是计数删除，但是计数删除需要存储一个数值，而不是原先的 bit 位，会增大占用的内存大小。
+增加一个值就是将对应索引槽上存储的值加一，删除则是减一，判断是否存在则是看值是否大于0。
+  ">
+<meta itemprop="datePublished" content="2020-04-12T22:55:23&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T22:55:23&#43;08:00" />
+<meta itemprop="wordCount" content="41">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Redis布隆过滤器" />
+<meta property="og:description" content=" 布隆过滤器是什么？（判断某个key一定不存在）  本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构 特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存在或者可能存在”。 相比于传统的 List、Set、Map 等数据结构，它更高效、占用空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。  使用：
+ 布隆过滤器在NoSQL数据库领域中应用的非常广泛 当用户来查询某一个row时，可以先通过内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询 布隆过滤器说某个值不存在时，那肯定就是不存在，可以显著降低数据库IO请求数量  应用场景  场景1（给用户推荐新闻）
+ 当用户看过的新闻，肯定会被过滤掉，对于没有看多的新闻，可能会过滤极少的一部分（误判）。
+这样可以完全保证推送给用户的新闻都是无重复的。
+ 场景2（爬虫url去重）
+ 在爬虫系统中，我们需要对url去重，已经爬取的页面不再爬取
+当url高达几千万时，如果一个集合去装下这些URL地址非常浪费空间
+使用布隆过滤器可以大幅降低去重存储消耗，只不过也会使爬虫系统错过少量页面
+  布隆过滤器原理  每个布隆过滤器对应到Redis的数据结构是一个大型的数组和几个不一样的无偏hash函数 如下图：f、g、h就是这样的hash函数（无偏差指让hash映射到数组的位置比较随机）   添加：值到布隆过滤器
+ 向布隆过滤器添加key,会使用 f、g、h hash函数对key算出一个整数索引，然后对长度取余
+每个hash函数都会算出一个不同的位置，把算出的位置都设置成1就完成了布隆过滤器添加过程
+ 查询：布隆过滤器值
+ 当查询某个key时，先用hash函数算出一个整数索引，然后对长度取余
+当你有一个不为1时肯定不存在这个key，当全部都为1时可能有这个key
+这样内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询，减少IO操作
+   删除：不支持
+ 目前我们知道布隆过滤器可以支持 add 和 isExist 操作
+如何解决这个问题，答案是计数删除，但是计数删除需要存储一个数值，而不是原先的 bit 位，会增大占用的内存大小。
+增加一个值就是将对应索引槽上存储的值加一，删除则是减一，判断是否存在则是看值是否大于0。
+  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" />
+<meta property="article:published_time" content="2020-04-12T22:55:23+08:00" />
+<meta property="article:modified_time" content="2020-04-12T22:55:23+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis布隆过滤器"/>
+<meta name="twitter:description" content=" 布隆过滤器是什么？（判断某个key一定不存在）  本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构 特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存在或者可能存在”。 相比于传统的 List、Set、Map 等数据结构，它更高效、占用空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。  使用：
+ 布隆过滤器在NoSQL数据库领域中应用的非常广泛 当用户来查询某一个row时，可以先通过内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询 布隆过滤器说某个值不存在时，那肯定就是不存在，可以显著降低数据库IO请求数量  应用场景  场景1（给用户推荐新闻）
+ 当用户看过的新闻，肯定会被过滤掉，对于没有看多的新闻，可能会过滤极少的一部分（误判）。
+这样可以完全保证推送给用户的新闻都是无重复的。
+ 场景2（爬虫url去重）
+ 在爬虫系统中，我们需要对url去重，已经爬取的页面不再爬取
+当url高达几千万时，如果一个集合去装下这些URL地址非常浪费空间
+使用布隆过滤器可以大幅降低去重存储消耗，只不过也会使爬虫系统错过少量页面
+  布隆过滤器原理  每个布隆过滤器对应到Redis的数据结构是一个大型的数组和几个不一样的无偏hash函数 如下图：f、g、h就是这样的hash函数（无偏差指让hash映射到数组的位置比较随机）   添加：值到布隆过滤器
+ 向布隆过滤器添加key,会使用 f、g、h hash函数对key算出一个整数索引，然后对长度取余
+每个hash函数都会算出一个不同的位置，把算出的位置都设置成1就完成了布隆过滤器添加过程
+ 查询：布隆过滤器值
+ 当查询某个key时，先用hash函数算出一个整数索引，然后对长度取余
+当你有一个不为1时肯定不存在这个key，当全部都为1时可能有这个key
+这样内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询，减少IO操作
+   删除：不支持
+ 目前我们知道布隆过滤器可以支持 add 和 isExist 操作
+如何解决这个问题，答案是计数删除，但是计数删除需要存储一个数值，而不是原先的 bit 位，会增大占用的内存大小。
+增加一个值就是将对应索引槽上存储的值加一，删除则是减一，判断是否存在则是看值是否大于0。
+  "/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f&amp;title=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f&amp;title=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f&amp;description=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">Redis布隆过滤器</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 22:55:23 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f&amp;title=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f&amp;title=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f&amp;description=Redis%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E5%25B8%2583%25E9%259A%2586%25E8%25BF%2587%25E6%25BB%25A4%25E5%2599%25A8%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="布隆过滤器是什么判断某个key一定不存在">布隆过滤器是什么？（判断某个key一定不存在）</h2>
+<ol>
+<li>本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构</li>
+<li>特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存在或者可能存在”。</li>
+<li>相比于传统的 List、Set、Map 等数据结构，它更高效、占用空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。</li>
+</ol>
+<p>使用：</p>
+<ol>
+<li>布隆过滤器在NoSQL数据库领域中应用的非常广泛</li>
+<li>当用户来查询某一个row时，可以先通过内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询</li>
+<li>布隆过滤器说某个值不存在时，那肯定就是不存在，可以显著降低数据库IO请求数量</li>
+</ol>
+<h2 id="应用场景">应用场景</h2>
+<blockquote>
+<p>场景1（给用户推荐新闻）</p>
+<blockquote>
+<p>当用户看过的新闻，肯定会被过滤掉，对于没有看多的新闻，可能会过滤极少的一部分（误判）。</p>
+<p>这样可以完全保证推送给用户的新闻都是无重复的。</p>
+</blockquote>
+<p>场景2（爬虫url去重）</p>
+<blockquote>
+<p>在爬虫系统中，我们需要对url去重，已经爬取的页面不再爬取</p>
+<p>当url高达几千万时，如果一个集合去装下这些URL地址非常浪费空间</p>
+<p>使用布隆过滤器可以大幅降低去重存储消耗，只不过也会使爬虫系统错过少量页面</p>
+</blockquote>
+</blockquote>
+<h2 id="布隆过滤器原理">布隆过滤器原理</h2>
+<ol>
+<li>每个布隆过滤器对应到Redis的数据结构是一个大型的数组和几个不一样的无偏hash函数</li>
+<li>如下图：f、g、h就是这样的hash函数（无偏差指让hash映射到数组的位置比较随机）</li>
+</ol>
+<blockquote>
+<p>添加：值到布隆过滤器</p>
+<blockquote>
+<p>向布隆过滤器添加key,会使用 f、g、h hash函数对key算出一个整数索引，然后对长度取余</p>
+<p>每个hash函数都会算出一个不同的位置，把算出的位置都设置成1就完成了布隆过滤器添加过程</p>
+</blockquote>
+<p>查询：布隆过滤器值</p>
+<blockquote>
+<p>当查询某个key时，先用hash函数算出一个整数索引，然后对长度取余</p>
+<p>当你有一个不为1时肯定不存在这个key，当全部都为1时可能有这个key</p>
+<p>这样内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询，减少IO操作</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>删除：不支持</p>
+<blockquote>
+<p>目前我们知道布隆过滤器可以支持 add 和 isExist 操作</p>
+<p>如何解决这个问题，答案是计数删除，但是计数删除需要存储一个数值，而不是原先的 bit 位，会增大占用的内存大小。</p>
+<p>增加一个值就是将对应索引槽上存储的值加一，删除则是减一，判断是否存在则是看值是否大于0。</p>
+</blockquote>
+</blockquote>
+<p><img src="/%E5%9B%BE%E7%89%876.png" alt="布隆过滤器"></p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" class="button"><div class="previous"><div>Redis分布式锁</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E9%9B%AA%E5%B4%A9_%E7%A9%BF%E9%80%8F_%E5%87%BB%E7%A9%BF/" class="button"><div class="next"><div>Redis雪崩_穿透_击穿</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

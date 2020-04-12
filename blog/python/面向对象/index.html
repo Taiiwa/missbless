@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>面向对象 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="面向对象">
+<meta itemprop="description" content="封装，继承，多态 1. 封装  在类中对数据的赋值、内部调用对外部用户是透明的 这使类变成了一个胶囊或容器，里面包含着类的数据和方法 作用：   防止数据被随意修改
+  使外部程序不需要关注对象内部的构造，只需要通过对外提供的接口进行直接访问
+ 2．Inheritance 继承（代码重用）  一个类可以派生出子类，在这个父类里定义的属性、方法自动被子类继承 比如CS中的警察和恐怖分子，可以将两个角色的相同点写到一个父类中，然后同时去继承它 使用经典类： Person.__init__(self,name,age) 并重写写父类Person的构造方法，实现，先覆盖，再继承，再重构  3. Polymorphism 多态（接口重用）  多态是面向对象的重要特性,简单点说:“一个接口，多种实现” 指一个基类中派生出了不同的子类，且每个子类在继承同样的方法名的同时又对父类的方法做了不同的实现 这就是同一种事物表现出的多种形态 比如黄种人继承了人talk这个功能，但是他说的是中文，而美国人的talk是英文，但是他们是同样的talk  作用：简单的讲就是允许父类调用子类的方法
+静态方法、类方法、属性方法 静态方法  作用: 静态方法可以更好的组织代码，防止代码变大后变得比较混乱。 特性: 静态方法只是名义上归类管理，实际上在静态方法里访问不了类或则实例中的任何属性 静态方法使用场景：   我们要写一个只在类中运行而不在实例中运行的方法.
+  经常有一些跟类有关系的功能但在运行时又不需要实例和类参与的情况下需要用到静态方法.
+  比如更改环境变量或者修改其他类的属性等能用到静态方法.
+  这种情况可以直接用函数解决, 但这样同样会扩散类内部的代码，造成维护困难.
+  调用方式: 既可以被类直接调用，也可以通过实例调用
+ class Dog(object): def __init__(self,name): self.name = name @staticmethod def eat(): print(&quot;I am a static method&quot;) d = Dog(&quot;ChenRonghua&quot;) d.">
+<meta itemprop="datePublished" content="2020-04-12T21:39:27&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T21:39:27&#43;08:00" />
+<meta itemprop="wordCount" content="266">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="面向对象" />
+<meta property="og:description" content="封装，继承，多态 1. 封装  在类中对数据的赋值、内部调用对外部用户是透明的 这使类变成了一个胶囊或容器，里面包含着类的数据和方法 作用：   防止数据被随意修改
+  使外部程序不需要关注对象内部的构造，只需要通过对外提供的接口进行直接访问
+ 2．Inheritance 继承（代码重用）  一个类可以派生出子类，在这个父类里定义的属性、方法自动被子类继承 比如CS中的警察和恐怖分子，可以将两个角色的相同点写到一个父类中，然后同时去继承它 使用经典类： Person.__init__(self,name,age) 并重写写父类Person的构造方法，实现，先覆盖，再继承，再重构  3. Polymorphism 多态（接口重用）  多态是面向对象的重要特性,简单点说:“一个接口，多种实现” 指一个基类中派生出了不同的子类，且每个子类在继承同样的方法名的同时又对父类的方法做了不同的实现 这就是同一种事物表现出的多种形态 比如黄种人继承了人talk这个功能，但是他说的是中文，而美国人的talk是英文，但是他们是同样的talk  作用：简单的讲就是允许父类调用子类的方法
+静态方法、类方法、属性方法 静态方法  作用: 静态方法可以更好的组织代码，防止代码变大后变得比较混乱。 特性: 静态方法只是名义上归类管理，实际上在静态方法里访问不了类或则实例中的任何属性 静态方法使用场景：   我们要写一个只在类中运行而不在实例中运行的方法.
+  经常有一些跟类有关系的功能但在运行时又不需要实例和类参与的情况下需要用到静态方法.
+  比如更改环境变量或者修改其他类的属性等能用到静态方法.
+  这种情况可以直接用函数解决, 但这样同样会扩散类内部的代码，造成维护困难.
+  调用方式: 既可以被类直接调用，也可以通过实例调用
+ class Dog(object): def __init__(self,name): self.name = name @staticmethod def eat(): print(&quot;I am a static method&quot;) d = Dog(&quot;ChenRonghua&quot;) d." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/python/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" />
+<meta property="article:published_time" content="2020-04-12T21:39:27+08:00" />
+<meta property="article:modified_time" content="2020-04-12T21:39:27+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="面向对象"/>
+<meta name="twitter:description" content="封装，继承，多态 1. 封装  在类中对数据的赋值、内部调用对外部用户是透明的 这使类变成了一个胶囊或容器，里面包含着类的数据和方法 作用：   防止数据被随意修改
+  使外部程序不需要关注对象内部的构造，只需要通过对外提供的接口进行直接访问
+ 2．Inheritance 继承（代码重用）  一个类可以派生出子类，在这个父类里定义的属性、方法自动被子类继承 比如CS中的警察和恐怖分子，可以将两个角色的相同点写到一个父类中，然后同时去继承它 使用经典类： Person.__init__(self,name,age) 并重写写父类Person的构造方法，实现，先覆盖，再继承，再重构  3. Polymorphism 多态（接口重用）  多态是面向对象的重要特性,简单点说:“一个接口，多种实现” 指一个基类中派生出了不同的子类，且每个子类在继承同样的方法名的同时又对父类的方法做了不同的实现 这就是同一种事物表现出的多种形态 比如黄种人继承了人talk这个功能，但是他说的是中文，而美国人的talk是英文，但是他们是同样的talk  作用：简单的讲就是允许父类调用子类的方法
+静态方法、类方法、属性方法 静态方法  作用: 静态方法可以更好的组织代码，防止代码变大后变得比较混乱。 特性: 静态方法只是名义上归类管理，实际上在静态方法里访问不了类或则实例中的任何属性 静态方法使用场景：   我们要写一个只在类中运行而不在实例中运行的方法.
+  经常有一些跟类有关系的功能但在运行时又不需要实例和类参与的情况下需要用到静态方法.
+  比如更改环境变量或者修改其他类的属性等能用到静态方法.
+  这种情况可以直接用函数解决, 但这样同样会扩散类内部的代码，造成维护困难.
+  调用方式: 既可以被类直接调用，也可以通过实例调用
+ class Dog(object): def __init__(self,name): self.name = name @staticmethod def eat(): print(&quot;I am a static method&quot;) d = Dog(&quot;ChenRonghua&quot;) d."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1&amp;url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f&amp;title=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f&amp;title=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f&amp;description=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/python/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">面向对象</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 21:39:27 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1&amp;url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f&amp;title=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f&amp;title=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f&amp;description=%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E9%259D%25A2%25E5%2590%2591%25E5%25AF%25B9%25E8%25B1%25A1%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="封装继承多态">封装，继承，多态</h2>
+<h3 id="1-封装">1. 封装</h3>
+<ol>
+<li>在类中对数据的赋值、内部调用对外部用户是透明的</li>
+<li>这使类变成了一个胶囊或容器，里面包含着类的数据和方法</li>
+<li>作用：</li>
+</ol>
+<blockquote>
+<p>防止数据被随意修改</p>
+</blockquote>
+<blockquote>
+<p>使外部程序不需要关注对象内部的构造，只需要通过对外提供的接口进行直接访问</p>
+</blockquote>
+<h3 id="2inheritance-继承代码重用">2．Inheritance 继承（代码重用）</h3>
+<ol>
+<li>一个类可以派生出子类，在这个父类里定义的属性、方法自动被子类继承</li>
+<li>比如CS中的警察和恐怖分子，可以将两个角色的相同点写到一个父类中，然后同时去继承它</li>
+<li>使用经典类： <code>Person.__init__(self,name,age)</code> 并重写写父类Person的构造方法，实现，先覆盖，再继承，再重构</li>
+</ol>
+<h3 id="3-polymorphism-多态接口重用">3. Polymorphism 多态（接口重用）</h3>
+<ol>
+<li>多态是面向对象的重要特性,简单点说:“一个接口，多种实现”</li>
+<li>指一个基类中派生出了不同的子类，且每个子类在继承同样的方法名的同时又对父类的方法做了不同的实现</li>
+<li>这就是同一种事物表现出的多种形态</li>
+<li>比如黄种人继承了人talk这个功能，但是他说的是中文，而美国人的talk是英文，但是他们是同样的talk</li>
+</ol>
+<p>作用：简单的讲就是允许父类调用子类的方法</p>
+<h2 id="静态方法类方法属性方法">静态方法、类方法、属性方法</h2>
+<h3 id="静态方法">静态方法</h3>
+<ol>
+<li>作用: 静态方法可以更好的组织代码，防止代码变大后变得比较混乱。</li>
+<li>特性: 静态方法只是名义上归类管理，实际上在静态方法里访问不了类或则实例中的任何属性</li>
+<li>静态方法使用场景：</li>
+</ol>
+<blockquote>
+<p>我们要写一个只在类中运行而不在实例中运行的方法.</p>
+</blockquote>
+<blockquote>
+<p>经常有一些跟类有关系的功能但在运行时又不需要实例和类参与的情况下需要用到静态方法.</p>
+</blockquote>
+<blockquote>
+<p>比如更改环境变量或者修改其他类的属性等能用到静态方法.</p>
+</blockquote>
+<blockquote>
+<p>这种情况可以直接用函数解决, 但这样同样会扩散类内部的代码，造成维护困难.</p>
+</blockquote>
+<ol start="4">
+<li>
+<p>调用方式:  既可以被类直接调用，也可以通过实例调用</p>
+<pre><code> class Dog(object):
+     def __init__(self,name):
+         self.name = name
+     @staticmethod
+     def eat():
+         print(&quot;I am a static method&quot;)
+ d = Dog(&quot;ChenRonghua&quot;)
+ d.eat()                     #方法1：使用实例调用
+ Dog.eat()                   #方法2：使用类直接调用
+</code></pre>
+</li>
+</ol>
+<h3 id="类方法">类方法</h3>
+<ol>
+<li>
+<p>作用：无需实例化直接被类调用</p>
+</li>
+<li>
+<p>特性:  类方法只能访问类变量，不能访问实例变量</p>
+</li>
+<li>
+<p>类方法使用场景： 当我们还未创建实例，但是需要调用类中的方法</p>
+</li>
+<li>
+<p>调用方式:  既可以被类直接调用，也可以通过实例调用</p>
+<pre><code> class Dog(object):
+     name = '类变量' #在这里如果不定义类变量仅定义实例变量依然报错
+     def __init__(self,name):
+         self.name = '实例变量'
+         self.name = name
+     @classmethod
+     def eat(self,food):
+         print(&quot;%s is eating %s&quot;%(self.name,food))
+ Dog.eat('baozi')                   #方法1：使用类直接调用
+ d = Dog(&quot;ChenRonghua&quot;)          
+ d.eat(&quot;包子&quot;)                      #方法2：使用实例d调用
+</code></pre>
+</li>
+</ol>
+<h3 id="属性方法">属性方法</h3>
+<p>作用：属性方法把一个方法变成一个属性，隐藏了实现细节,调用时不必加括号直接d.eat即可调用self.eat()方法</p>
+<pre><code>    class Dog(object):
+        def __init__(self, name):
+            self.name = name
+
+        @property
+        def eat(self):
+            print(&quot; %s is eating&quot; % self.name)
+    d = Dog(&quot;ChenRonghua&quot;)
+    d.eat()
+    # 调用会出以下错误， 说NoneType is not callable, 因为eat此时已经变成一个静态属性了， 
+    # 不是方法了， 想调用已经不需要加()号了，直接d.eat就可以了
+</code></pre>
+<h2 id="3-魔法方法">3. 魔法方法</h2>
+<h3 id="type生成类调用顺序">type生成类调用顺序</h3>
+<p><code>__new__</code> : 先于<code>__init__</code>方法，每生成一个实例执行一次，<code>__new__</code> 类方法创建实例对象</p>
+<p><code>__init__</code> : <code> __init__</code>方法每生成一个实例就会执行一次，初始化实例对象</p>
+<p><code>__call__</code> : 后于<code>__init__</code>方法，C()() 使用类再加一个括号调用， C为类名称</p>
+<p><code>__del__</code> : 析构方法，删除无用的内存对象（当程序结束会自动自行析构方法）</p>
+<h3 id="类实例化时魔法方法调用顺序">类实例化时魔法方法调用顺序</h3>
+<pre><code>class Student(object):
+    def __new__(cls, *args, **kwargs):
+        print('__new__')
+        return object.__new__(cls)   # 必须返回父类的__new__方法，否则不不执行__init__方法，无法创建实例
+
+    def __init__(self,name):
+        print('__init__')
+        self.name = name
+
+    def __str__(self):                # 作用：打印实例时显示指定字符串，而不是内存地址
+        print('__str__')
+        return self.name
+
+    def __call__(self, *args, **kwargs):        # 当执行C()(*args) 或者 s1(*args) 就会执行__call__
+        print('__call__',*args)
+
+    def __del__(self):                # 作用：清除无用的实例对内存的暂用
+        print('__del__')
+
+#1、实例化时机会执行__new__、__init__
+s1 = Student('tom')
+
+#2、执行 实例()  就会执行__call__ 方法，并将参数传递给__call__函数
+s1('call01')
+
+#3、当打印实例时就会执行 __str__ 方法下返回的字符串（默认返回的实例地址）
+print(s1)
+
+#4、析构方法：当删除实例时就会调用 __del__ 方法
+del s1
+# 析构方法作用：在程序结束后会自动执行析构方法删除所有实例
+# 但是在程序运行时有很多实例是无用的，但是python内存回收机制却不会自动删除他们，这样就浪费内存
+# 我们可以执行 del s1 ，那么在程序运行时，python内存回收机制会检测到这些实例时无用的，才会删除
+# 其实我们执行del s1，并没有回收内存，只不过是摘除门牌号，python内存回收机制发现没有门牌号后会自动回收内存
+</code></pre>
+<h2 id="4-反射-hasattrgetattrsetattr-和-delattr">4 反射: hasattr、getattr、setattr 和 delattr</h2>
+<h3 id="hasattrogjname_str-判断一个对象里是否有对应的字符串方法">hasattr(ogj,name_str) 判断一个对象里是否有对应的字符串方法</h3>
+<pre><code>class Dog(object):
+    def eat(self,food):
+        print(&quot;eat method!!!&quot;)
+d = Dog()
+
+#hasattr判断对象d是否有eat方法，有返回True，没有返回False
+print(hasattr(d,'eat'))     #True
+print(hasattr(d,'cat'))     #False
+</code></pre>
+<h3 id="getattrobjname_str-根据字符串去获取obj对象里的对应的方法的内存地址">getattr(obj,name_str) 根据字符串去获取obj对象里的对应的方法的内存地址</h3>
+<pre><code>class Dog(object):
+    def eat(self):
+        print(&quot;eat method!!!&quot;)
+d = Dog()
+
+if hasattr(d,'eat'):          # hasattr判断实例是否有eat方法
+    func = getattr(d, 'eat')  # getattr获取实例d的eat方法内存地址
+    func()                    # 执行实例d的eat方法
+#运行结果：  eat method!!!
+</code></pre>
+<h3 id="使用stattr给类实例对象动态添加一个新的方法">使用stattr给类实例对象动态添加一个新的方法</h3>
+<h3 id="delattr删除实例属性">delattr删除实例属性</h3>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/%E8%BF%AD%E4%BB%A3%E5%99%A8/" class="button"><div class="previous"><div>迭代器</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/python/%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/" class="button"><div class="next"><div>深浅拷贝</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

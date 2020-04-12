@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 09 Apr 2020 19:51:01 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 12 Apr 2020 23:21:18 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Thu, 09 Apr 2020 19:51:01 +0800</pubDate>
+      <pubDate>Sun, 12 Apr 2020 23:21:18 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -27,6 +27,9 @@
  git   01-git常用指令
  02-git配置代理
  03-git解决push问题
+ linux   Linux-supervisor
+ Linux常用命令
+ sellect_poll_epoll
  pygame   01-pygame初始化
  02-pygame中的music
  03-pygame中的color
@@ -38,12 +41,540 @@
  09-pygame中的key
  10-pygame中的mouse
  11-pygame中的Surface
- Python   random模块
- 数据库   01-数据库Redis配置
- 02-数据库Redis操作
- 其他   01-Hugo博客编撰日志
- 02-MarkDown语法简介
- 03-虚拟环境</description>
+ pygame中的image
+ Python   datetime模块
+ python垃圾回收机制
+ random模块</description>
+    </item>
+    
+    <item>
+      <title>Linux常用命令</title>
+      <link>/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Sun, 12 Apr 2020 23:20:21 +0800</pubDate>
+      
+      <guid>/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+      <description>系统命令 runlevel # 查看当前的运行级别 systemctl status firewalld # 开启网络服务功能 stop # 关闭 restart # 重启 reload # 重载 reboot # 重启 halt # 关机 poweroff # 关机  查看文件常用指令 cat # 在命令提示符下查看文件内容 more # 在命令提示符中分页查看文件内容 less # 命令行中查看文件可以上下翻页反复浏览 head # 命令行中查看文件头几行 tail # 命令行中查看文件尾几行 wc # 统计文件的单词数 行数等信息  目录管理常用指令 pwd # 查看你当前所在的目录 cd # 切换目录 ls # 查看显示目录的内容 du # 统计目录和文件空间的占用情况 mkdir # 创建新目录 rmdir # 删除空目录 touch # 创建文件 rm # 删除文件 ln # 创建硬链接 ln -s # 创建软链接 cp # 复制文件或目录 mv # 移动文件或目录 which # 查看linux命令所在的目录  账号与权限 &#39;&#39;&#39;1.</description>
+    </item>
+    
+    <item>
+      <title>Linux Supervisor</title>
+      <link>/blog/linux/linux-supervisor/</link>
+      <pubDate>Sun, 12 Apr 2020 23:19:00 +0800</pubDate>
+      
+      <guid>/blog/linux/linux-supervisor/</guid>
+      <description> 场景需求 我司运营部门日常工作需要处理大量数据和报表，我司拟开发内部OA系统提高各部门工作效率。现项目内设备扫描功能使用了celery做的任务队列，进行异步扫描，同时又使用到Flower来监控任务队列。为了方便管理，在项目中使用了Supervisor来管理进程数据。请实现使用supervisor进行任务管理
+参考答案 Supervisor是用Python开发的一个client/server服务，是Linux/Unix系统下的一个进程管理工具，不支持Windows系统。它可以很方便的监听、启动、停止、重启一个或多个进程。用Supervisor管理的进程，当一个进程意外被杀死，supervisort监听到进程死后，会自动将它重新拉起，很方便的做到进程自动恢复的功能，不再需要自己写shell脚本来控制。
+不使用守护进程会出现的三个问题：  ASP.NET Core应用程序运行在shell之中，如果关闭shell则会发现 ASP.NET Core程序被关闭，从而导致应用无法访问，这种情况当然是我们不想遇到的，而且生产环境对这种情况是零容忍的。 如果 ASP.NET Core进程意外终止那么需要人为连进shell进行再次启动，往往这种操作都不够及时。 如果服务器宕机或需要重启，我们则还是需要连入shell进行启动。  为了解决这些问题，我们需要有一个程序来监听 ASP.NET Core 应用程序的状况。并在应用程序停止运行的时候立即重新启动
+# 编辑进程管理配置文件 [root@sandboxmp ~]$ touch /etc/supervisord.d/celery_worker.ini [root@sandboxmp ~]$ vim /etc/supervisord.d/celery_worker.ini # 将以下内容写入配置文件保存并退出 [program:celery-worker] command=/root/.virtualenvs/sandboxMP/bin/celery worker -A sandboxMP -l INFO directory=/opt/app/sandboxMP environment=PATH=&amp;quot;/root/.virtualenvs/sandboxMP/bin/&amp;quot; stdout_logfile=/opt/app/sandboxMP/slogs/celery_worker.log stderr_logfile=/opt/app/sandboxMP/slogs/celery_worker.log autostart=true autorestart=true priority=901 [program:celery-flower] command=/root/.virtualenvs/sandboxMP/bin/celery flower --broker=redis://localhost:6379/0 directory=/opt/app/sandboxMP environment=PATH=&amp;quot;/root/.virtualenvs/sandboxMP/bin/&amp;quot; stdout_logfile=/opt/app/sandboxMP/slogs/celery_flower.log stderr_logfile=/opt/app/sandboxMP/slogs/celery_flower.log autostart=true autorestart=true priority=900 systemctl start supervisord # 启动supervisord systemctl enable supervisord # 加到开机启动 </description>
+    </item>
+    
+    <item>
+      <title>青蛙跳台阶</title>
+      <link>/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/</link>
+      <pubDate>Sun, 12 Apr 2020 23:18:12 +0800</pubDate>
+      
+      <guid>/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/</guid>
+      <description> 一只青蛙一次可以跳上1级台阶，也可以跳上2级……它也可以跳上n级。求该青蛙跳上一个n级的台阶总共有多少种跳法。
+fib = lambda n: n if n &amp;lt; 2 else 2 * fib(n - 1) </description>
+    </item>
+    
+    <item>
+      <title>递归斐波那契</title>
+      <link>/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/</link>
+      <pubDate>Sun, 12 Apr 2020 23:17:57 +0800</pubDate>
+      
+      <guid>/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/</guid>
+      <description> def fun(i): if i == 0: return 0 elif i == 1: return 1 else: return fun(i-2) + fei(i-1) if __name__ == &#39;__main__&#39;: for i in range(10): print(fun(i),end=&amp;quot; &amp;quot;) </description>
+    </item>
+    
+    <item>
+      <title>快排</title>
+      <link>/blog/python/%E5%BF%AB%E6%8E%92/</link>
+      <pubDate>Sun, 12 Apr 2020 23:15:51 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%BF%AB%E6%8E%92/</guid>
+      <description> 快排代码实现（类似于二叉树 递归调用）&amp;mdash;-右手左手一个慢动作，右手左手一个慢动作重播
+#! /usr/bin/env python # -*- coding: utf-8 -*- def quick(list): if len(list) &amp;lt; 2: return list tmp = list[0] # 临时变量 可以取随机值 left = [x for x in list[1:] if x &amp;lt;= tmp] # 左列表 right = [x for x in list[1:] if x &amp;gt; tmp] # 右列表 return quick(left) + [tmp] + quick(right) li = [4,3,7,5,8,2] print quick(li) # [2, 3, 4, 5, 7, 8] #### 对[4,3,7,5,8,2]排序 &#39;&#39;&#39; [3, 2] + [4] + [7, 5, 8] # tmp = [4] [2] + [3] + [4] + [7, 5, 8] # tmp = [3] 此时对[3, 2]这个列表进行排序 [2] + [3] + [4] + [5] + [7] + [8] # tmp = [7] 此时对[7, 5, 8]这个列表进行排序 &#39;&#39;&#39; </description>
+    </item>
+    
+    <item>
+      <title>冒泡法排序</title>
+      <link>/blog/python/%E5%86%92%E6%B3%A1%E6%B3%95%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Sun, 12 Apr 2020 23:15:22 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%86%92%E6%B3%A1%E6%B3%95%E6%8E%92%E5%BA%8F/</guid>
+      <description> 原理：拿自己与上面一个比较，如果上面一个比自己小就将自己和上面一个调换位置，依次再与上面一个比较，第一轮结束后最上面那个一定是最大的数
+#! /usr/bin/env pythonf # -*- coding: utf-8 -*- def bubble_sort(li): for i in range(len(li)-1): for j in range(len(li)-i-1): if li[j] &amp;gt; li[j+1]: li[j],li[j+1]=li[j+1],li[j] li = [1,5,2,6,3,7,4,8,9,0] bubble_sort(li) print(li) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] </description>
+    </item>
+    
+    <item>
+      <title>二分法查找</title>
+      <link>/blog/python/%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE/</link>
+      <pubDate>Sun, 12 Apr 2020 23:15:04 +0800</pubDate>
+      
+      <guid>/blog/python/%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE/</guid>
+      <description> l = list(range(1,101)) def bin_search(data_set,val): low = 0 high = len(data_set) - 1 while low &amp;lt;= high: mid = (low+high)//2 if data_set[mid] == val: return mid elif data_set[mid] &amp;lt; val: low = mid + 1 else: high = mid - 1 return n = bin_search(l,11) print(n) # 返回结果是： 10 </description>
+    </item>
+    
+    <item>
+      <title>常见数据结构</title>
+      <link>/blog/python/%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Sun, 12 Apr 2020 23:10:26 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description> 栈  栈的定义：栈是一种数据集合，可以理解为只能在一端进行插入或删除操作的列表 栈的特点：后进先出（last-in, first-out）  队列  队列是一个数据集合，仅允许在列表的一端进行插入，另一端进行删除 插入的一端称为队尾（rear），插入动作叫进队或入队 进行删除的一端称为对头（front），删除动作称为出队 队列性质：先进先出（First-in, First-out） 双向队列：队列的两端都允许进行进队和出队操作  链表 链表中每个元素都是一个对象，每个对象称为一个节点，包含有数据域key和指向下一节点的指针next，通过各个节点间的相互连接，最终串联成一个链表
+数组  所谓数组，就是相同数据类型的元素按一定顺序排列的集合 在Java等其他语言中并不是所有的数据都能存储到数组中，只有相同类型的数据才可以一起存储到数组中。 因为数组在存储数据时是按顺序存储的，存储数据的内存也是连续的，所以他的特点就是寻址读取数据比较容易，插入和删除比较困难  字典对象实现原理  哈希表 (hash tables)
+ 哈希表（也叫散列表），根据关键值对(Key-value)而直接进行访问的数据结构。
+它通过把key和value映射到表中一个位置来访问记录，这种查询速度非常快，更新也快。
+而这个映射函数叫做哈希函数，存放值的数组叫做哈希表。
+通过把每个对象的关键字k作为自变量，通过一个哈希函数h(k)，将k映射到下标h(k)处，并将此对象存储在这个位置。
+ 具体操作过程
+ 数据添加：把key通过哈希函数转换成一个整型数字，然后就将该数字对数组长度进行取余，取余结果就当作数组的下标，将value存储在以该数字为下标的数组空间里。
+数据查询：再次使用哈希函数将key转换为对应的数组下标，并定位到数组的位置获取value。
+ {“name”:”zhangsan”,”age”:26} 字典如何存储的呢?
+ 比如字典{“name”:”zhangsan”,”age”:26}，那么他们的字典key为name、age，假如哈希函数h(“name”) = 1、h(“age”)=3,
+那么对应字典的key就会存储在列表对应下标的位置，[None, “zhangsan”, None, 26
+ 解决hash冲突
+ </description>
+    </item>
+    
+    <item>
+      <title>Redis Codis集群</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis-codis%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Sun, 12 Apr 2020 23:07:13 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis-codis%E9%9B%86%E7%BE%A4/</guid>
+      <description> 为什么会出现codis  在大数据高并发场景下，单个redis实例往往会无法应对 首先redis内存不易过大，内存太大会导致rdb文件过大，导致主从同步时间过长 其次在CPU利用率中上，单个redis实例只能利用单核，数据量太大，压力就会特别大  什么是codis  codis是redis集群解决方案之一，codis是GO语言开发的代理中间件 当客户端向codis发送指令时，codis负责将指令转发给后面的redis实例来执行，并将返回结果转发给客户端  codis部署方案  单个codis代理支撑的QPS比较有限，通过启动多个codis代理可以显著增加整体QPS 多codis还能起到容灾功能，挂掉一个codis代理还有很多codis代理可以继续服务  codis分片的原理  codis负责将特定key转发到特定redis实例，codis默认将所有key划分为1024个槽位 首先会对客户端传来的key进行crc32计算hash值，然后将hash后的整数值对1024进行取模，这个余数就是对应的key槽位 每个槽位都会唯一映射到后面的多个redis实例之一，codis会在内存中维护槽位和redis实例的映射关系 这样有了上面key对应的槽位，那么它应该转发到那个redis实例就很明确了 槽位数量默认是1024，如果集群中节点较多，建议将这个数值大一些，比如2048,4096  不同codis槽位如何同步  如果codis槽位值存在内存中，那么不同的codis实例间的槽位关系得不到同步 所以codis还需要一个分布式配置存储的数据库专门来持久化槽位关系 codis将槽位关系存储在zookeeper中，并且提供一个dashboard可以来观察和修改槽位关系  进入从库发现6380之前的角色是slave，现在已经是master了。也就是成功了。  </description>
+    </item>
+    
+    <item>
+      <title>Redis哨兵模式    Sentinel</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-sentinel/</link>
+      <pubDate>Sun, 12 Apr 2020 23:04:21 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-sentinel/</guid>
+      <description>sentinel作用  当用Redis做主从方案时，假如master宕机，Redis本身无法自动进行主备切换 而Redis-sentinel本身也是一个独立运行的进程，它能监控多个master-slave集群，发现master宕机后能进行自动切换。  sentinel原理  sentinel负责持续监控主节点的健康，当主节挂掉时，自动选择一个最优的从节点切换成主节点 从节点来连接集群时会首先连接sentinel，通过sentinel来查询主节点的地址 当主节点发生故障时，sentinel会将最新的主节点地址告诉客户端，可以实现无需重启自动切换redis  Sentinel支持集群  只使用单个sentinel进程来监控redis集群是不可靠的，当sentinel进程宕掉后sentinel本身也有单点问题 如果有多个sentinel，redis的客户端可以随意地连接任意一个sentinel来获得关于redis集群中的信息。  Sentinel版本  Sentinel当前稳定版本称为Sentinel 2，Redis2.8和Redis3.0附带稳定的哨兵版本 安装完redis-3.2.8后，redis-3.2.8/src/redis-sentinel启动程序 redis-3.2.8/sentinel.conf是配置文件。  运行sentinel两种方式（效果相同） 法1：redis-sentinel /path/to/sentinel.conf
+法2：redis-server /path/to/sentinel.conf --sentinel
+ 以上两种方式，都必须指定一个sentinel的配置文件sentinel.conf，如果不指定，将无法启动sentinel。 sentinel默认监听26379端口，所以运行前必须确定该端口没有被别的进程占用。  sentinel.conf配置文件说明   配置文件只需要配置master的信息就好啦，不用配置slave的信息，因为slave能够被自动检测到
+  需要注意的是，配置文件在sentinel运行期间是会被动态修改的，例如当发生主备切换时候，配置文件中的master会被修改为另外一个slave。
+  这样，之后sentinel如果重启时，就可以根据这个配置来恢复其之前所监控的redis集群的状态。
+ # sentinel.conf 配置说明 sentinel monitor mymaster 127.0.0.1 6379 2 sentinel down-after-milliseconds mymaster 60000 sentinel failover-timeout mymaster 180000 sentinel parallel-syncs mymaster 1    配置传播  一旦一个sentinel成功地对一个master进行了failover，它将会把关于master的最新配置通过广播形式通知其它sentinel，其它的sentinel则更新对应master的配置。 一个faiover要想被成功实行，sentinel必须能够向选为master的slave发送SLAVE OF NO ONE命令，然后能够通过INFO命令看到新master的配置信息。 当将一个slave选举为master并发送SLAVE OF NO ONE`后，即使其它的slave还没针对新master重新配置自己，failover也被认为是成功了的。  因为每一个配置都有一个版本号，所以以版本号最大的那个为标准：</description>
+    </item>
+    
+    <item>
+      <title>Redis主从同步</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5/</link>
+      <pubDate>Sun, 12 Apr 2020 23:01:08 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5/</guid>
+      <description> CPA原理  CPA原理是分布式存储理论的基石： C(一致性)； A(可用性)； P(分区容忍性); 当主从网络无法连通时，修改操作无法同步到节点，所以“一致性”无法满足 除非我们牺牲“可用性”，也就是暂停分布式节点服务，不再提供修改数据功能，知道网络恢复  一句话概括CAP: 当网络分区发生时，一致性 和 可用性 两难全
+redis主从同步介绍  和MySQL主从复制的原因一样，Redis虽然读取写入的速度都特别快，但是也会产生读压力特别大的情况。 为了分担读压力，Redis支持主从复制，Redis的主从结构可以采用一主多从或者级联结构。 Redis主从复制可以根据是否是全量分为全量同步和增量同步。  注：redis主节点Master挂掉时，运维让从节点Slave接管（redis主从默认无法自动切换，需要运维手动切换）
+全量同步（快照同步） 注：Redis全量复制一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份。
+具体步骤如下：
+ 从服务器连接主服务器，发送SYNC命令； 主服务器接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令； 主服务器BGSAVE执行完后，向所有从服务器发送快照文件，并在发送期间继续记录被执行的写命令； 从服务器收到快照文件后丢弃所有旧数据，载入收到的快照； 主服务器快照发送完毕后开始向从服务器发送缓冲区中的写命令； 从服务器完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令； 完成上面几个步骤后就完成了从服务器数据初始化的所有操作，从服务器此时可以接收来自用户的读请求。  增量同步  主节点会将那些对自己状态产生修改性影响的指令记录在本地内存buffer中，然后异步将buffer中指令同步到从节点 从节点一边执行同步指令达到主节点状态，一边向主节点反馈自己同步到哪里（偏移量） 当网络状态不好时，从节点无法和主节点进行同步，当网络恢复时需要进行快照同步  Redis主从同步策略  主从刚刚连接的时候，进行全量同步；全同步结束后，进行增量同步。 当然，如果有需要，slave 在任何时候都可以发起全量同步。 redis 策略是，无论如何，首先会尝试进行增量同步，如不成功，要求从机进行全量同步。  注意点  如果多个Slave断线了，需要重启的时候，因为只要Slave启动，就会发送sync请求和主机全量同步，当多个同时出现的时候，可能会导致Master IO剧增宕机。  </description>
+    </item>
+    
+    <item>
+      <title>Redis雪崩_穿透_击穿</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E9%9B%AA%E5%B4%A9_%E7%A9%BF%E9%80%8F_%E5%87%BB%E7%A9%BF/</link>
+      <pubDate>Sun, 12 Apr 2020 22:59:08 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E9%9B%AA%E5%B4%A9_%E7%A9%BF%E9%80%8F_%E5%87%BB%E7%A9%BF/</guid>
+      <description> 缓存穿透  定义   缓存穿透是指查询一个一定不存在的数据，由于缓存不命中，接着查询数据库也无法查询出结果， 虽然也不会写入到缓存中，但是这将会导致每个查询都会去请求数据库，造成缓存穿透；   解决方法 ：布隆过滤   对所有可能查询的参数以hash形式存储，在控制层先进行校验，不符合则丢弃，从而避免了对底层存储系统的查询压力；  缓存雪崩  定义　   缓存雪崩是指，由于缓存层承载着大量请求，有效的保护了存储层，但是如果缓存层由于某些原因整体不能提供服务 于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。   解决方法   保证缓存层服务高可用性：比如 Redis Sentinel 和 Redis Cluster 都实现了高可用 依赖隔离组件为后端限流并降级：比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。  缓存击穿  定义：   缓存击穿，就是说某个 key 非常热点，访问非常频繁，处于集中式高并发访问的情况 当这个 key 在失效的瞬间，大量的请求就击穿了缓存，直接请求数据库，就像是在一道屏障上凿开了一个洞。   解决方法   解决方式也很简单，可以将热点数据设置为永远不过期； 或者基于 redis or zookeeper 实现互斥锁，等待第一个请求构建完缓存之后，再释放锁，进而其它请求才能通过该 key 访问数据  </description>
+    </item>
+    
+    <item>
+      <title>Redis布隆过滤器</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</link>
+      <pubDate>Sun, 12 Apr 2020 22:55:23 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</guid>
+      <description> 布隆过滤器是什么？（判断某个key一定不存在）  本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构 特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存在或者可能存在”。 相比于传统的 List、Set、Map 等数据结构，它更高效、占用空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。  使用：
+ 布隆过滤器在NoSQL数据库领域中应用的非常广泛 当用户来查询某一个row时，可以先通过内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询 布隆过滤器说某个值不存在时，那肯定就是不存在，可以显著降低数据库IO请求数量  应用场景  场景1（给用户推荐新闻）
+ 当用户看过的新闻，肯定会被过滤掉，对于没有看多的新闻，可能会过滤极少的一部分（误判）。
+这样可以完全保证推送给用户的新闻都是无重复的。
+ 场景2（爬虫url去重）
+ 在爬虫系统中，我们需要对url去重，已经爬取的页面不再爬取
+当url高达几千万时，如果一个集合去装下这些URL地址非常浪费空间
+使用布隆过滤器可以大幅降低去重存储消耗，只不过也会使爬虫系统错过少量页面
+  布隆过滤器原理  每个布隆过滤器对应到Redis的数据结构是一个大型的数组和几个不一样的无偏hash函数 如下图：f、g、h就是这样的hash函数（无偏差指让hash映射到数组的位置比较随机）   添加：值到布隆过滤器
+ 向布隆过滤器添加key,会使用 f、g、h hash函数对key算出一个整数索引，然后对长度取余
+每个hash函数都会算出一个不同的位置，把算出的位置都设置成1就完成了布隆过滤器添加过程
+ 查询：布隆过滤器值
+ 当查询某个key时，先用hash函数算出一个整数索引，然后对长度取余
+当你有一个不为1时肯定不存在这个key，当全部都为1时可能有这个key
+这样内存中的布隆过滤器过滤掉大量不存在的row请求，然后去再磁盘进行查询，减少IO操作
+   删除：不支持
+ 目前我们知道布隆过滤器可以支持 add 和 isExist 操作
+如何解决这个问题，答案是计数删除，但是计数删除需要存储一个数值，而不是原先的 bit 位，会增大占用的内存大小。
+增加一个值就是将对应索引槽上存储的值加一，删除则是减一，判断是否存在则是看值是否大于0。
+  </description>
+    </item>
+    
+    <item>
+      <title>Redis分布式锁</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</link>
+      <pubDate>Sun, 12 Apr 2020 22:53:06 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</guid>
+      <description>redis事务  严格意义来讲,Redis的事务和我们理解的传统数据库(如mysql)的事务是不一样的； Redis的事务实质上是命令的集合，在一个事务中要么所有命令都被执行，要么所有命令都不执行。  需要注意的是:
+ Redis的事务没有关系数据库事务提供的回滚（rollback），所以开发者必须在事务执行失败后进行后续的处理； 如果在一个事务中的命令出现错误，那么所有的命令都不会执行； 如果在一个事务中出现运行错误，那么正确的命令会被执行。  redis原子操作  原子操作是指不会被线程调度机制打断的操作 这种操作一旦开始，就会一直运行到结束，中间不会切换任何进程  分布式锁   分布式锁本质是占一个坑，当别的进程也要来占坑时发现已经被占，就会放弃或者稍后重试
+  占坑一般使用 setnx(set if not exists)指令，只允许一个客户端占坑
+  先来先占，用完了在调用del指令释放坑
+ &amp;gt; setnx lock:codehole true .... do something critical .... &amp;gt; del lock:codehole    但是这样有一个问题，如果逻辑执行到中间出现异常，可能导致del指令没有被调用，这样就会陷入死锁，锁永远无法释放
+  为了解决死锁问题，我们拿到锁时可以加上一个expire过期时间，这样即使出现异常，当到达过期时间也会自动释放锁
+ &amp;gt; setnx lock:codehole true &amp;gt; expire lock:codehole 5 .... do something critical .... &amp;gt; del lock:codehole    这样又有一个问题，setnx和expire是两条指令而不是原子指令，如果两条指令之间进程挂掉依然会出现死锁</description>
+    </item>
+    
+    <item>
+      <title>Redis事务</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1/</link>
+      <pubDate>Sun, 12 Apr 2020 22:51:17 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1/</guid>
+      <description> redis事务介绍  redis事务是可以一次执行多个命令，本质是一组命令的集合。 一个事务中的所有命令都会序列化，按顺序串行化的执行而不会被其他命令插入  作用：一个队列中，一次性、顺序性、排他性的执行一系列命令
+redis事务基本使用  下面指令演示了一个完整的事务过程，所有指令在exec前不执行，而是缓存在服务器的一个事务队列中 服务器一旦收到exec指令才开始执行事务队列，执行完毕后一次性返回所有结果 因为redis是单线程的，所以不必担心自己在执行队列是被打断，可以保证这样的“原子性”  注：redis事务在遇到指令失败后，后面的指令会继续执行
+mysql的rollback与redis的discard的区别:
+  mysql回滚为sql全部成功才执行,一条sql失败则全部失败,执行rollback后所有语句造成的影响消失
+  redis的discard只是结束本次事务,正确命令造成的影响仍然还在.
+ &amp;gt; multi（开始一个redis事务） incr books incr books &amp;gt; exec （执行事务） &amp;gt; discard （丢弃事务）    watch指令  watch其实就是redis提供的一种乐观锁，可以解决并发修改问题 watch会在事务开始前盯住一个或多个关键变量，当服务器收到exec指令要顺序执行缓存中的事务队列时 redis会检查关键变量自watch后是否被修改（包括当前事务所在的客户端） 如果关键变量被人改动过，exec指令就会返回null回复告知客户端事务执行失败，这个时候客户端会选择重试 注：redis禁用在multi和exec之间执行watch指令，必须在multi之前盯住关键变量，否则会出错  </description>
+    </item>
+    
+    <item>
+      <title>Redis的五大数据类型实现原理</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sun, 12 Apr 2020 22:48:39 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description> 说明：  redis中所有数据结构都以唯一的key字符串作为名称，然后通过这个唯一的key来获取对应的value 不同的数据类型数据结构差异就在于value的结构不一样  1. 字符串（string） value的数据结构（数组）  字符串value数据结构类似于数组，采用与分配容易空间来减少内存频繁分配 当字符串长度小于1M时，扩容就是加倍现有空间 如果字符串长度操作1M时，扩容时最多扩容1M空间，字符串最大长度为 512M  字符串的使用场景（缓存）  字符串一个常见的用途是缓存用户信息，我们将用户信息使用JSON序列化成字符串 取用户信息时会经过一次反序列化的过程  2. list（列表） value的数据结构（双向链表）  列表的数据结构是双向链表，这意味着插入和删除的时间复杂度是0(1)，索引的时间复杂度位0(n) 当列表弹出最后一个元素后，该数据结构会被自动删除，内存被回手  列表的使用场景（队列、栈） 3. hash（字典） value的数据结构（HashMap）  redis中的字典也是HashMap（数组+列表）的二维结构 不同的是redis的字典的值只能是字符串  hash的使用场景（缓存）  hash可以用来缓存用户信息，与字符串一次性全部序列化整个对象不同，hash可以对每个字段进行单独存储 这样可以部分获取用户信息，节约网络流量 hash也有缺点，hash结构的存储消耗要高于单个字符串  </description>
+    </item>
+    
+    <item>
+      <title>MySQL 基于Docker的主从复制</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
+      <pubDate>Sun, 12 Apr 2020 22:44:47 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E5%9F%BA%E4%BA%8Edocker%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
+      <description>场景需求 今天老板要求 docker 搭建mysql 主从同步，头皮发麻，无从下手，要求：使用docker，并说明使用docker搭建得好处，实现原理，搭建具体过程。
+参考答案 好处：
+ 一台服务器可以运行多个docker容器。 docker 容器之间相互独立，互不冲突。 docker 使用步骤简便。  具体实现步骤：
+首先基于docker拉取mysql镜像 docker pull mysql:5.7
+使用下载好的镜像，启动主从两个容器 docker run -p 3339:3306 --name mymysql –e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7 # 主 docker run -p 3340:3306 --name mymysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7 # 从  配置主从 docker exec -it 627a2368c865 /bin/bash # 进入容器，627a2368c865是容器的id,而mysql-master是容器的名称 apt-get update apt-get install vim # 在容器中手动安装 vim  vi my.cnf，进入/etc/mysql目录下，对my.cnf进行编辑 [mysqld] server-id = 100 log-bin = mysql-bin service mysql restart # 重启mysql docker start mysql-master # 启动容器  创建主从所需权限用户 CREATE USER &#39;slave&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39; # 创建用户 GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.</description>
+    </item>
+    
+    <item>
+      <title>MySQL 主从一致校验</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%A0%A1%E9%AA%8C/</link>
+      <pubDate>Sun, 12 Apr 2020 22:37:38 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%A0%A1%E9%AA%8C/</guid>
+      <description>场景需求 2020年春，由我司开发的考试系统项目，经过不懈的运营努力，用户群体每日以指数倍激增，现考虑到数据库的安全可靠和访问性能问题，决定在业务中集成部署Mysql主从复制以实现读写分离等功能；巧的是，在想要进行主从复制操作前，我们的主要业务数据库已经工作了一段时间，现在要添加一台新的从数据库进行主从复制，通过一位发量稀少同事的一番操作，两台主机已经成功部署好了主从复制，但是我们该如何检测主从服务器的数据是否一致，如果不一致怎么同步数据？
+参考答案 我们可以通过采用pt-table-checksum工具来检查主从的一致性，以下是具体流程。
+工具安装 [root@MySQL-01 ~]# wget http://www.percona.com/get/percona-toolkit.tar.gz
+安装所需依赖 [root@MySQL-01 ~]# yum install perl perl-devel perl-Time-HiRes perl-DBI perl-DBD-MySQL perl-Compress-Raw-Bzip2 perl-Compress-Raw-Zlib perl-Digest perl-Digest-MD5 perl-IO-Compress perl-IO-Socket-IP perl-IO-Socket-SSL perl-Mozilla-CA perl-Net-Daemon perl-Net-LibIDN perl-Net-SSLeay ...  安装工具 [root@MySQL-01 ~]# tar zxf percona-toolkit-2.2.13.tar.gz [root@MySQL-01 ~]# cd percona-toolkit-2.2.13 [root@MySQL-01 ~]# perl Makefile.PL [root@MySQL-01 ~]# make &amp;amp;&amp;amp; make install  在进行主从校验之前，我们首先需要对主从库进行授权，来看看如何来做吧 主库授权
+root@node1 12:28: [pt_check]&amp;gt; GRANT CREATE,INSERT,SELECT,DELETE,UPDATE,LOCK TABLES,PROCESS,SUPER,REPLICATION SLAVE ON *.* TO &#39;root&#39;@&#39;47.97.218.145&#39; IDENTIFIED BY &#39;123456&#39;; Query OK, 0 rows affected (0.</description>
+    </item>
+    
+    <item>
+      <title>MySQL 慢查询应用</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E6%85%A2%E6%9F%A5%E8%AF%A2%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Sun, 12 Apr 2020 22:25:16 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E6%85%A2%E6%9F%A5%E8%AF%A2%E5%BA%94%E7%94%A8/</guid>
+      <description>场景需求 现我司发现，我司业务中部分接口相应极慢，用户甚至可以在等待过程中泡面，经由我司诸位人才讨论分析，需要使用mysql慢查询定位有问题的SQL语句，请您为我司说明什么是mysql慢查询及如何开启慢查询、其详细配置和使用方法。
+参考答案 MySQL的慢查询，全名是慢查询日志，是MySQL提供的一种日志记录，用来记录在MySQL中响应时间超过阀值的语句。具体环境中，运行时间超过long_query_time值的SQL语句，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是记录运行10秒以上的语句。默认情况下，MySQL数据库并不启动慢查询日志，需要手动来设置这个参数。
+当然，如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。
+此外，慢查询日志支持将日志记录写入文件和数据库表。
+MySQL 慢查询的相关参数解释：  slow_query_log：是否开启慢查询日志，1表示开启，0表示关闭。 log-slow-queries ：旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log slow-query-log-file：新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log long_query_time：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 log_queries_not_using_indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。 log_output：日志存储方式。log_output=&#39;FILE&#39;表示将日志存入文件，默认值是&amp;rsquo;FILE&amp;rsquo;。log_output=&#39;TABLE&#39;表示将日志存入数据库。  那么如何进行慢查询日志的配置呢？默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：
+show variables like &#39;%slow_query_log%&#39;; +----------------------+-----------------------------------------------+ | Variable_name | Value | +----------------------+-----------------------------------------------+ | slow_query_log | OFF | | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log | +----------------------+------------------------------------------------+ 2 rows in set (0.00 sec)  使用set global slow_query_log=1开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果要永久生效，就必须修改配置文件my.cnf（其它系统变量也是如此）
+set global slow_query_log=1;  my.cnf要增加或修改参数slow_query_log 和slow_query_log_file，如下所示：
+slow_query_log = 1 slow_query_log_file = /tmp/mysql_slow.log  slow_query_log_file这个参数用于指定慢查询日志的存放路径，缺省情况是host_name-slow.log文件。
+show variables like &#39;slow_query_log_file&#39;; +---------------------+-----------------------------------------------+ | Variable_name | Value | +---------------------+-----------------------------------------------+ | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.</description>
+    </item>
+    
+    <item>
+      <title>MySQL主从同步原理</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sun, 12 Apr 2020 22:24:24 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E5%8E%9F%E7%90%86/</guid>
+      <description>   master服务器将数据的改变记录二进制binlog日志，当master上的数据发生改变时，则将其改变写入二进制日志中；
+  slave服务器会在一定时间间隔内对master二进制日志进行探测其是否发生改变，如果发生改变，则开始一个I/OThread请求master二进制事件
+  同时主节点为每个I/O线程启动一个dump线程，用于向其发送二进制事件，并保存至从节点本地的中继日志中，从节点将启动SQL线程从中继日志中读取二进制日志，在本地重放，使得其数据和主节点的保持一致，最后I/OThread和SQLThread将进入睡眠状态，等待下一次被唤醒。
+  </description>
+    </item>
+    
+    <item>
+      <title>B&#43;tree</title>
+      <link>/blog/%E5%85%B6%E4%BB%96/06-b&#43;tree/</link>
+      <pubDate>Sun, 12 Apr 2020 22:16:07 +0800</pubDate>
+      
+      <guid>/blog/%E5%85%B6%E4%BB%96/06-b&#43;tree/</guid>
+      <description> 以一个3阶的B-Tree举例   每个节点占用一个盘块的磁盘空间，一个节点上有两个升序排序的关键字和三个指向子树根节点的指针，指针存储的是子节点所在磁盘块的地址。
+  两个关键词划分成的三个范围域对应三个指针指向的子树的数据的范围域。
+  以根节点为例，关键字为17和35，P1指针指向的子树的数据范围为小于17，P2指针指向的子树的数据范围为17~35，P3指针指向的子树的数据范围为大于35。
+ &#39;&#39;&#39;模拟查找关键字29的过程：&#39;&#39;&#39; # 根据根节点找到磁盘块1，读入内存。【磁盘I/O操作第1次】 # 比较关键字29在区间（17,35），找到磁盘块1的指针P2。 # 根据P2指针找到磁盘块3，读入内存。【磁盘I/O操作第2次】 # 比较关键字29在区间（26,30），找到磁盘块3的指针P2。 # 根据P2指针找到磁盘块8，读入内存。【磁盘I/O操作第3次】 # 在磁盘块8中的关键字列表中找到关键字29。    B+tree(以每个节点可存4个键值及指针信息为例)  B+Tree的非叶子节点只存储键值信息，假设每个磁盘块能存储4个键值及指针信息 在B+Tree上有两个头指针，一个指向根节点，另一个指向关键字最小的叶子节点，而且所有叶子节点（即数据节点）之间是一种链式环结构。 因此可以对B+Tree进行两种查找运算：一种是对于主键的范围查找和分页查找，另一种是从根节点开始，进行随机查找。  </description>
+    </item>
+    
+    <item>
+      <title>MySQL优化</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Sun, 12 Apr 2020 22:12:45 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BC%98%E5%8C%96/</guid>
+      <description>  字段设计优化 适应遵循数据库三范式 引擎的选择 适应选择MyIsam &amp;amp; InnoDB 索引 索引也会消耗内存空间，并不是越多越好。而且索引的种类都有各自的有点 查询缓存 将 select查询结果缓存起来，key 为SQL语句，value 为查询结果 分区 水平分割和垂直分割 集群 SQL语句 服务器的选择 选择配置较高的服务器  为什么要MySQL优化？
+ 系统的吞吐量瓶颈往往出现在数据库的访问速度上 随着应用程序的运行，数据库的中的数据会越来越多，处理时间会相应变慢 为了避免慢查询的出现  </description>
+    </item>
+    
+    <item>
+      <title>MySQL中的锁</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%B8%AD%E7%9A%84%E9%94%81/</link>
+      <pubDate>Sun, 12 Apr 2020 22:11:03 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%B8%AD%E7%9A%84%E9%94%81/</guid>
+      <description> 锁分类  按操作划分：DML锁，DDL锁 按锁的粒度划分：表级锁、行级锁、页级锁 按锁级别划分：共享锁、排他锁 按加锁方式划分：自动锁、显示锁 按使用方式划分：乐观锁、悲观锁  乐观锁   每次获取商品时，不对该商品加锁。
+  在更新数据的时候需要比较程序中的库存量与数据库中的库存量是否相等，如果相等则进行更新
+  反之程序重新获取库存量，再次进行比较，直到两个库存量的数值相等才进行数据更新。
+ #### 乐观锁实现加一操作代码 # 我们可以看到，只有当对数量-1操作时才会加锁，只有当程序中值和数据库中的值相等时才正真执行。 &#39;&#39;&#39; //不加锁 select id,name,stock where id=1; //业务处理 begin; update shop set stock=stock-1 where id=1 and stock=stock; commit; &#39;&#39;&#39;    悲观锁   每次获取商品时，对该商品加排他锁。
+  也就是在用户A获取获取 id=1 的商品信息时对该行记录加锁，期间其他用户阻塞等待访问该记录。
+ #### 悲观锁实现加一操作代码 # 我们可以看到，首先通过begin开启一个事物，在获得shop信息和修改数据的整个过程中都对数据加锁，保证了数据的一致性。 &#39;&#39;&#39; begin; select id,name,stock as old_stock from shop where id=1 for update; update shop set stock=stock-1 where id=1 and stock=old_stock; commit &#39;&#39;&#39;    排它锁  排它锁又叫写锁，如果事务T对A加上排它锁，则其它事务都不能对A加任何类型的锁。获准排它锁的事务既能读数据，又能写数据。 用法 ： SELECT … FOR UPDATE  共享锁(share lock)  共享锁又叫读锁，如果事务T对A加上共享锁，则其它事务只能对A再加共享锁，不能加其它锁。 获准共享锁的事务只能读数据，不能写数据。 用法： SELECT … LOCK IN SHARE MODE;  </description>
+    </item>
+    
+    <item>
+      <title>MySQL事物</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BA%8B%E7%89%A9/</link>
+      <pubDate>Sun, 12 Apr 2020 22:08:49 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BA%8B%E7%89%A9/</guid>
+      <description>InnoDB事务原理  事务（Transaction）是数据库区别于文件系统的重要特性之一，事务会把数据库从一种一致性状态转换为另一种一致性状态。 在数据库提交时，可以确保要么所有修改都已保存，要么所有修改都不保存。  事务的（ACID）特征  原子性(Atomicity)：整个事物的所有操作要么全部提交成功，要么全部失败回滚(不会出现部分执行的情况)。 一致性(Consistency)：几个并行执行的事务，其执行结果必须与按某一顺序串行执行的结果相一致。 隔离性(Isolation)：事务的执行不受其他事务的干扰，事务执行的中间结果对其他事务必须是透明的。 持久性(Durability): 一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作。  事物隔离级别  未提交读: 脏读（READ UNCOMMITTED）   事务2查询到的数据是事务1中修改但未提交的数据，但因为事务1回滚了数据
+  所以事务2查询的数据是不正确的，因此出现了脏读的问题。
+ 提交读: 不可重复读（READ COMMITTED）   事务2执行update语句但未提交前，事务1的前两个select操作返回结果是相同的。
+  但事务2执行commit操作后，事务1的第三个select操作就读取到事务2对数据的改变。
+  导致与前两次select操作返回不同的数据，因此出现了不可重复读的问题。
+ 可重复读: 幻读（REPEATABLE READ）：这是MySQL的默认事务隔离级别   事务每开启一个实例，都会分配一个版本号给它，如果读取的数据行正在被其它事务执行DELETE或UPDATE操作（即该行上有排他锁）
+  这时该事物的读取操作不会等待行上的锁释放，而是根据版本号去读取行的快照数据（记录在undo log中）
+  这样，事务中的查询操作返回的都是同一版本下的数据，解决了不可重复读问题。
+  虽然该隔离级别下解决了不可重复读问题，但理论上会导致另一个问题：幻读（Phantom Read）。
+  一个事务在执行过程中，另一个事物对已有数据行的更改，MVCC机制可保障该事物读取到的原有数据行的内容相同
+  但并不能阻止另一个事务插入新的数据行，这就会导致该事物中凭空多出数据行，像出现了幻读一样，这便是幻读问题。
+ 可串行读（SERIALIZABLE）   这是事务的最高隔离级别，通过强制事务排序，使之不可能相互冲突，就是在每个读的数据行加上共享锁来实现
+  在该隔离级别下，可以解决前面出现的脏读、不可重复读和幻读问题，但也会导致大量的超时和锁竞争现象，一般不推荐使用</description>
+    </item>
+    
+    <item>
+      <title>高阶函数</title>
+      <link>/blog/python/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/</link>
+      <pubDate>Sun, 12 Apr 2020 22:04:34 +0800</pubDate>
+      
+      <guid>/blog/python/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/</guid>
+      <description>匿名函数 lambda   lambda只是一个表达式，函数体比def简单很多。
+  lambda的主体是一个表达式，而不是一个代码块。仅仅能在lambda表达式中封装有限的逻辑进去。
+  lambda表达式是起到一个函数速写的作用。允许在代码内嵌入一个函数的定义。
+  格式：lambda的一般形式是关键字lambda后面跟一个或多个参数，紧跟一个冒号，之后是一个表达式。
+ f = lambda x,y,z:x+y+z print(f(1,2,3)) # 6 my_lambda = lambda arg : arg + 1 print(my_lambda(10)) # 11    三元运算   三元运算格式： result=值1 if x&amp;lt;y else 值2 if条件成立result=1,否则result=2
+  作用：三元运算，又称三目运算，主要作用是减少代码量，是对简单的条件语句的缩写
+ name = &#39;Tom&#39; if 1 == 1 else &#39;fly&#39; print(name) # 运行结果： Tom f = lambda x:x if x % 2 !</description>
+    </item>
+    
+    <item>
+      <title>上下文管理</title>
+      <link>/blog/python/%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Sun, 12 Apr 2020 22:03:11 +0800</pubDate>
+      
+      <guid>/blog/python/%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/</guid>
+      <description> 什么是with语句  with是一种上下文管理协议，目的在于从流程图中把 try,except 和finally 关键字和资源分配释放相关代码统统去掉，简化try….except….finlally的处理流程。 所以使用with处理的对象必须有enter()和exit()这两个方法   with通过enter方法初始化（enter方法在语句体执行之前进入运行）
+  然后在exit中做善后以及处理异常（exit()方法在语句体执行完毕退出后运行）
+ with语句使用场景  with 语句适用于对资源进行访问的场合，确保不管使用过程中是否发生异常都会执行必要的“清理”操作，释放资源 比如文件使用后自动关闭、线程中锁的自动获取和释放等。  with处理文件操作的实例 with open(&#39;/etc/passwd&#39;) as f: for line in f: print(line) # 这段代码的作用：打开一个文件，如果一切正常，把文件对象赋值给f，然后用迭代器遍历文件中每一行，当完成时，关闭文件； # 而无论在这段代码的任何地方，如果发生异常，此时文件仍会被关闭。  </description>
+    </item>
+    
+    <item>
+      <title>Python垃圾回收机制</title>
+      <link>/blog/python/python%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</link>
+      <pubDate>Sun, 12 Apr 2020 21:54:04 +0800</pubDate>
+      
+      <guid>/blog/python/python%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</guid>
+      <description> 引用计数  当一个对象的引用被创建或者复制时，对象的引用计数加1；当一个对象的引用被销毁时，对象的引用计数减1. 当对象的引用计数减少为0时，就意味着对象已经再没有被使用了，可以将其内存释放掉。  标记－清除  它分为两个阶段：第一阶段是标记阶段，GC会把所有的活动对象打上标记，第二阶段是把那些没有标记的对象非活动对象进行回收。 对象之间通过引用（指针）连在一起，构成一个有向图 从根对象（root object）出发，沿着有向边遍历对象，可达的（reachable）对象标记为活动对象，不可达的对象就是要被清除的非活动对象，根对象就是全局变量、调用栈、寄存器。   在上图中，可以从程序变量直接访问块1，并且可以间接访问块2和3,程序无法访问块4和5 第一步将标记块1，并记住块2和3以供稍后处理。 第二步将标记块2，第三步将标记块3，但不记得块2，因为它已被标记。 扫描阶段将忽略块1，2和3，因为它们已被标记，但会回收块4和5。  分代回收  分代回收是建立在标记清除技术基础之上的，是一种以空间换时间的操作方式。 Python将内存分为了3“代”，分别为年轻代（第0代）、中年代（第1代）、老年代（第2代） 他们对应的是3个链表，它们的垃圾收集频率与对象的存活时间的增大而减小。 新创建的对象都会分配在年轻代，年轻代链表的总数达到上限时，Python垃圾收集机制就会被触发 把那些可以被回收的对象回收掉，而那些不会回收的对象就会被移到中年代去，依此类推 老年代中的对象是存活时间最久的对象，甚至是存活于整个系统的生命周期内。  </description>
+    </item>
+    
+    <item>
+      <title>深浅拷贝</title>
+      <link>/blog/python/%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/</link>
+      <pubDate>Sun, 12 Apr 2020 21:52:31 +0800</pubDate>
+      
+      <guid>/blog/python/%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D/</guid>
+      <description> 预备知识——python的变量及其存储  python的一切变量都是对象，变量的存储，采用了引用语义的方式，存储的只是一个变量的值所在的内存地址，而不是这个变量的只本身 不管多么复杂的数据结构，浅拷贝都只会copy一层。 理解：两个人公用一张桌子，只要桌子不变，桌子上的菜发生了变化两个人是共同感受的。  浅copy与deepcopy   copy：不管多么复杂的数据结构，浅拷贝都只会copy一层
+  deepcopy：深拷贝会完全复制原变量相关的所有数据，在内存中生成一套完全一样的内容，我们对这两个变量中任意一个修改都不会影响其他变量
+ import copy sourceList = [1,2,3,[4,5,6]] copyList = copy.copy(sourceList) deepcopyList = copy.deepcopy(sourceList) sourceList[3][0]=100 print(sourceList) # [1, 2, 3, [100, 5, 6]] print(copyList) # [1, 2, 3, [100, 5, 6]] print(deepcopyList) # [1, 2, 3, [4, 5, 6]]    </description>
+    </item>
+    
+    <item>
+      <title>面向对象</title>
+      <link>/blog/python/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Sun, 12 Apr 2020 21:39:27 +0800</pubDate>
+      
+      <guid>/blog/python/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</guid>
+      <description>封装，继承，多态 1. 封装  在类中对数据的赋值、内部调用对外部用户是透明的 这使类变成了一个胶囊或容器，里面包含着类的数据和方法 作用：   防止数据被随意修改
+  使外部程序不需要关注对象内部的构造，只需要通过对外提供的接口进行直接访问
+ 2．Inheritance 继承（代码重用）  一个类可以派生出子类，在这个父类里定义的属性、方法自动被子类继承 比如CS中的警察和恐怖分子，可以将两个角色的相同点写到一个父类中，然后同时去继承它 使用经典类： Person.__init__(self,name,age) 并重写写父类Person的构造方法，实现，先覆盖，再继承，再重构  3. Polymorphism 多态（接口重用）  多态是面向对象的重要特性,简单点说:“一个接口，多种实现” 指一个基类中派生出了不同的子类，且每个子类在继承同样的方法名的同时又对父类的方法做了不同的实现 这就是同一种事物表现出的多种形态 比如黄种人继承了人talk这个功能，但是他说的是中文，而美国人的talk是英文，但是他们是同样的talk  作用：简单的讲就是允许父类调用子类的方法
+静态方法、类方法、属性方法 静态方法  作用: 静态方法可以更好的组织代码，防止代码变大后变得比较混乱。 特性: 静态方法只是名义上归类管理，实际上在静态方法里访问不了类或则实例中的任何属性 静态方法使用场景：   我们要写一个只在类中运行而不在实例中运行的方法.
+  经常有一些跟类有关系的功能但在运行时又不需要实例和类参与的情况下需要用到静态方法.
+  比如更改环境变量或者修改其他类的属性等能用到静态方法.
+  这种情况可以直接用函数解决, 但这样同样会扩散类内部的代码，造成维护困难.
+  调用方式: 既可以被类直接调用，也可以通过实例调用
+ class Dog(object): def __init__(self,name): self.name = name @staticmethod def eat(): print(&amp;quot;I am a static method&amp;quot;) d = Dog(&amp;quot;ChenRonghua&amp;quot;) d.</description>
+    </item>
+    
+    <item>
+      <title>迭代器</title>
+      <link>/blog/python/%E8%BF%AD%E4%BB%A3%E5%99%A8/</link>
+      <pubDate>Sun, 12 Apr 2020 21:37:01 +0800</pubDate>
+      
+      <guid>/blog/python/%E8%BF%AD%E4%BB%A3%E5%99%A8/</guid>
+      <description> 1. 迭代器定义  迭代器是访问集合内元素的方式，迭代器对象从集合的第一个元素开始访问，直到所有的元素都被访问一遍后结束 迭代器仅是一容器对象，它有两个基本方法   next方法：返回容器的下一个元素
+  __iter__方法：返回迭代器自身
+ a = iter([1,2,]) #生成一个迭代器 print(a.__next__()) print(a.__next__()) print(a.__next__()) #在这一步会引发 “StopIteration” 的异常  2. 生成器和迭代器之间的区别  在使用生成器时，我们创建一个函数；在使用迭代器时，我们使用内置函数iter()和next()。 在生成器中，我们使用关键字yield来每次生成/返回一个对象。 生成器中有多少yield语句，你可以自定义。 每次yield暂停循环时，生成器会保存本地变量的状态。而迭代器并不会使用局部变量，它只需要一个可迭代对象进行迭代。 使用类可以实现你自己的迭代器，但无法实现生成器。 生成器运行速度快，语法简洁，更简单。 迭代器更能节约内存。
+ </description>
+    </item>
+    
+    <item>
+      <title>生成器</title>
+      <link>/blog/python/%E7%94%9F%E6%88%90%E5%99%A8/</link>
+      <pubDate>Sun, 12 Apr 2020 21:34:53 +0800</pubDate>
+      
+      <guid>/blog/python/%E7%94%9F%E6%88%90%E5%99%A8/</guid>
+      <description> 1. 生成器定义 生成器可以理解为一种数据类型，这种数据类型自动实现了迭代器协议（其他数据类型需要调用自己的内置iter方法）
+在Python中，一边循环，一边计算的机制，称为生成器。
+2. 生成器的作用  通过列表生成式，我们可以直接创建一个列表，但是，受到内存限制，列表容量肯定是有限的。 而且，创建一个包含100万个元素的列表，不仅占用很大的存储空间，如果我们仅仅需要访问前面几个元素，那后面绝大多数元素占用的空间都白白浪费了。 所以，如果列表元素可以按照某种算法推算出来，那我们是否可以在循环的过程中不断推算出后续的元素呢？ 这样就不必创建完整的list，从而节省大量的空间。在Python中，这种一边循环一边计算的机制，称为生成器：generator。  3. 生成器工作原理  生成器是这样一个函数，它记住上一次返回时在函数体中的位置。 对生成器函数的第二次（或第 n 次）调用跳转至该函数中间，而上次调用的所有局部变量都保持不变。 生成器不仅“记住”了它数据状态；生成器还“记住”了它在流控制构造中的位置。 生成器是一个函数，而且函数的参数都会保留。 迭代到下一次的调用时，所使用的参数都是第一次所保留下的，即是说，在整个所有函数调用的参数都是第一次所调用时保留的，而不是新创建的  4. yield生成器运行机制 在Python中，yield就是这样的一个生成器。
+  当你问生成器要一个数时，生成器会执行，直至出现 yield 语句，生成器把yield 的参数给你，之后生成器就不会往下继续运行。
+  当你问他要下一个数时，他会从上次的状态开始运行，直至出现yield语句，把参数给你，之后停下。如此反复
+  在python中，当你定义一个函数，使用了yield关键字时，这个函数就是一个生成器
+  它的执行会和其他普通的函数有很多不同，函数返回的是一个对象，而不是你平常所用return语句那样，能得到结果值。如果想取得值，那得调用next()函数
+  每当调用一次迭代器的next函数，生成器函数运行到yield之处，返回yield后面的值且在这个地方暂停，所有的状态都会被保持住，直到下次next函数被调用，或者碰到异常循环退出。
+ # yield实现fib数 def fib(max_num): a,b = 1,1 while a &amp;lt; max_num: yield b a,b=b,a+b g = fib(10) #生成一个生成器：[1，2, 3, 5, 8, 13] print(g.__next__()) #第一次调用返回：1 print(list(g)) #把剩下元素变成列表：[2, 3, 5, 8, 13]    </description>
+    </item>
+    
+    <item>
+      <title>装饰器</title>
+      <link>/blog/python/%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
+      <pubDate>Sun, 12 Apr 2020 21:33:27 +0800</pubDate>
+      
+      <guid>/blog/python/%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
+      <description>1. 装饰器定义 不能修改被装饰函数的源代码，不能修改被装饰函数的调用方式，为其他函数添加其他功能
+2. 使用高阶函数模拟装饰器 #! /usr/bin/env python # -*- coding: utf-8 -*- import time def timer(func): start_time = time.time() func() print &#39;函数执行时间为&#39;, time.time() - start_time def test(): print &#39;开始执行test&#39; time.sleep(3) print &#39;test执行结束&#39; timer(test) &#39;&#39;&#39; 开始执行test test执行结束 函数执行时间为 3.00332999229 &#39;&#39;&#39;  3. 计算运行时间装饰器 import time def timer(func): #timer(test1) func=test1 def deco(*args,**kwargs): start_time = time.time() func(*args,**kwargs) #run test1 stop_time = time.time() print(&amp;quot;running time is %s&amp;quot;%(stop_time-start_time)) return deco @timer # test1=timer(test1) def test1(): time.</description>
+    </item>
+    
+    <item>
+      <title>Sellect_poll_epoll</title>
+      <link>/blog/linux/sellect_poll_epoll/</link>
+      <pubDate>Sun, 12 Apr 2020 21:30:55 +0800</pubDate>
+      
+      <guid>/blog/linux/sellect_poll_epoll/</guid>
+      <description>1. select （能监控数量有限，不能告诉用户程序具体哪个连接有数据）  select目前几乎在所有的平台上支持，其良好跨平台支持也是它的一个优点 select的一个缺点在于单个进程能够监视的文件描述符的数量存在最大限制，在Linux上一般为1024 select监控socket连接时不能准确告诉用户是哪个，比如：现在用socket监控10000链接，如果其中有一个链接有数据了，select就会告诉用户程序，你有socket来数据了，那样就只能自己循环10000次判断哪个活跃  2. poll（和select一样，仅仅去除了最大监控数量）  poll和select在本质上没有多大差别，但是poll没有最大文件描述符数量的限制 可以理解为poll是一个过渡阶段，大家也都不用他  3. epoll (不仅没有最大监控数量限制，还能告诉用户程序哪个连接有活跃) epoll被认为是linux下性能最好的多路io就绪通知方法
+ epoll直到Linux2.6（centos6以后）才出现了由内核直接支持 Epoll没有最大文件描述符数量限制 epoll最重要的优点是他可以直接告诉用户程序哪一个，比如现在用epoll去监控10000个socket链接，交给内核去监测，现在有一个连接有数据了，在有有一个连接有数据了，epoll会直接高数用户程序哪个连接有数据了  4. epoll能实现高并发原理  epoll() 中内核则维护一个链表，epoll_wait 直接检查链表是不是空就知道是否有文件描述符准备好了。 在内核实现中 epoll 是根据每个 sockfd 上面的与设备驱动程序建立起来的回调函数实现的。 某个 sockfd 上的事件发生时，与它对应的回调函数就会被调用，把这个 sockfd 加入链表。 epoll上面链表中获取文件描述，这里使用内存映射（mmap）技术， 避免了复制大量文件描述符带来的开销  内存映射文件，是由一个文件到一块内存的映射，将不必再对文件执行I/O操作</description>
+    </item>
+    
+    <item>
+      <title>协程</title>
+      <link>/blog/python/%E5%8D%8F%E7%A8%8B/</link>
+      <pubDate>Sun, 12 Apr 2020 21:28:29 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%8D%8F%E7%A8%8B/</guid>
+      <description>1. 什么是协程（进入上一次调用的状态）  协程，又称微线程，纤程，协程是一种用户态的轻量级线程。 线程的切换会保存到CPU的栈里，协程拥有自己的寄存器上下文和栈， 协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈 协程能保留上一次调用时的状态（即所有局部状态的一个特定组合），每次过程重入时，就相当于进入上一次调用的状态 协程最主要的作用是在单线程的条件下实现并发的效果，但实际上还是串行的（像yield一样）  2. 协程缺点(无法利用多核资源) 协程的本质是个单线程,它不能同时将 单个CPU 的多个核用上,协程需要和进程配合才能运行在多CPU上线程阻塞（Blocking）操作（如IO时）会阻塞掉整个程序
+3. 协程为何能处理大并发1：Greenlet遇到I/O手动切换  协程之所以快是因为遇到I/O操作就切换（最后只有CPU运算） 这里先演示用greenlet实现手动的对各个协程之间切换 其实Gevent模块仅仅是对greenlet的再封装，将I/O间的手动切换变成自动切换  4. 协程为何能处理大并发2：Gevent遇到I/O自动切换  Gevent 是一个第三方库，可以轻松通过gevent实现并发同步或异步编程 在gevent中用到的主要模式是Greenlet, 它是以C扩展模块形式接入Python的轻量级协程 Greenlet全部运行在主程序操作系统进程的内部，但它们被协作式地调度。 Gevent原理是只要遇到I/O操作就会自动切换到下一个协程  5. 使用协程处理并发 Gevent只用起一个线程，当请求发出去后gevent就不管,永远就只有一个线程工作，谁先回来先处理
+import gevent import requests from gevent import monkey monkey.patch_all() # 这些请求谁先回来就先处理谁 def fetch_async(method, url, req_kwargs): response = requests.request(method=method, url=url, **req_kwargs) print(response.url, response.content) # ##### 发送请求 ##### gevent.joinall([ gevent.spawn(fetch_async, method=&#39;get&#39;, url=&#39;https://www.python.org/&#39;, req_kwargs={}), gevent.spawn(fetch_async, method=&#39;get&#39;, url=&#39;https://www.google.com/&#39;, req_kwargs={}), gevent.</description>
+    </item>
+    
+    <item>
+      <title>线程</title>
+      <link>/blog/python/%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Sun, 12 Apr 2020 21:22:30 +0800</pubDate>
+      
+      <guid>/blog/python/%E7%BA%BF%E7%A8%8B/</guid>
+      <description>1. 线程定义   线程是操作系统调度的最小单位
+  它被包含在进程中，是进程中的实际运作单位
+  进程本身是无法自己运行的，要操作cpu，必须创建一个线程，线程是一系列指令的集合
+ 线程是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位 一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务 无论你启多少个线程，你有多少个cpu, Python在执行的时候会淡定的在同一时刻只允许一个线程运行 进程本身是无法自己执行的，要操作cpu，必须创建一个线程，线程是一系列指令的集合 所有在同一个进程里的线程是共享同一块内存空间的，不同进程间内存空间不同 同一个进程中的各线程可以相互访问资源，线程可以操作同进程中的其他线程，但进程仅能操作子进程 两个进程想通信，必须要通过一个中间代理 对主线程的修改可能回影响其他子线程，对主进程修改不会影响其他进程因为进程间内存相互独立，但是同一进程下的线程共享内存    2. 进程和线程的区别  进程包含线程 线程共享内存空间 进程内存是独立的（不可互相访问） 进程可以生成子进程，子进程之间互相不能互相访问（相当于在父级进程克隆两个子进程） 在一个进程里面线程之间可以交流。两个进程想通信，必须通过一个中间代理来实现 创建新线程很简单，创建新进程需要对其父进程进行克隆。 一个线程可以控制或操作同一个进程里面的其它线程。但进程只能操作子进程。 父进程可以修改不影响子进程，但不能修改。 线程可以帮助应用程序同时做几件事  3. for循环同时启动多个线程 import threading import time def sayhi(num): #定义每个线程要运行的函数 print(&amp;quot;running on number:%s&amp;quot; %num) time.sleep(3) for i in range(50): t = threading.Thread(target=sayhi,args=(&#39;t-%s&#39;%i,)) t.start()  4. t.join()： 实现所有线程都执行结束后再执行主线程 import threading import time start_time = time.</description>
+    </item>
+    
+    <item>
+      <title>进程</title>
+      <link>/blog/python/%E8%BF%9B%E7%A8%8B/</link>
+      <pubDate>Sun, 12 Apr 2020 20:33:12 +0800</pubDate>
+      
+      <guid>/blog/python/%E8%BF%9B%E7%A8%8B/</guid>
+      <description>进程的定义   进程是资源分配的最小单位
+  当一个可执行程序被系统执行（分配内存等资源）时，程序就变成了一个进程
+程序并不能单独运行，程序只是指令的集合，是进程运行的静态描述文本。只有将程序装载到内存中，系统为它分配资源才能运行。程序执行，就称为进程。进程属于动态概念。
+在多道编程中，我们允许多个程序同时加载到内存中，在操作系统的调度下，可以并发地执行。
+进程的出现让每个用户感觉到自己独享CPU，因此，进程就是为了在CPU上实现多道编程而提出的。也就是说，如果没有进程这个概念，一个CPU只能同时启动一个程序，要想用多个程序，就必须来回切换。
+有了进程，就能让这些程序有各自独立的内存空间。这些进程之间不能相互访问。
+创建一个新线程很简单，创建新进程需要对父进程进行复制。
+· 多道编程：在计算机内同时存放几道相互独立的内存，他们共享资源，相互穿插进行
+· 单道编程：在计算机内存中只允许一个程序运行。
+  进程与程序  程序只是一个文件，是一个机器代码指令和数据的集合，所以，程序是一个静态的实体。 而进程是程序运行在数据集上的动态过程。进程是一个动态实体，它应创建而产生，因调度执行而运行，因等待资源或时间而被处于等待状态，因完成任务而被撤销。 进程是系统进行资源分配和调度的一个独立单位。 一个程序可以对应多个进程（多开），一个进程为多个程序服务（WeGame）。 一个程序执行在不同的数据集上就称为不同的进程，可以通过进程控制块来唯一地标识每一个进程。  进程与线程   进程优点：
+ 进程提供了多道编程，让我们感觉我们每个人都拥有自己的CPU和资源，可以提高计算机的利用率。
+   进程的两个重要缺点：
+ 进程只能在一个时间做一件事
+  进程在执行过程中如果遇到IO，无法执行
+   进程间通信   Queue
+  pipe
+  Managers
+  Redis
+  进程池  from multiprocessing import Process, Pool import time, os def foo(i): time.</description>
+    </item>
+    
+    <item>
+      <title>集合常用方法</title>
+      <link>/blog/python/%E9%9B%86%E5%90%88%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Sun, 12 Apr 2020 20:31:47 +0800</pubDate>
+      
+      <guid>/blog/python/%E9%9B%86%E5%90%88%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</guid>
+      <description> `set() 去重` `intersection()` `union()` `difference()`  </description>
+    </item>
+    
+    <item>
+      <title>字典常用方法</title>
+      <link>/blog/python/%E5%AD%97%E5%85%B8%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Sun, 12 Apr 2020 20:30:03 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%AD%97%E5%85%B8%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</guid>
+      <description> `clear()` `setdefault()` `fromkeys()` `keys()` `values()` `items()` `get()` `pop()` `update()`  </description>
+    </item>
+    
+    <item>
+      <title>字符串常用方法</title>
+      <link>/blog/python/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Sun, 12 Apr 2020 20:27:21 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</guid>
+      <description> `find()` `rfind()` `index()` `split()` `join()` `strip()` `lstrip()` `rstrip()` `isalpha()` `isdigit()` `isalnum()` `startswith()` `endswith()` `upper()` `lower()`  </description>
+    </item>
+    
+    <item>
+      <title>列表常用方法</title>
+      <link>/blog/python/%E5%88%97%E8%A1%A8%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Sun, 12 Apr 2020 20:22:01 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%88%97%E8%A1%A8%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</guid>
+      <description> `append()` `extend()` `insert()` `pop()` `remove()` `reverse()` `sort()` `count()` `index()` `enumrate()`  </description>
+    </item>
+    
+    <item>
+      <title>Datetime模块</title>
+      <link>/blog/python/datetime%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Sun, 12 Apr 2020 18:13:09 +0800</pubDate>
+      
+      <guid>/blog/python/datetime%E6%A8%A1%E5%9D%97/</guid>
+      <description>1. 日期输出格式化 所有日期、时间的api都在datetime模块内。
+  datetime =&amp;gt; string
+ now = datetime.datetime.now() now.strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)    string =&amp;gt; datetime
+ t_str = &#39;2012-03-05 16:26:23&#39; d = datetime.datetime.strptime(t_str, &#39;%Y-%m-%d %H:%M:%S&#39;)    日期比较操作
+    在datetime模块中有timedelta类，这个类的对象用于表示一个时间间隔，比如两个日期或者时间的差别。
+  构造方法：
+ datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)    所有的参数都有默认值0，这些参数可以是int或float，正的或负的。
+  可以通过timedelta.days、tiemdelta.seconds等获取相应的时间值。
+  timedelta类的实例，支持加、减、乘、除等操作，所得的结果也是timedelta类的实例。比如：
+ year = timedelta(days=365) ten_years = year *10 nine_years = ten_years - year    同时，date、time和datetime类也支持与timedelta的加、减运算。</description>
     </item>
     
     <item>
@@ -536,9 +1067,13 @@ Django的主要目的是简便、快速的开发数据库驱动的网站。它�
       <guid>/blog/%E5%85%B6%E4%BB%96/02-markdown%E8%AF%AD%E6%B3%95%E7%AE%80%E4%BB%8B/</guid>
       <description>MarkDown
  Markdown 的超简短语法介绍 标题 普通文字
-图片 本地图片 网络图片 链接 本站
-代码 code
-MarkDown 的 11 种基本语法   标题设置（让字体变大，和word的标题意思一样） 在Markdown当中设置标题，有两种方式： 第一种：通过在文字下方添加“=”和“-”，他们分别表示一级标题和二级标题。 第二种：在文字开头加上 “#”，通过“#”数量表示几级标题。（一共只有1~6级标题，1级标题字体最大）
+图片 本地图片 ![logo](/logo.png)
+网络图片 ![logo](https://i01piccdn.sogoucdn.com/e176b93079818948)
+链接 [本站](https://www.missbless.cn)
+本站
+代码 `code`单行代码  或者缩进标识多行代码
+code
+ code  MarkDown 的 11 种基本语法   标题设置（让字体变大，和word的标题意思一样） 在Markdown当中设置标题，有两种方式： 第一种：通过在文字下方添加“=”和“-”，他们分别表示一级标题和二级标题。 第二种：在文字开头加上 “#”，通过“#”数量表示几级标题。（一共只有1~6级标题，1级标题字体最大）
   块注释（blockquote） 通过在文字开头添加“&amp;gt;”表示块注释。（当&amp;gt;和文字之间添加五个blank时，块注释的文字会有变化。）
   斜体 将需要设置为斜体的文字两端使用1个“*”或者“_”夹起来
   粗体 将需要设置为斜体的文字两端使用2个“*”或者“_”夹起来
@@ -612,6 +1147,26 @@ git config --global --unset https.proxy</description>
       <guid>/blog/git/03-git%E8%A7%A3%E5%86%B3push%E9%97%AE%E9%A2%98/</guid>
       <description>&#39;&amp;rsquo;&amp;rsquo; hint: Updates were rejected because the tip of your current branch is behind hint: its remote counterpart. Integrate the remote changes (e.g. hint: &amp;lsquo;git pull &amp;hellip;&#39;) before pushing again. hint: See the &amp;lsquo;Note about fast-forwards&amp;rsquo; in &amp;lsquo;git push &amp;ndash;help&amp;rsquo; for details.
 解决办法： git push -u origin master -f</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/blog/pygame/pygame%E4%B8%AD%E7%9A%84image/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/pygame/pygame%E4%B8%AD%E7%9A%84image/</guid>
+      <description>从文件加载新图像pygame.image.load
+将图像保存到磁盘pygame.image.save
+测试是否可以加载扩展图像格式pygame.image.get_extended
+将图像传输到字符串缓冲区pygame.image.tostring
+从字符串缓冲区创建新的Surfacepygame.image.fromstring
+创建一个在字符串缓冲区内共享数据的新Surfacepygame.image.frombuffer
+从文件加载新图像pygame.image.load
+将图像保存到磁盘pygame.image.save
+测试是否可以加载扩展图像格式pygame.image.get_extended
+将图像传输到字符串缓冲区pygame.image.tostring
+从字符串缓冲区创建新的Surfacepygame.image.fromstring
+创建一个在字符串缓冲区内共享数据的新Surfacepygame.image.frombuffer</description>
     </item>
     
   </channel>

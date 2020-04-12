@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Redis雪崩_穿透_击穿 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Redis雪崩_穿透_击穿">
+<meta itemprop="description" content=" 缓存穿透  定义   缓存穿透是指查询一个一定不存在的数据，由于缓存不命中，接着查询数据库也无法查询出结果， 虽然也不会写入到缓存中，但是这将会导致每个查询都会去请求数据库，造成缓存穿透；   解决方法 ：布隆过滤   对所有可能查询的参数以hash形式存储，在控制层先进行校验，不符合则丢弃，从而避免了对底层存储系统的查询压力；  缓存雪崩  定义　   缓存雪崩是指，由于缓存层承载着大量请求，有效的保护了存储层，但是如果缓存层由于某些原因整体不能提供服务 于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。   解决方法   保证缓存层服务高可用性：比如 Redis Sentinel 和 Redis Cluster 都实现了高可用 依赖隔离组件为后端限流并降级：比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。  缓存击穿  定义：   缓存击穿，就是说某个 key 非常热点，访问非常频繁，处于集中式高并发访问的情况 当这个 key 在失效的瞬间，大量的请求就击穿了缓存，直接请求数据库，就像是在一道屏障上凿开了一个洞。   解决方法   解决方式也很简单，可以将热点数据设置为永远不过期； 或者基于 redis or zookeeper 实现互斥锁，等待第一个请求构建完缓存之后，再释放锁，进而其它请求才能通过该 key 访问数据  ">
+<meta itemprop="datePublished" content="2020-04-12T22:59:08&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T22:59:08&#43;08:00" />
+<meta itemprop="wordCount" content="37">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Redis雪崩_穿透_击穿" />
+<meta property="og:description" content=" 缓存穿透  定义   缓存穿透是指查询一个一定不存在的数据，由于缓存不命中，接着查询数据库也无法查询出结果， 虽然也不会写入到缓存中，但是这将会导致每个查询都会去请求数据库，造成缓存穿透；   解决方法 ：布隆过滤   对所有可能查询的参数以hash形式存储，在控制层先进行校验，不符合则丢弃，从而避免了对底层存储系统的查询压力；  缓存雪崩  定义　   缓存雪崩是指，由于缓存层承载着大量请求，有效的保护了存储层，但是如果缓存层由于某些原因整体不能提供服务 于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。   解决方法   保证缓存层服务高可用性：比如 Redis Sentinel 和 Redis Cluster 都实现了高可用 依赖隔离组件为后端限流并降级：比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。  缓存击穿  定义：   缓存击穿，就是说某个 key 非常热点，访问非常频繁，处于集中式高并发访问的情况 当这个 key 在失效的瞬间，大量的请求就击穿了缓存，直接请求数据库，就像是在一道屏障上凿开了一个洞。   解决方法   解决方式也很简单，可以将热点数据设置为永远不过期； 或者基于 redis or zookeeper 实现互斥锁，等待第一个请求构建完缓存之后，再释放锁，进而其它请求才能通过该 key 访问数据  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E9%9B%AA%E5%B4%A9_%E7%A9%BF%E9%80%8F_%E5%87%BB%E7%A9%BF/" />
+<meta property="article:published_time" content="2020-04-12T22:59:08+08:00" />
+<meta property="article:modified_time" content="2020-04-12T22:59:08+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis雪崩_穿透_击穿"/>
+<meta name="twitter:description" content=" 缓存穿透  定义   缓存穿透是指查询一个一定不存在的数据，由于缓存不命中，接着查询数据库也无法查询出结果， 虽然也不会写入到缓存中，但是这将会导致每个查询都会去请求数据库，造成缓存穿透；   解决方法 ：布隆过滤   对所有可能查询的参数以hash形式存储，在控制层先进行校验，不符合则丢弃，从而避免了对底层存储系统的查询压力；  缓存雪崩  定义　   缓存雪崩是指，由于缓存层承载着大量请求，有效的保护了存储层，但是如果缓存层由于某些原因整体不能提供服务 于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。   解决方法   保证缓存层服务高可用性：比如 Redis Sentinel 和 Redis Cluster 都实现了高可用 依赖隔离组件为后端限流并降级：比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。  缓存击穿  定义：   缓存击穿，就是说某个 key 非常热点，访问非常频繁，处于集中式高并发访问的情况 当这个 key 在失效的瞬间，大量的请求就击穿了缓存，直接请求数据库，就像是在一道屏障上凿开了一个洞。   解决方法   解决方式也很简单，可以将热点数据设置为永远不过期； 或者基于 redis or zookeeper 实现互斥锁，等待第一个请求构建完缓存之后，再释放锁，进而其它请求才能通过该 key 访问数据  "/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f&amp;title=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f&amp;title=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f&amp;description=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E9%9B%AA%E5%B4%A9_%E7%A9%BF%E9%80%8F_%E5%87%BB%E7%A9%BF/">Redis雪崩_穿透_击穿</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 22:59:08 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f&amp;title=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f&amp;title=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f&amp;description=Redis%e9%9b%aa%e5%b4%a9_%e7%a9%bf%e9%80%8f_%e5%87%bb%e7%a9%bf" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E9%259B%25AA%25E5%25B4%25A9_%25E7%25A9%25BF%25E9%2580%258F_%25E5%2587%25BB%25E7%25A9%25BF%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="缓存穿透">缓存穿透</h2>
+<ul>
+<li>定义</li>
+</ul>
+<ol>
+<li>缓存穿透是指查询一个一定不存在的数据，由于缓存不命中，接着查询数据库也无法查询出结果，</li>
+<li>虽然也不会写入到缓存中，但是这将会导致每个查询都会去请求数据库，造成缓存穿透；</li>
+</ol>
+<ul>
+<li>解决方法 ：布隆过滤</li>
+</ul>
+<ol>
+<li>对所有可能查询的参数以hash形式存储，在控制层先进行校验，不符合则丢弃，从而避免了对底层存储系统的查询压力；</li>
+</ol>
+<h2 id="缓存雪崩">缓存雪崩</h2>
+<ul>
+<li>定义　　　　　　</li>
+</ul>
+<ol>
+<li>缓存雪崩是指，由于缓存层承载着大量请求，有效的保护了存储层，但是如果缓存层由于某些原因整体不能提供服务</li>
+<li>于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。</li>
+</ol>
+<ul>
+<li>解决方法</li>
+</ul>
+<ol>
+<li>保证缓存层服务高可用性：比如 Redis Sentinel 和 Redis Cluster 都实现了高可用</li>
+<li>依赖隔离组件为后端限流并降级：比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。</li>
+</ol>
+<h2 id="缓存击穿">缓存击穿</h2>
+<ul>
+<li>定义：</li>
+</ul>
+<ol>
+<li>缓存击穿，就是说某个 key 非常热点，访问非常频繁，处于集中式高并发访问的情况</li>
+<li>当这个 key 在失效的瞬间，大量的请求就击穿了缓存，直接请求数据库，就像是在一道屏障上凿开了一个洞。</li>
+</ol>
+<ul>
+<li>解决方法</li>
+</ul>
+<ol>
+<li>解决方式也很简单，可以将热点数据设置为永远不过期；</li>
+<li>或者基于 redis or zookeeper 实现互斥锁，等待第一个请求构建完缓存之后，再释放锁，进而其它请求才能通过该 key 访问数据</li>
+</ol>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" class="button"><div class="previous"><div>Redis布隆过滤器</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5/" class="button"><div class="next"><div>Redis主从同步</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

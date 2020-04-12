@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>MySQL 慢查询应用 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="MySQL 慢查询应用">
+<meta itemprop="description" content="场景需求 现我司发现，我司业务中部分接口相应极慢，用户甚至可以在等待过程中泡面，经由我司诸位人才讨论分析，需要使用mysql慢查询定位有问题的SQL语句，请您为我司说明什么是mysql慢查询及如何开启慢查询、其详细配置和使用方法。
+参考答案 MySQL的慢查询，全名是慢查询日志，是MySQL提供的一种日志记录，用来记录在MySQL中响应时间超过阀值的语句。具体环境中，运行时间超过long_query_time值的SQL语句，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是记录运行10秒以上的语句。默认情况下，MySQL数据库并不启动慢查询日志，需要手动来设置这个参数。
+当然，如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。
+此外，慢查询日志支持将日志记录写入文件和数据库表。
+MySQL 慢查询的相关参数解释：  slow_query_log：是否开启慢查询日志，1表示开启，0表示关闭。 log-slow-queries ：旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log slow-query-log-file：新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log long_query_time：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 log_queries_not_using_indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。 log_output：日志存储方式。log_output=&#39;FILE&#39;表示将日志存入文件，默认值是&rsquo;FILE&rsquo;。log_output=&#39;TABLE&#39;表示将日志存入数据库。  那么如何进行慢查询日志的配置呢？默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：
+show variables like &#39;%slow_query_log%&#39;; &#43;----------------------&#43;-----------------------------------------------&#43; | Variable_name | Value | &#43;----------------------&#43;-----------------------------------------------&#43; | slow_query_log | OFF | | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log | &#43;----------------------&#43;------------------------------------------------&#43; 2 rows in set (0.00 sec)  使用set global slow_query_log=1开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果要永久生效，就必须修改配置文件my.cnf（其它系统变量也是如此）
+set global slow_query_log=1;  my.cnf要增加或修改参数slow_query_log 和slow_query_log_file，如下所示：
+slow_query_log = 1 slow_query_log_file = /tmp/mysql_slow.log  slow_query_log_file这个参数用于指定慢查询日志的存放路径，缺省情况是host_name-slow.log文件。
+show variables like &#39;slow_query_log_file&#39;; &#43;---------------------&#43;-----------------------------------------------&#43; | Variable_name | Value | &#43;---------------------&#43;-----------------------------------------------&#43; | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.">
+<meta itemprop="datePublished" content="2020-04-12T22:25:16&#43;08:00" />
+<meta itemprop="dateModified" content="2020-04-12T22:25:16&#43;08:00" />
+<meta itemprop="wordCount" content="312">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="MySQL 慢查询应用" />
+<meta property="og:description" content="场景需求 现我司发现，我司业务中部分接口相应极慢，用户甚至可以在等待过程中泡面，经由我司诸位人才讨论分析，需要使用mysql慢查询定位有问题的SQL语句，请您为我司说明什么是mysql慢查询及如何开启慢查询、其详细配置和使用方法。
+参考答案 MySQL的慢查询，全名是慢查询日志，是MySQL提供的一种日志记录，用来记录在MySQL中响应时间超过阀值的语句。具体环境中，运行时间超过long_query_time值的SQL语句，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是记录运行10秒以上的语句。默认情况下，MySQL数据库并不启动慢查询日志，需要手动来设置这个参数。
+当然，如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。
+此外，慢查询日志支持将日志记录写入文件和数据库表。
+MySQL 慢查询的相关参数解释：  slow_query_log：是否开启慢查询日志，1表示开启，0表示关闭。 log-slow-queries ：旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log slow-query-log-file：新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log long_query_time：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 log_queries_not_using_indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。 log_output：日志存储方式。log_output=&#39;FILE&#39;表示将日志存入文件，默认值是&rsquo;FILE&rsquo;。log_output=&#39;TABLE&#39;表示将日志存入数据库。  那么如何进行慢查询日志的配置呢？默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：
+show variables like &#39;%slow_query_log%&#39;; &#43;----------------------&#43;-----------------------------------------------&#43; | Variable_name | Value | &#43;----------------------&#43;-----------------------------------------------&#43; | slow_query_log | OFF | | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log | &#43;----------------------&#43;------------------------------------------------&#43; 2 rows in set (0.00 sec)  使用set global slow_query_log=1开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果要永久生效，就必须修改配置文件my.cnf（其它系统变量也是如此）
+set global slow_query_log=1;  my.cnf要增加或修改参数slow_query_log 和slow_query_log_file，如下所示：
+slow_query_log = 1 slow_query_log_file = /tmp/mysql_slow.log  slow_query_log_file这个参数用于指定慢查询日志的存放路径，缺省情况是host_name-slow.log文件。
+show variables like &#39;slow_query_log_file&#39;; &#43;---------------------&#43;-----------------------------------------------&#43; | Variable_name | Value | &#43;---------------------&#43;-----------------------------------------------&#43; | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E6%85%A2%E6%9F%A5%E8%AF%A2%E5%BA%94%E7%94%A8/" />
+<meta property="article:published_time" content="2020-04-12T22:25:16+08:00" />
+<meta property="article:modified_time" content="2020-04-12T22:25:16+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL 慢查询应用"/>
+<meta name="twitter:description" content="场景需求 现我司发现，我司业务中部分接口相应极慢，用户甚至可以在等待过程中泡面，经由我司诸位人才讨论分析，需要使用mysql慢查询定位有问题的SQL语句，请您为我司说明什么是mysql慢查询及如何开启慢查询、其详细配置和使用方法。
+参考答案 MySQL的慢查询，全名是慢查询日志，是MySQL提供的一种日志记录，用来记录在MySQL中响应时间超过阀值的语句。具体环境中，运行时间超过long_query_time值的SQL语句，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是记录运行10秒以上的语句。默认情况下，MySQL数据库并不启动慢查询日志，需要手动来设置这个参数。
+当然，如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。
+此外，慢查询日志支持将日志记录写入文件和数据库表。
+MySQL 慢查询的相关参数解释：  slow_query_log：是否开启慢查询日志，1表示开启，0表示关闭。 log-slow-queries ：旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log slow-query-log-file：新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log long_query_time：慢查询阈值，当查询时间多于设定的阈值时，记录日志。 log_queries_not_using_indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。 log_output：日志存储方式。log_output=&#39;FILE&#39;表示将日志存入文件，默认值是&rsquo;FILE&rsquo;。log_output=&#39;TABLE&#39;表示将日志存入数据库。  那么如何进行慢查询日志的配置呢？默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：
+show variables like &#39;%slow_query_log%&#39;; &#43;----------------------&#43;-----------------------------------------------&#43; | Variable_name | Value | &#43;----------------------&#43;-----------------------------------------------&#43; | slow_query_log | OFF | | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log | &#43;----------------------&#43;------------------------------------------------&#43; 2 rows in set (0.00 sec)  使用set global slow_query_log=1开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果要永久生效，就必须修改配置文件my.cnf（其它系统变量也是如此）
+set global slow_query_log=1;  my.cnf要增加或修改参数slow_query_log 和slow_query_log_file，如下所示：
+slow_query_log = 1 slow_query_log_file = /tmp/mysql_slow.log  slow_query_log_file这个参数用于指定慢查询日志的存放路径，缺省情况是host_name-slow.log文件。
+show variables like &#39;slow_query_log_file&#39;; &#43;---------------------&#43;-----------------------------------------------&#43; | Variable_name | Value | &#43;---------------------&#43;-----------------------------------------------&#43; | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f&amp;title=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f&amp;title=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f&amp;description=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E6%85%A2%E6%9F%A5%E8%AF%A2%E5%BA%94%E7%94%A8/">MySQL 慢查询应用</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-04-12 22:25:16 &#43;0800 CST">
+      April 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f&amp;title=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f&amp;title=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f&amp;description=MySQL%20%e6%85%a2%e6%9f%a5%e8%af%a2%e5%ba%94%e7%94%a8" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmysql-%25E6%2585%25A2%25E6%259F%25A5%25E8%25AF%25A2%25E5%25BA%2594%25E7%2594%25A8%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="场景需求">场景需求</h2>
+<p>现我司发现，我司业务中部分接口相应极慢，用户甚至可以在等待过程中泡面，经由我司诸位人才讨论分析，需要使用mysql慢查询定位有问题的SQL语句，请您为我司说明什么是mysql慢查询及如何开启慢查询、其详细配置和使用方法。</p>
+<h2 id="参考答案">参考答案</h2>
+<p>MySQL的慢查询，全名是慢查询日志，是MySQL提供的一种日志记录，用来记录在MySQL中响应时间超过阀值的语句。具体环境中，运行时间超过long_query_time值的SQL语句，则会被记录到慢查询日志中。long_query_time的默认值为10，意思是记录运行10秒以上的语句。默认情况下，MySQL数据库并不启动慢查询日志，需要手动来设置这个参数。</p>
+<p>当然，如果不是调优需要的话，一般不建议启动该参数，因为开启慢查询日志会或多或少带来一定的性能影响。</p>
+<p>此外，慢查询日志支持将日志记录写入文件和数据库表。</p>
+<h2 id="mysql-慢查询的相关参数解释">MySQL 慢查询的相关参数解释：</h2>
+<ul>
+<li>slow_query_log：是否开启慢查询日志，1表示开启，0表示关闭。</li>
+<li>log-slow-queries ：旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log</li>
+<li>slow-query-log-file：新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log</li>
+<li>long_query_time：慢查询阈值，当查询时间多于设定的阈值时，记录日志。</li>
+<li>log_queries_not_using_indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。</li>
+<li>log_output：日志存储方式。log_output='FILE'表示将日志存入文件，默认值是&rsquo;FILE&rsquo;。log_output='TABLE'表示将日志存入数据库。</li>
+</ul>
+<p>那么如何进行慢查询日志的配置呢？默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：</p>
+<pre><code>show variables  like '%slow_query_log%';
+
++----------------------+-----------------------------------------------+ 
+| Variable_name  | Value                                              |
++----------------------+-----------------------------------------------+
+| slow_query_log | OFF                                                |
+| slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log |
++----------------------+------------------------------------------------+
+2 rows in set (0.00 sec)
+</code></pre>
+<p>使用set global slow_query_log=1开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果要永久生效，就必须修改配置文件my.cnf（其它系统变量也是如此）</p>
+<pre><code>set global slow_query_log=1;
+</code></pre>
+<p>my.cnf要增加或修改参数slow_query_log 和slow_query_log_file，如下所示：</p>
+<pre><code>slow_query_log = 1
+slow_query_log_file = /tmp/mysql_slow.log
+</code></pre>
+<p>slow_query_log_file这个参数用于指定慢查询日志的存放路径，缺省情况是host_name-slow.log文件。</p>
+<pre><code>show variables like 'slow_query_log_file';
+
++---------------------+-----------------------------------------------+
+| Variable_name       | Value                                         |
++---------------------+-----------------------------------------------+
+| slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log |
++---------------------+-----------------------------------------------+
+1 row in set (0.00 sec)
+</code></pre>
+<p>开启了慢查询日志后，什么样的SQL才会记录到慢查询日志里面呢？这个是由参数long_query_time控制，默认情况下long_query_time的值为10秒，可以使用命令修改，也可以在my.cnf参数里面修改。
+关于运行时间正好等于long_query_time的情况，并不会被记录下来；也就是说，在mysql源码里是判断大于long_query_time，而非大于等于。
+从MySQL 5.1开始，long_query_time开始以微秒记录SQL语句运行时间，之前仅用秒为单位记录。如果记录到表里面，只会记录整数部分，不会记录微秒部分
+注意，某些情况下当你使用局部设置的方式时可能会出现如下情况，来看下面：</p>
+<pre><code>show variables like 'long_query_time%';
+# 查看当前long_query_time时间
+
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+set global long_query_time=4;
+# 设置当前long_query_time时间
+show variables like 'long_query_time';
+# 再次查看long_query_time时间
+</code></pre>
+<p>如上所示，修改了变量long_query_time，但是查询变量long_query_time的值还是10，难道没有修改到呢？注意：使用命令 set global long_query_time=4修改后，需要重新连接或新开一个会话才能看到修改值。用show variables like &lsquo;long_query_time'查看只是当前会话的变量值。也可以不用重新连接会话，而是用show global variables like &lsquo;long_query_time&rsquo;;。
+log_output参数指定慢查询日志的存储方式：</p>
+<ul>
+<li>log_output='FILE'表示将日志存入文件，默认值也是&rsquo;FILE&rsquo;。</li>
+<li>log_output='TABLE'表示将日志存入数据库，这样日志信息就会被写入到mysql.slow_log表中。同时也支持两种日志存储方式，配置的时候以逗号隔开即可，如：log_output='FILE,TABLE&rsquo;。</li>
+</ul>
+<p>日志记录到系统的专用日志表中，要比记录到文件耗费更多的系统资源。因此对于需要启用慢查询日志，又需要能够获得更高的系统性能，那么建议优先记录到文件。</p>
+<pre><code>show variables like '%log_output%';
+
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_output    | FILE  |
++---------------+-------+
+set global log_output='TABLE';
+show variables like '%log_output%';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_output    | TABLE |
++---------------+-------+
+select sleep(5) ;
++----------+
+| sleep(5) |
++----------+
+|        0 |
++----------+
+</code></pre>
+<p>当我们在上面执行了一次sleep5之后，这条操作将会被记录在慢查询日志中，我们来看看：</p>
+<pre><code>mysql&gt; select * from mysql.slow_log;
++---------------------+---------------------------+------------+-----------+-----------+---------------+----+----------------+-----------+-----------+-----------------+-----------+
+| start_time          | user_host                 | query_time | lock_time | rows_sent | rows_examined | db | last_insert_id | insert_id | server_id | sql_text        | thread_id |
++---------------------+---------------------------+------------+-----------+-----------+---------------+----+----------------+-----------+-----------+-----------------+-----------+
+| 2016-06-16 17:37:53 | root[root] @ localhost [] | 00:00:03   | 00:00:00  |         1 |             0 |    |              0 |         0 |         1 | select sleep(3) |         5 |
+| 2016-06-16 21:45:23 | root[root] @ localhost [] | 00:00:05   | 00:00:00  |         1 |             0 |    |              0 |         0 |         1 | select sleep(5) |         2 |
++---------------------+---------------------------+------------+-----------+-----------+---------------+----+----------------+-----------+-----------+-----------------+-----------+
+</code></pre>
+<h2 id="4一些其他慢查询配置选项如下">4.一些其他慢查询配置选项如下。</h2>
+<p><code>log-queries-not-using-indexes</code>该系统变量指定未使用索引的查询也被记录到慢查询日志中，调优的话，建议开启这个选项。另外，开启了这个参数，其实使用full index scan的SQL也会被记录到慢查询日志。</p>
+<pre><code>set global log_queries_not_using_indexes=1;
+# 开启该选项
+</code></pre>
+<p><code>log_slow_admin_statements</code>这个系统变量表示，是否将慢管理语句例如ANALYZE TABLE和ALTER TABLE等记入慢查询日志
+<code>slow_queries</code>如果你想查询有多少条慢查询记录，可以使用slow _queries系统变量。</p>
+<pre><code>mysql&gt; show global status like '%Slow_queries%';
+
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| Slow_queries  | 2104  |
++---------------+-------+
+1 row in set (0.00 sec)</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E5%8E%9F%E7%90%86/" class="button"><div class="previous"><div>MySQL主从同步原理</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql-%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%A0%A1%E9%AA%8C/" class="button"><div class="next"><div>MySQL 主从一致校验</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">Linux常用命令</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux-supervisor/">Linux Supervisor</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/">青蛙跳台阶</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%BF%AB%E6%8E%92/">快排</a></h1>
+          <time class="published" datetime="">April 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
