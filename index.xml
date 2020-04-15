@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 12 Apr 2020 23:21:18 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 15 Apr 2020 20:36:52 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Sun, 12 Apr 2020 23:21:18 +0800</pubDate>
+      <pubDate>Wed, 15 Apr 2020 20:36:52 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -24,9 +24,12 @@
  05-Django配置MySql
  06-Django操作Mysql
  07-Django常用的工具方法
+ 08-Django反序列化
+ 09-Django文件传输
  git   01-git常用指令
  02-git配置代理
  03-git解决push问题
+ JavaScript   JS正则表达式
  linux   Linux-supervisor
  Linux常用命令
  sellect_poll_epoll
@@ -41,10 +44,51 @@
  09-pygame中的key
  10-pygame中的mouse
  11-pygame中的Surface
- pygame中的image
- Python   datetime模块
- python垃圾回收机制
- random模块</description>
+ pygame中的image</description>
+    </item>
+    
+    <item>
+      <title>Django文件传输</title>
+      <link>/blog/django/09-django%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93/</link>
+      <pubDate>Wed, 15 Apr 2020 20:27:01 +0800</pubDate>
+      
+      <guid>/blog/django/09-django%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93/</guid>
+      <description>前端
+ &amp;lt;template&amp;gt; &amp;lt;!-- 展示当前头像 --&amp;gt; &amp;lt;div id = &#39;photo_img&#39;&amp;gt; &amp;lt;center&amp;gt; &amp;lt;Avatar :src=&amp;quot;photo&amp;quot; :width=&#39;width&#39; fit=&#39;fill&#39;&amp;gt;&amp;lt;/Avatar&amp;gt; &amp;lt;/center&amp;gt; &amp;lt;!-- &amp;lt;img :src=&amp;quot;photo&amp;quot; alt=&amp;quot;&amp;quot; width=100% height=100%&amp;gt; --&amp;gt; &amp;lt;/div&amp;gt; &amp;lt;form action=&amp;quot;&amp;quot;&amp;gt; &amp;lt;!-- 前端上传头像 --&amp;gt; &amp;lt;input type=&amp;quot;file&amp;quot; @change=&#39;change($event)&#39;&amp;gt; &amp;lt;/form&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;script&amp;gt; import { config } from &#39;../config&#39;; export default { data:(){ photo:&#39;&#39; } methods:{ change:function(event){ console.log(event.target.files) var data = new FormData() data.append(&#39;file&#39;,event.target.files[0]) this.axios.post(&#39;/api/upload_file/&#39;,data,{headers: {&#39;Content-Type&#39;: &#39;multipart/form-data&#39;}}).then(resp=&amp;gt;{ this.photo = config.baseurl + &#39;/static/upload/&#39; +resp.data.data }) }, } } &amp;lt;/script&amp;gt;    后端</description>
+    </item>
+    
+    <item>
+      <title>Django反序列化</title>
+      <link>/blog/django/08-django%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+      <pubDate>Wed, 15 Apr 2020 20:20:20 +0800</pubDate>
+      
+      <guid>/blog/django/08-django%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+      <description> 反序列化可以节省代码量
+  后端
+ class InsertData(APIView): def post(self, request): res = {} data = DataSer(data= request.data) if data.isvalid(): data.save() res[&#39;code&#39;] = 200 return Response(res) # 配置数据库、序列化器、路由省略，导包省略    前端
+ send_data(){ this.axios.post(config.baseurl + &#39;/insert_data/&#39;, this.qs.stringify({ key1: value1, key2: value2, key3: value3, })).then(resp =&amp;gt; { console.log(resp.data.data) }) },   </description>
+    </item>
+    
+    <item>
+      <title>JS正则表达式</title>
+      <link>/blog/javascript/js%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
+      <pubDate>Wed, 15 Apr 2020 19:56:37 +0800</pubDate>
+      
+      <guid>/blog/javascript/js%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
+      <description>正则表达式 英语：Regular Expression，在代码中常简写为regex、regexp或RE，使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。
+ 语法 /正则表达式主体/修饰符(可选)
+var patt = /runoob/i
+ /runoob/i 是一个正则表达式。
+runoob 是一个正则表达式主体 (用于检索)。
+i 是一个修饰符 (搜索不区分大小写)。
+  test() 和 exec() JS 判断输入是否为数字、字母、下划线组成
+/^\w+$/.test(str) # 结果为布尔类型
+输出匹配到的结果
+/www/.exec(&#39;www&#39;) # 结果为数组 [&amp;quot;www&amp;quot;]
+封装
+function isValid(str) { return /^\w+$/.test(str); } # 返回布尔值
+正则表达式修饰符 /Www/i.test(&#39;www&#39;) --&amp;gt; true
+   修饰符 描述     i 大小写不敏感   g 全局匹配，而非找到第一个匹配后停止   m 执行多行匹配    正则表达式模式    表达式 描述     [abc] 查找方括号内的任意字符   [0-9] 查找0-9之间的数字   （x|y) 查找任何以|分隔的选项       元字符 描述     \d 查找数字   \s 查找空白字符   \b 匹配单词边界   \uxxxx 查找以十六进制数 xxxx 规定的 Unicode 字符       量词 描述     n+ 匹配任何包含至少一个n的字符串   n* 匹配任何包含0或多个n的字符串   n?</description>
     </item>
     
     <item>
@@ -341,24 +385,23 @@ show variables like &#39;slow_query_log_file&#39;; +---------------------+-----
     </item>
     
     <item>
-      <title>MySQL事物</title>
-      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BA%8B%E7%89%A9/</link>
+      <title>MySQL事务</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BA%8B%E5%8A%A1/</link>
       <pubDate>Sun, 12 Apr 2020 22:08:49 +0800</pubDate>
       
-      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BA%8B%E7%89%A9/</guid>
-      <description>InnoDB事务原理  事务（Transaction）是数据库区别于文件系统的重要特性之一，事务会把数据库从一种一致性状态转换为另一种一致性状态。 在数据库提交时，可以确保要么所有修改都已保存，要么所有修改都不保存。  事务的（ACID）特征  原子性(Atomicity)：整个事物的所有操作要么全部提交成功，要么全部失败回滚(不会出现部分执行的情况)。 一致性(Consistency)：几个并行执行的事务，其执行结果必须与按某一顺序串行执行的结果相一致。 隔离性(Isolation)：事务的执行不受其他事务的干扰，事务执行的中间结果对其他事务必须是透明的。 持久性(Durability): 一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作。  事物隔离级别  未提交读: 脏读（READ UNCOMMITTED）   事务2查询到的数据是事务1中修改但未提交的数据，但因为事务1回滚了数据
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E4%BA%8B%E5%8A%A1/</guid>
+      <description>InnoDB事务原理  事务（Transaction）是数据库区别于文件系统的重要特性之一，事务会把数据库从一种一致性状态转换为另一种一致性状态。 在数据库提交时，可以确保要么所有修改都已保存，要么所有修改都不保存。  事务的（ACID）特征  原子性(Atomicity)：整个事务的所有操作要么全部提交成功，要么全部失败回滚(不会出现部分执行的情况)。 一致性(Consistency)：几个并行执行的事务，其执行结果必须与按某一顺序串行执行的结果相一致。 隔离性(Isolation)：事务的执行不受其他事务的干扰，事务执行的中间结果对其他事务必须是透明的。 持久性(Durability): 一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作。  事务隔离级别   读未提交（Read Uncommitted）：可以读取其它事务未提交的记录，会出现脏读、幻读、不可重复读等问题。
+  读已提交（Read Committed）：一个事务提交后所做的变更才能被其它事务看到，不会出现脏读，但是会出现幻读、不可重复读。（大多数数据库的默认隔离级别都是 RC。InnoDB 默认是 RR）。
+  可重复读（Repeatable Read）：事务执行过程中看到一致性的数据视图，解决了不可重复读问题，但是仍然存在幻读问题.（InnoDB通过MVCC+GAP间隙锁也解决了幻读）。
+  序列化（Serializable）：“写”会加“写锁”，“读”会加“读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成,没有并发问题。
+   未提交读: 脏读（READ UNCOMMITTED）   事务2查询到的数据是事务1中修改但未提交的数据，但因为事务1回滚了数据
   所以事务2查询的数据是不正确的，因此出现了脏读的问题。
  提交读: 不可重复读（READ COMMITTED）   事务2执行update语句但未提交前，事务1的前两个select操作返回结果是相同的。
   但事务2执行commit操作后，事务1的第三个select操作就读取到事务2对数据的改变。
   导致与前两次select操作返回不同的数据，因此出现了不可重复读的问题。
  可重复读: 幻读（REPEATABLE READ）：这是MySQL的默认事务隔离级别   事务每开启一个实例，都会分配一个版本号给它，如果读取的数据行正在被其它事务执行DELETE或UPDATE操作（即该行上有排他锁）
-  这时该事物的读取操作不会等待行上的锁释放，而是根据版本号去读取行的快照数据（记录在undo log中）
-  这样，事务中的查询操作返回的都是同一版本下的数据，解决了不可重复读问题。
-  虽然该隔离级别下解决了不可重复读问题，但理论上会导致另一个问题：幻读（Phantom Read）。
-  一个事务在执行过程中，另一个事物对已有数据行的更改，MVCC机制可保障该事物读取到的原有数据行的内容相同
-  但并不能阻止另一个事务插入新的数据行，这就会导致该事物中凭空多出数据行，像出现了幻读一样，这便是幻读问题。
- 可串行读（SERIALIZABLE）   这是事务的最高隔离级别，通过强制事务排序，使之不可能相互冲突，就是在每个读的数据行加上共享锁来实现
-  在该隔离级别下，可以解决前面出现的脏读、不可重复读和幻读问题，但也会导致大量的超时和锁竞争现象，一般不推荐使用</description>
+  这时该事务的读取操作不会等待行上的锁释放，而是根据版本号去读取行的快照数据（记录在undo log中）
+  这样，事务中的查询操作返回的都是同一版本下的数据，解决了不可重复读问题。</description>
     </item>
     
     <item>
