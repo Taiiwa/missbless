@@ -13,7 +13,7 @@
  mkdir xx git init git clone &quot;master的ssh&quot; # 进行代码更新操作 # 创建分支 git branch develop origin/develop git branch xx origin/xx # 查看分支 git branch # 切换节点 git checkout xx # 整合到测试环境 git add -A git commit -m &quot;&quot; git push origin xx # 切换 git checkout develop # 整合 git merge xx    向分支上推送代码：">
 <meta itemprop="datePublished" content="2020-04-21T08:44:02&#43;08:00" />
 <meta itemprop="dateModified" content="2020-04-21T08:44:02&#43;08:00" />
-<meta itemprop="wordCount" content="88">
+<meta itemprop="wordCount" content="126">
 
 
 
@@ -371,7 +371,30 @@
 
   git commit -m &quot;&quot;
 
-  git push -u origin 分支名</code></pre>
+  git push -u origin 分支名
+</code></pre>
+</li>
+<li>
+<p>冲突</p>
+<pre><code>  git status
+
+  # 显示冲突文件名
+
+  git diff 文件名
+
+  # pull报错：
+  git pull origin develop
+  fatal: Exiting because of an unresolved conflict.
+
+  git reset --hard FETCH_HEAD
+
+  # 重新拉取
+  git pull origin develop
+
+  git merge 分支
+
+  git push origin develop
+</code></pre>
 </li>
 </ul>
 
