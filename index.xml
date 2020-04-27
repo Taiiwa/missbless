@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 21 Apr 2020 15:38:54 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 27 Apr 2020 08:36:00 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Tue, 21 Apr 2020 15:38:54 +0800</pubDate>
+      <pubDate>Mon, 27 Apr 2020 08:36:00 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -26,6 +26,7 @@
  07-Django常用的工具方法
  08-Django反序列化
  09-Django文件传输
+ Django中的jwt
  git   01-git常用指令
  02-git配置代理
  03-git解决push问题
@@ -43,8 +44,21 @@
  07-pygame中的font
  08-pygame中的image
  09-pygame中的key
- 10-pygame中的mouse
- 11-pygame中的Surface</description>
+ 10-pygame中的mouse</description>
+    </item>
+    
+    <item>
+      <title>Django中的jwt</title>
+      <link>/blog/django/django%E4%B8%AD%E7%9A%84jwt/</link>
+      <pubDate>Mon, 27 Apr 2020 08:16:32 +0800</pubDate>
+      
+      <guid>/blog/django/django%E4%B8%AD%E7%9A%84jwt/</guid>
+      <description>JWT概念   组成: header.payload.signature 头.载荷.签名
+  举例：
+ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Im93ZW4iLCJleHAiOjE1NTgzMDM1NDR9.4j5QypLwufjpqoScwUB9LYiuhYcTw1y4dPrvnv7DUyo    介绍： header：一般存放如何处理token的方式：加密的算法、是否有签名等 payload：数据的主体部分：用户信息、发行者、过期时间等 signature：签名：将header、payload再结合密码盐整体处理一下
+  工作原理  jwt = base64(头部).base64(载荷).hash256(base64(头部).base(载荷).密钥) base64是可逆的算法、hash256是不可逆的算法 密钥是固定的字符串，保存在服务器  drf-jwt [官方文档]https://github.com/jpadilla/django-rest-framework-jwt
+安装子虚拟环境 pip install djangorestframework-jwt  使用：user/urls.py from django.urls import path from rest_framework_jwt.views import obtain_jwt_token urlpatterns = [ path(&#39;login/&#39;, obtain_jwt_token), ]  测试接口：post请求 postman发生post请求
+接口：http://api.luffy.cn:8000/user/login/ 数据： { &amp;quot;username&amp;quot;:&amp;quot;admin&amp;quot;, &amp;quot;password&amp;quot;:&amp;quot;admin&amp;quot; }  drf-jwt开发 配置信息：JWT_AUTH到dev.py中 import datetime JWT_AUTH = { # 过期时间 &#39;JWT_EXPIRATION_DELTA&#39;: datetime.</description>
     </item>
     
     <item>
