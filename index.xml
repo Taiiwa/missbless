@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 27 Apr 2020 08:36:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 20 May 2020 00:15:58 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Mon, 27 Apr 2020 08:36:00 +0800</pubDate>
+      <pubDate>Wed, 20 May 2020 00:15:58 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -26,7 +26,8 @@
  07-Django常用的工具方法
  08-Django反序列化
  09-Django文件传输
- Django中的jwt
+ 10-Django中的jwt
+ 11-Django中的联合索引
  git   01-git常用指令
  02-git配置代理
  03-git解决push问题
@@ -43,16 +44,49 @@
  06-pygame中的event
  07-pygame中的font
  08-pygame中的image
- 09-pygame中的key
- 10-pygame中的mouse</description>
+ 09-pygame中的key</description>
+    </item>
+    
+    <item>
+      <title>Django中的联合索引</title>
+      <link>/blog/django/11-django%E4%B8%AD%E7%9A%84%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95/</link>
+      <pubDate>Tue, 19 May 2020 23:19:52 +0800</pubDate>
+      
+      <guid>/blog/django/11-django%E4%B8%AD%E7%9A%84%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95/</guid>
+      <description>Mysql中的联合唯一索引 有这样一张表，它要记录一个人的浏览记录。
+   id uid gid     1 1 1   2 1 2   3 1 3   4 2 1   5 2 3   6 2 5    每个人的浏览记录只记一次，每个人可以浏览多个商品，每个商品也可以被多个人浏览。
+但是每条记录是单一的，不可重复。比如id为1的这条记录，{uid:1}可重复，{cid:1}可重复，但{uid:1, cid:1}，它只能出现一次。
+这中情况，我们需要联合唯一索引来限制。
+建立联合唯一索引：从Navicat建立：
+表名称为：table_a
+两个字段分别为：key_a key_b
+执行语句：
+alter table table_a add unique index(key_a,key_b);
+建立了联合索引之后，表中不能插入两个字段值同时相等的数据。
+Django中实现联合唯一索引 class UserOrderHouse(models.Model): &amp;quot;&amp;quot;&amp;quot; 客户预约表 &amp;quot;&amp;quot;&amp;quot; broker_id = models.ForeignKey(to=&amp;quot;Broker&amp;quot;, verbose_name=&amp;quot;经纪人&amp;quot;, null=True, blank=True) client_id = models.</description>
+    </item>
+    
+    <item>
+      <title>RBAC权限管理模型理念</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/rbac%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B%E7%90%86%E5%BF%B5/</link>
+      <pubDate>Mon, 18 May 2020 18:08:10 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/rbac%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B%E7%90%86%E5%BF%B5/</guid>
+      <description> RBAC权限管理模型：基本模型及角色模型解析及举例 概念 RBAC是一套成熟的权限模型。在传统权限模型中，我们直接把权限赋予用户。而在RBAC中，增加了“角色”的概念，我们首先把权限赋予角色，再把角色赋予用户。这样，由于增加了角色，授权会更加灵活方便。在RBAC中，根据权限的复杂程度，又可分为RBAC0、RBAC1、RBAC2、RBAC3。其中，RBAC0是基础，RBAC1、RBAC2、RBAC3都是以RBAC0为基础的升级。用户和角色，角色和权限都是多对多的关系。用户拥有的权限等于他所有的角色持有权限之和。
+RBAC1建立在RBAC0基础之上，在角色中引入了继承的概念。
+RBAC2同样建立在RBAC0基础之上，仅是对用户、角色和权限三者之间增加了一些限制。这些限制可以分成两类，即静态职责分离SSD(Static Separation of Duty)和动态职责分离DSD(Dynamic Separation of Duty)。
+譬如给一个用户分配了销售经理的角色，就不能给他再赋予财务经理的角色了，否则他即可以录入合同又能自己审核合同；再譬如，有些公司对角色的升级十分看重，一个销售员要想升级到销售经理，必须先升级到销售主管，这时候就要采用先决条件限制了。
+RBAC3是RBAC1和RBAC2的合集，所以RBAC3既有角色分层，也包括可以增加各种限制。
+基于RBAC模型，还可以适当延展，使其更适合我们的产品。譬如增加用户组概念，直接给用户组分配角色，再把用户加入用户组。这样用户除了拥有自身的权限外，还拥有了所属用户组的所有权限。
+应用 </description>
     </item>
     
     <item>
       <title>Django中的jwt</title>
-      <link>/blog/django/django%E4%B8%AD%E7%9A%84jwt/</link>
+      <link>/blog/django/10-django%E4%B8%AD%E7%9A%84jwt/</link>
       <pubDate>Mon, 27 Apr 2020 08:16:32 +0800</pubDate>
       
-      <guid>/blog/django/django%E4%B8%AD%E7%9A%84jwt/</guid>
+      <guid>/blog/django/10-django%E4%B8%AD%E7%9A%84jwt/</guid>
       <description>JWT概念   组成: header.payload.signature 头.载荷.签名
   举例：
  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Im93ZW4iLCJleHAiOjE1NTgzMDM1NDR9.4j5QypLwufjpqoScwUB9LYiuhYcTw1y4dPrvnv7DUyo    介绍： header：一般存放如何处理token的方式：加密的算法、是否有签名等 payload：数据的主体部分：用户信息、发行者、过期时间等 signature：签名：将header、payload再结合密码盐整体处理一下

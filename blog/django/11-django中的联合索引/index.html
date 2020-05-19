@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Django中的联合索引 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django中的联合索引">
+<meta itemprop="description" content="Mysql中的联合唯一索引 有这样一张表，它要记录一个人的浏览记录。
+   id uid gid     1 1 1   2 1 2   3 1 3   4 2 1   5 2 3   6 2 5    每个人的浏览记录只记一次，每个人可以浏览多个商品，每个商品也可以被多个人浏览。
+但是每条记录是单一的，不可重复。比如id为1的这条记录，{uid:1}可重复，{cid:1}可重复，但{uid:1, cid:1}，它只能出现一次。
+这中情况，我们需要联合唯一索引来限制。
+建立联合唯一索引：从Navicat建立：
+表名称为：table_a
+两个字段分别为：key_a key_b
+执行语句：
+alter table table_a add unique index(key_a,key_b);
+建立了联合索引之后，表中不能插入两个字段值同时相等的数据。
+Django中实现联合唯一索引 class UserOrderHouse(models.Model): &quot;&quot;&quot; 客户预约表 &quot;&quot;&quot; broker_id = models.ForeignKey(to=&quot;Broker&quot;, verbose_name=&quot;经纪人&quot;, null=True, blank=True) client_id = models.">
+<meta itemprop="datePublished" content="2020-05-19T23:19:52&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-19T23:19:52&#43;08:00" />
+<meta itemprop="wordCount" content="118">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django中的联合索引" />
+<meta property="og:description" content="Mysql中的联合唯一索引 有这样一张表，它要记录一个人的浏览记录。
+   id uid gid     1 1 1   2 1 2   3 1 3   4 2 1   5 2 3   6 2 5    每个人的浏览记录只记一次，每个人可以浏览多个商品，每个商品也可以被多个人浏览。
+但是每条记录是单一的，不可重复。比如id为1的这条记录，{uid:1}可重复，{cid:1}可重复，但{uid:1, cid:1}，它只能出现一次。
+这中情况，我们需要联合唯一索引来限制。
+建立联合唯一索引：从Navicat建立：
+表名称为：table_a
+两个字段分别为：key_a key_b
+执行语句：
+alter table table_a add unique index(key_a,key_b);
+建立了联合索引之后，表中不能插入两个字段值同时相等的数据。
+Django中实现联合唯一索引 class UserOrderHouse(models.Model): &quot;&quot;&quot; 客户预约表 &quot;&quot;&quot; broker_id = models.ForeignKey(to=&quot;Broker&quot;, verbose_name=&quot;经纪人&quot;, null=True, blank=True) client_id = models." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/11-django%E4%B8%AD%E7%9A%84%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95/" />
+<meta property="article:published_time" content="2020-05-19T23:19:52+08:00" />
+<meta property="article:modified_time" content="2020-05-19T23:19:52+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django中的联合索引"/>
+<meta name="twitter:description" content="Mysql中的联合唯一索引 有这样一张表，它要记录一个人的浏览记录。
+   id uid gid     1 1 1   2 1 2   3 1 3   4 2 1   5 2 3   6 2 5    每个人的浏览记录只记一次，每个人可以浏览多个商品，每个商品也可以被多个人浏览。
+但是每条记录是单一的，不可重复。比如id为1的这条记录，{uid:1}可重复，{cid:1}可重复，但{uid:1, cid:1}，它只能出现一次。
+这中情况，我们需要联合唯一索引来限制。
+建立联合唯一索引：从Navicat建立：
+表名称为：table_a
+两个字段分别为：key_a key_b
+执行语句：
+alter table table_a add unique index(key_a,key_b);
+建立了联合索引之后，表中不能插入两个字段值同时相等的数据。
+Django中实现联合唯一索引 class UserOrderHouse(models.Model): &quot;&quot;&quot; 客户预约表 &quot;&quot;&quot; broker_id = models.ForeignKey(to=&quot;Broker&quot;, verbose_name=&quot;经纪人&quot;, null=True, blank=True) client_id = models."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95&amp;url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f&amp;title=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f&amp;title=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f&amp;description=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/11-django%E4%B8%AD%E7%9A%84%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95/">Django中的联合索引</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-05-19 23:19:52 &#43;0800 CST">
+      May 19, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95&amp;url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f&amp;title=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f&amp;title=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f&amp;description=Django%e4%b8%ad%e7%9a%84%e8%81%94%e5%90%88%e7%b4%a2%e5%bc%95" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f11-django%25E4%25B8%25AD%25E7%259A%2584%25E8%2581%2594%25E5%2590%2588%25E7%25B4%25A2%25E5%25BC%2595%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="mysql中的联合唯一索引">Mysql中的联合唯一索引</h2>
+<p>有这样一张表，它要记录一个人的浏览记录。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="right">uid</th>
+<th align="center">gid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="right">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="right">1</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="right">1</td>
+<td align="center">3</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="right">2</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="right">2</td>
+<td align="center">3</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="right">2</td>
+<td align="center">5</td>
+</tr>
+</tbody>
+</table>
+<p>每个人的浏览记录只记一次，每个人可以浏览多个商品，每个商品也可以被多个人浏览。</p>
+<p>但是每条记录是单一的，不可重复。比如id为1的这条记录，{uid:1}可重复，{cid:1}可重复，但{uid:1, cid:1}，它只能出现一次。</p>
+<p>这中情况，我们需要<strong>联合唯一索引</strong>来限制。</p>
+<p>建立联合唯一索引：从Navicat建立：</p>
+<p><img src="/QQ%E6%88%AA%E5%9B%BE20200520000153.png" alt="联合唯一索引"></p>
+<p>表名称为：table_a</p>
+<p>两个字段分别为：key_a  key_b</p>
+<p>执行语句：</p>
+<p>alter table <code>table_a</code> add unique index(key_a,key_b);</p>
+<p>建立了联合索引之后，表中不能插入两个字段值同时相等的数据。</p>
+<h2 id="django中实现联合唯一索引">Django中实现联合唯一索引</h2>
+<pre><code>class UserOrderHouse(models.Model):
+    &quot;&quot;&quot;
+    客户预约表
+    &quot;&quot;&quot;
+    broker_id = models.ForeignKey(to=&quot;Broker&quot;, verbose_name=&quot;经纪人&quot;, null=True, blank=True)
+    client_id = models.ForeignKey(to=&quot;Client&quot;, verbose_name=&quot;游客&quot;, null=True, blank=True)
+    house = models.ForeignKey(to=&quot;house.House&quot;, verbose_name=&quot;楼盘预约&quot;, null=True, blank=True)
+    rend_house = models.ForeignKey(to=&quot;old_house.RentHouse&quot;, verbose_name=&quot;出租预约&quot;, null=True, blank=True)
+    sell_house = models.ForeignKey(to=&quot;old_house.SellHouse&quot;, verbose_name=&quot;求租预约&quot;, null=True, blank=True)
+    buy_house = models.ForeignKey(to=&quot;old_house.BuyHouse&quot;, verbose_name=&quot;求售预约&quot;, null=True, blank=True)
+    time = models.DateTimeField(auto_now=True, verbose_name=&quot;预约时间&quot;)
+
+    class Meta:
+        unique_together = (
+            ('broker_id', 'house'),
+            ('broker_id', 'rend_house'),
+            ('broker_id', 'sell_house'),
+            ('broker_id', 'buy_house'),
+            ('client_id', 'house'),
+            ('client_id', 'rend_house'),
+            ('client_id', 'sell_house'),
+            ('client_id', 'buy_house'),
+        )
+        verbose_name = &quot;用户预约&quot;
+        verbose_name_plural = verbose_name
+
+————————————————
+版权声明：代码部分为CSDN博主「Abraverman」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_42874244/article/details/97750783</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/rbac%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B%E7%90%86%E5%BF%B5/" class="button"><div class="previous"><div>RBAC权限管理模型理念</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/11-django%E4%B8%AD%E7%9A%84%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95/">Django中的联合索引</a></h1>
+          <time class="published" datetime="">May 19, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/rbac%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B%E7%90%86%E5%BF%B5/">RBAC权限管理模型理念</a></h1>
+          <time class="published" datetime="">May 18, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/10-django%E4%B8%AD%E7%9A%84jwt/">Django中的jwt</a></h1>
+          <time class="published" datetime="">April 27, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/vue/vue%E5%B0%81%E8%A3%85axios/">Vue封装axios</a></h1>
+          <time class="published" datetime="">April 21, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/git/04-git%E5%A4%9A%E4%BA%BA%E9%A1%B9%E7%9B%AE/">Git多人项目</a></h1>
+          <time class="published" datetime="">April 21, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
