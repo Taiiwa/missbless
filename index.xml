@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 20 May 2020 00:15:58 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 20 May 2020 00:40:53 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Wed, 20 May 2020 00:15:58 +0800</pubDate>
+      <pubDate>Wed, 20 May 2020 00:40:53 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -45,6 +45,21 @@
  07-pygame中的font
  08-pygame中的image
  09-pygame中的key</description>
+    </item>
+    
+    <item>
+      <title>Vue中的高德地图</title>
+      <link>/blog/vue/vue%E4%B8%AD%E7%9A%84%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</link>
+      <pubDate>Wed, 20 May 2020 00:24:53 +0800</pubDate>
+      
+      <guid>/blog/vue/vue%E4%B8%AD%E7%9A%84%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</guid>
+      <description>vue中高德地图的使用 1. 准备工作 vue搭建 高德开发key值申请（链接：高德开放平台），key值请放入以下需要对号入座的地方 地图样式挑选，需要申请到key值后，在高德开放平台自动移地图模板处挑选配置。此处用 极夜蓝模板来示例，也可选择其他模板。然后发布=&amp;gt;复制与分享=&amp;gt;辅助出来样式ID。如： bb7f5165253f57515d7ba226b2******，然后放入以下需要对号入座的地方 注：第二步和第三步申请的两个值需要对应使用
+2. 地图引入项目 入口文件index.html引入标签:
+&amp;lt;script src=&amp;quot;https://webapi.amap.com/maps?v=1.4.15&amp;amp;key=这里放入key值&amp;quot;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script src=&amp;quot;//webapi.amap.com/ui/1.0/main.js?v=1.0.11&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;  vue.config.js中配置:
+module.exports = { // ... configureWebpack(config) { // ... config.externals = { &#39;AMap&#39;: &#39;AMap&#39; // 高德地图配置 } } }  使用该功能的组件中引入：
+import AMap from &amp;quot;AMap&amp;quot;  3. 使用
+地图初始化即可：
+&amp;lt;div class=&amp;quot;map&amp;quot; id=&amp;quot;map&amp;quot;&amp;gt; // 引入地图组件 import AMap from &amp;quot;AMap&amp;quot; // 初始化 MapInit () { let _this = this; let map = new AMap.</description>
     </item>
     
     <item>
