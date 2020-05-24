@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Python基础2 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Python基础2">
+<meta itemprop="description" content="字符串 定义my_str为一个字符串
+   方法 格式 功能     [] my_str[起始下标:结束:步长] 切片是指对操作的对象截取其中一部分的操作   find() my_str.find(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则返回-1   rfind() my_str.rfind(str, start=0,end=len(mystr) ) 类似于 find()函数，不过是从右边开始查找.   index() my_str.index(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则报错   count() my_str.count(str, start=0, end=len(mystr)) 返回 str在start和end之间 在 mystr里面出现的次数   replace() my_str.replace(str1, str2, mystr.count(str1)) 把 mystr 中的 str1 替换成 str2,如果 count 指定，则替换不超过 count 次.   split() my_str.">
+<meta itemprop="datePublished" content="2020-05-25T00:09:04&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-25T00:09:04&#43;08:00" />
+<meta itemprop="wordCount" content="395">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Python基础2" />
+<meta property="og:description" content="字符串 定义my_str为一个字符串
+   方法 格式 功能     [] my_str[起始下标:结束:步长] 切片是指对操作的对象截取其中一部分的操作   find() my_str.find(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则返回-1   rfind() my_str.rfind(str, start=0,end=len(mystr) ) 类似于 find()函数，不过是从右边开始查找.   index() my_str.index(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则报错   count() my_str.count(str, start=0, end=len(mystr)) 返回 str在start和end之间 在 mystr里面出现的次数   replace() my_str.replace(str1, str2, mystr.count(str1)) 把 mystr 中的 str1 替换成 str2,如果 count 指定，则替换不超过 count 次.   split() my_str." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/python/python%E5%9F%BA%E7%A1%802/" />
+<meta property="article:published_time" content="2020-05-25T00:09:04+08:00" />
+<meta property="article:modified_time" content="2020-05-25T00:09:04+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Python基础2"/>
+<meta name="twitter:description" content="字符串 定义my_str为一个字符串
+   方法 格式 功能     [] my_str[起始下标:结束:步长] 切片是指对操作的对象截取其中一部分的操作   find() my_str.find(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则返回-1   rfind() my_str.rfind(str, start=0,end=len(mystr) ) 类似于 find()函数，不过是从右边开始查找.   index() my_str.index(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则报错   count() my_str.count(str, start=0, end=len(mystr)) 返回 str在start和end之间 在 mystr里面出现的次数   replace() my_str.replace(str1, str2, mystr.count(str1)) 把 mystr 中的 str1 替换成 str2,如果 count 指定，则替换不超过 count 次.   split() my_str."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Python%e5%9f%ba%e7%a1%802&amp;url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f&amp;title=Python%e5%9f%ba%e7%a1%802" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f&amp;title=Python%e5%9f%ba%e7%a1%802" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f&amp;description=Python%e5%9f%ba%e7%a1%802" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/python/python%E5%9F%BA%E7%A1%802/">Python基础2</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-05-25 00:09:04 &#43;0800 CST">
+      May 25, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Python%e5%9f%ba%e7%a1%802&amp;url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f&amp;title=Python%e5%9f%ba%e7%a1%802" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f&amp;title=Python%e5%9f%ba%e7%a1%802" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f&amp;description=Python%e5%9f%ba%e7%a1%802" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fpython%25E5%259F%25BA%25E7%25A1%25802%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="字符串">字符串</h2>
+<p><code>定义my_str为一个字符串</code></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>格式</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[]</td>
+<td>my_str[起始下标:结束:步长]</td>
+<td>切片是指对操作的对象截取其中一部分的操作</td>
+</tr>
+<tr>
+<td>find()</td>
+<td>my_str.find(str, start=0, end=len(mystr))</td>
+<td>检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则返回-1</td>
+</tr>
+<tr>
+<td>rfind()</td>
+<td>my_str.rfind(str, start=0,end=len(mystr) )</td>
+<td>类似于 find()函数，不过是从右边开始查找.</td>
+</tr>
+<tr>
+<td>index()</td>
+<td>my_str.index(str, start=0, end=len(mystr))</td>
+<td>检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则报错</td>
+</tr>
+<tr>
+<td>count()</td>
+<td>my_str.count(str, start=0, end=len(mystr))</td>
+<td>返回 str在start和end之间 在 mystr里面出现的次数</td>
+</tr>
+<tr>
+<td>replace()</td>
+<td>my_str.replace(str1, str2,  mystr.count(str1))</td>
+<td>把 mystr 中的 str1 替换成 str2,如果 count 指定，则替换不超过 count 次.</td>
+</tr>
+<tr>
+<td>split()</td>
+<td>my_str.split(str=&rdquo; &ldquo;, 2)</td>
+<td>以 str 为分隔符切片 mystr，如果 maxsplit有指定值，则仅分隔 maxsplit 个子字符串</td>
+</tr>
+<tr>
+<td>startswith()</td>
+<td>my_str.startswith(str)</td>
+<td>检查字符串是否是以 str 开头, 是则返回 True，否则返回 False</td>
+</tr>
+<tr>
+<td>endswith()</td>
+<td>检查字符串是否以obj结束，如果是返回True,否则返回 False.</td>
+<td>my_str.endswith(obj)</td>
+</tr>
+<tr>
+<td>upper()</td>
+<td>my_str.upper()</td>
+<td>转换 mystr 中的小写字母为大写</td>
+</tr>
+<tr>
+<td>lower()</td>
+<td>my_str.lower()</td>
+<td>转换 mystr 中所有大写字符为小写</td>
+</tr>
+<tr>
+<td>title()</td>
+<td>my_str.title()</td>
+<td>把字符串的每个单词首字母大写</td>
+</tr>
+<tr>
+<td>capitalize()</td>
+<td>my_str.capitalize()</td>
+<td>把字符串的第一个字符大写</td>
+</tr>
+<tr>
+<td>partition()</td>
+<td>my_str.partition(str)</td>
+<td>把mystr以str分割成三部分,str前，str和str后</td>
+</tr>
+<tr>
+<td>rpartition()</td>
+<td>my_str.rpartition(str)</td>
+<td>类似于 partition()函数,不过是从右边开始.</td>
+</tr>
+<tr>
+<td>splitlines()</td>
+<td>my_str.splitlines()</td>
+<td>按照行分隔，返回一个包含各行作为元素的列表</td>
+</tr>
+<tr>
+<td>isalpha()</td>
+<td>my_str.isalpha()</td>
+<td>如果 mystr 所有字符都是字母 则返回 True,否则返回 False</td>
+</tr>
+<tr>
+<td>isdigit()</td>
+<td>my_str.isdigit()</td>
+<td>如果 mystr 只包含数字则返回 True 否则返回 False.</td>
+</tr>
+<tr>
+<td>isalnum()</td>
+<td>my_str.isalnum()</td>
+<td>如果 mystr 所有字符都是字母或数字则返回 True,否则返回 False</td>
+</tr>
+<tr>
+<td>isspace()</td>
+<td>my_str.isspace()</td>
+<td>如果 mystr 中只包含空格，则返回 True，否则返回 False.</td>
+</tr>
+<tr>
+<td>rjust()</td>
+<td>my_str.rjust(width)</td>
+<td>返回一个原字符串右对齐,并使用空格填充至长度 width 的新字符串</td>
+</tr>
+<tr>
+<td>ljust()</td>
+<td>my_str.ljust(width)</td>
+<td>返回一个原字符串左对齐,并使用空格填充至长度 width 的新字符串</td>
+</tr>
+<tr>
+<td>center()</td>
+<td>my_str.center(width)</td>
+<td>返回一个原字符串居中对齐,并使用空格填充至长度 width 的新字符串</td>
+</tr>
+<tr>
+<td>lstrip()</td>
+<td>my_str.lstrip()</td>
+<td>删除 my_str 左边的空白字符</td>
+</tr>
+<tr>
+<td>rstrip()</td>
+<td>my_str.rstrip()</td>
+<td>删除 mystr 字符串末尾的空白字符</td>
+</tr>
+<tr>
+<td>strip()</td>
+<td>my_str.strip()</td>
+<td>删除mystr字符串两端的空白字符</td>
+</tr>
+<tr>
+<td>join()</td>
+<td>my_list.join(str)</td>
+<td>list中每个字符后面插入my_str,构造出一个新的字符串</td>
+</tr>
+<tr>
+<td>replace()</td>
+<td>my_str.replace(&lsquo;a&rsquo;, &lsquo;b&rsquo;)</td>
+<td>用b替换a</td>
+</tr>
+</tbody>
+</table>
+<h2 id="列表">列表</h2>
+<h3 id="列表的循环遍历">列表的循环遍历</h3>
+<p>使用for循环
+为了更有效率的输出列表的每个数据，可以使用循环来完成</p>
+<pre><code>demo:
+    namesList = ['xiaoWang','xiaoZhang','xiaoHua']
+    for name in namesList:
+        print(name)
+结果:
+    xiaoWang
+    xiaoZhang
+    xiaoHua
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>append()</td>
+<td>通过append可以向列表（尾部）添加元素</td>
+</tr>
+<tr>
+<td>extend()</td>
+<td>通过extend可以将另一个集合中的元素逐一添加到列表中</td>
+</tr>
+<tr>
+<td>insert()</td>
+<td>insert(index, object) 在指定位置index前插入元素object</td>
+</tr>
+<tr>
+<td>a_list[1] = &lsquo;a&rsquo;</td>
+<td>按下表修改列表元素</td>
+</tr>
+<tr>
+<td>in, not in</td>
+<td>in（存在）,如果存在那么结果为true，否则为false</td>
+</tr>
+<tr>
+<td>not in（不存在），如果不存在那么结果为true，否则false</td>
+<td></td>
+</tr>
+<tr>
+<td>index(), count()</td>
+<td>index和count与字符串中的用法相同</td>
+</tr>
+<tr>
+<td>del</td>
+<td>根据下标进行删除</td>
+</tr>
+<tr>
+<td>pop()</td>
+<td>删除最后一个元素</td>
+</tr>
+<tr>
+<td>remove()</td>
+<td>根据元素的值进行删除</td>
+</tr>
+<tr>
+<td>sort()</td>
+<td>sort方法是将list按特定顺序重新排列，默认为由小到大，参数reverse=True可改为倒序，由大到小。</td>
+</tr>
+<tr>
+<td>reverse()</td>
+<td>将list逆置</td>
+</tr>
+</tbody>
+</table>
+<h2 id="元组">元组</h2>
+<p>Python的元组与列表类似，不同之处在于元组的元素不能修改。元组使用小括号，列表使用方括号。</p>
+<h2 id="字典">字典</h2>
+<p>字典的每个元素由2部分组成，键（key）:值（value）。例如 &lsquo;name&rsquo;:&lsquo;班长&rsquo; ,&lsquo;name'为键(key)，&lsquo;班长'为值(value)</p>
+<pre><code>#1. clear方法清除字典中所有的项，这是一个原地操作，所以无返回值（或则说返回None）
+d = {'name':&quot;tom&quot;}
+d.clear()
+print(d)                                         #the result : {}
+
+#2. fromkeys方法使用给定的键建立新的字典，每个键都对应一个默认的值None
+print({}.fromkeys(['name','age']))              #the result　：　{'age': None, 'name': None}
+
+#3. get方法是个更宽松的访问字典项的方法，如果试图访问字典中不存在的项时不会报错仅会      返回：None
+d = {'Tom':8777,'Jack':8888,'Fly':6666}
+print(d.get('Tom'))                              #the result ：     8777
+print(d.get('not_exist'))                       #the result ：     None
+
+#4. for循环字典的三种方法
+d = {'Tom':8777,'Jack':8888,'Fly':6666}
+for k,v in d.items():
+    print(k,v)
+for k in d.values():
+    print(k)
+for k in d.keys():
+    print(k)
+
+#5. pop方法用于获得对应与给定键的值，然后将这个”键-值”对从字典中移除
+d = {'Tom':8777,'Jack':8888,'Fly':6666}
+v = d.pop('Tom')
+print(v)                    #8777
+
+
+#6. setdefault方法在某种程度上类似于get方法，能够获得与给定键相关联的值，除此之外，setdefault还能在字典中不含有给定键的情况下设定相应的键值
+d = {'Tom':8777,'Jack':8888,'Fly':6666}
+d.setdefault('Tom')                           #the result ： 8777
+print(d.setdefault('Test'))                  #the result ： None
+print(d)                                      #{'Fly': 6666, 'Jack': 8888, 'Tom': 8777, 'Test': None}
+
+#7. update方法可以利用一个字典项更新另一个字典，提供的字典中的项会被添加到旧的字典中，如有相同的键则会被覆盖
+d = {'Tom':8777,'Jack':8888,'Fly':6666}
+a = {'Tom':110,'Test':119}
+d.update(a)
+print(d)                                       #the result ：{'Fly': 6666, 'Test': 119, 'Jack': 8888, 'Tom': 110}
+
+#8. 将两个列表组合成字典
+keys = ['a', 'b']
+values = [1, 2]
+print(dict(zip(keys,values)))                                      # {'a': 1, 'b': 2}
+</code></pre>
+<h2 id="集合">集合</h2>
+<pre><code>list_1 = [1,2,3,4,5,1,2]
+#1、去重(去除list_1中重复元素1,2)
+list_1 = set(list_1)                                    #去重： {1, 2, 3, 4, 5}
+print(list_1)
+list_2 = set([4,5,6,7,8])
+
+#2、交集（在list_1和list_2中都有的元素4,5）
+print(list_1.intersection(list_2))                      #交集： {4, 5}
+
+#3、并集（在list_1和list_2中的元素全部打印出来，重复元素仅打印一次）
+print(list_1.union(list_2))                             #并集： {1, 2, 3, 4, 5, 6, 7, 8}
+
+#4、差集
+print(list_1.difference(list_2))                        #差集：在list_1中有在list_2中没有：   {1, 2, 3}
+print(list_2.difference(list_1))                        #差集：在list_1中有在list_2中没有：   {8, 6, 7}
+</code></pre>
+<h2 id="文件相关操作">文件相关操作</h2>
+<p><img src="/python_img/%E5%9B%BE%E7%89%877.png" alt="Python基础"></p>
+<p><img src="/python_img/%E5%9B%BE%E7%89%878.png" alt="Python基础"></p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/python%E5%9F%BA%E7%A1%801/" class="button"><div class="previous"><div>Python基础1</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/python/python%E5%9F%BA%E7%A1%803/" class="button"><div class="next"><div>Python基础3</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/os%E6%A8%A1%E5%9D%97/">Os模块</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%803/">Python基础3</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%802/">Python基础2</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%801/">Python基础1</a></h1>
+          <time class="published" datetime="">May 24, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BC%98%E5%8C%96/">Redis优化</a></h1>
+          <time class="published" datetime="">May 24, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

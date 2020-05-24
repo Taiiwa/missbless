@@ -6,10 +6,127 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 20 May 2020 00:24:53 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2020 00:39:26 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Os模块</title>
+      <link>/blog/python/os%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Mon, 25 May 2020 00:39:26 +0800</pubDate>
+      
+      <guid>/blog/python/os%E6%A8%A1%E5%9D%97/</guid>
+      <description>os.getcwd()
+获取当前工作目录，即当前python脚本工作的目录路径
+ os.chdir(&amp;ldquo;dirname&amp;rdquo;) 改变当前脚本工作目录；相当于shell下cd
+ os.curdir 返回当前目录: (&#39;.&#39;)
+ os.pardir 获取当前目录的父目录字符串名：(&#39;..&#39;)
+ os.makedirs(&amp;lsquo;dirname1/dirname2&amp;rsquo;) 可生成多层递归目录
+ os.removedirs(&amp;lsquo;dirname1&amp;rsquo;)
+若目录为空，则删除，并递归到上一级目录，如若也为空，则删除，依此类推
+注:makedirs()和removedirs()是一组相反的函数,一个创建一个删除(针对多个层级文件操作) os.mkdir(&amp;lsquo;dirname&amp;rsquo;)
+生成单级目录；相当于shell中mkdir dirname
+ os.rmdir(&amp;lsquo;dirname&amp;rsquo;)
+删除单级空目录，若目录不为空则无法删除，报错；相当于shell中rmdir dirname
+ os.remove() 删除一个文件注:mkdir()和remove()是一组相反的函数,一个创建一个删除(针对单个层级文件操作) os.listdir(&amp;lsquo;dirname&amp;rsquo;)
+列出指定目录下的所有文件和子目录，包括隐藏文件，并以列表方式打印
+ os.rename(&amp;ldquo;oldname&amp;rdquo;,&amp;ldquo;newname&amp;rdquo;) 重命名文件/目录
+ os.stat(&amp;lsquo;path/filename&amp;rsquo;)
+获取文件/目录信息
+ os.sep
+输出操作系统特定的路径分隔符，win下为&amp;rdquo;\&amp;quot;,Linux下为&amp;rdquo;/&amp;rdquo;
+ os.linesep
+输出当前平台使用的行终止符，win下为&amp;rdquo;\t\n&amp;rdquo;,Linux下为&amp;rdquo;\n&amp;rdquo;
+ os.pathsep
+输出用于分割文件路径的字符串 win下为; , Linux下为:
+ os.name
+输出字符串指示当前使用平台。win-&amp;gt;&amp;lsquo;nt&amp;rsquo;; Linux-&amp;gt;&amp;lsquo;posix&amp;rsquo;
+ os.system(&amp;ldquo;bash command&amp;rdquo;)
+运行shell命令，直接显示
+ os.environ
+获取系统环境变量</description>
+    </item>
+    
+    <item>
+      <title>Python基础3</title>
+      <link>/blog/python/python%E5%9F%BA%E7%A1%803/</link>
+      <pubDate>Mon, 25 May 2020 00:34:18 +0800</pubDate>
+      
+      <guid>/blog/python/python%E5%9F%BA%E7%A1%803/</guid>
+      <description> </description>
+    </item>
+    
+    <item>
+      <title>Python基础2</title>
+      <link>/blog/python/python%E5%9F%BA%E7%A1%802/</link>
+      <pubDate>Mon, 25 May 2020 00:09:04 +0800</pubDate>
+      
+      <guid>/blog/python/python%E5%9F%BA%E7%A1%802/</guid>
+      <description>字符串 定义my_str为一个字符串
+   方法 格式 功能     [] my_str[起始下标:结束:步长] 切片是指对操作的对象截取其中一部分的操作   find() my_str.find(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则返回-1   rfind() my_str.rfind(str, start=0,end=len(mystr) ) 类似于 find()函数，不过是从右边开始查找.   index() my_str.index(str, start=0, end=len(mystr)) 检测 str 是否包含在 mystr中，如果是返回开始的索引值，否则报错   count() my_str.count(str, start=0, end=len(mystr)) 返回 str在start和end之间 在 mystr里面出现的次数   replace() my_str.replace(str1, str2, mystr.count(str1)) 把 mystr 中的 str1 替换成 str2,如果 count 指定，则替换不超过 count 次.   split() my_str.</description>
+    </item>
+    
+    <item>
+      <title>Python基础1</title>
+      <link>/blog/python/python%E5%9F%BA%E7%A1%801/</link>
+      <pubDate>Sun, 24 May 2020 22:55:15 +0800</pubDate>
+      
+      <guid>/blog/python/python%E5%9F%BA%E7%A1%801/</guid>
+      <description>注释 注释的作用：解释当前代码的作用或用途 （1. 给自己看；2. 给同事看；3. 服务于自己调试代码（注释的代码是不会执行的！）） Python中的注释有单行注释和多行注释： Python中单行注释以 # 开头（快捷键为：Ctrl + /）
+python中的多行注释 多行注释用三个单引号 &#39;&amp;rsquo;&amp;rsquo; 或者三个双引号 &amp;quot;&amp;rdquo;&amp;rdquo; 将注释括起来。
+格式化输出 str=&amp;quot;网站名称：{:&amp;gt;9s}\t网址：{:s}&amp;quot; print(str.format(&amp;quot;C语言中文网&amp;quot;,&amp;quot;c.biancheng.net&amp;quot;)) #以货币形式显示 print(&amp;quot;货币形式：{:,d}&amp;quot;.format(1000000)) #科学计数法表示 print(&amp;quot;科学计数法：{:E}&amp;quot;.format(1200.12)) #以十六进制表示 print(&amp;quot;100的十六进制：{:#x}&amp;quot;.format(100)) #输出百分比形式 print(&amp;quot;0.01的百分比表示：{:.0%}&amp;quot;.format(0.01))  输入 python2.x中的输入是这样的：raw_input() python3.x中的输入是这样的：input()  运算符 算术运算符：
+赋值运算符：=
+数据类型的转换
+比较运算符：
+逻辑运算符：
+if 条件句 if a: pass elif: pass if b: pass else: pass else: pass  while循环 while i &amp;lt; 10: pass i += 1 # 无限循环 while True: pass # 或 while 1: pass  while True 和while 1的区别</description>
+    </item>
+    
+    <item>
+      <title>Redis优化</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Sun, 24 May 2020 22:45:47 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BC%98%E5%8C%96/</guid>
+      <description>redis优化
+数据持久化 Redis提供了将数据定期自动持久化至硬盘的能力，包括RDB和AOF两种方案，两种方案分别有其长处和短板，可以配合起来同时运行，确保数据的稳定性。
+必须使用数据持久化吗？ Redis的数据持久化机制是可以关闭的。如果你只把Redis作为缓存服务使用，Redis中存储的所有数据都不是该数据的主体而仅仅是同步过来的备份，那么可以关闭Redis的数据持久化机制。 但通常来说，仍然建议至少开启RDB方式的数据持久化，因为：
+ RDB方式的持久化几乎不损耗Redis本身的性能，在进行RDB持久化时，Redis主进程唯一需要做的事情就是fork出一个子进程，所有持久化工作都由子进程完成 Redis无论因为什么原因crash掉之后，重启时能够自动恢复到上一次RDB快照中记录的数据。这省去了手工从其他数据源（如DB）同步数据的过程，而且要比其他任何的数据恢复方式都要快 现在硬盘那么大，真的不缺那一点地方  RDB 采用RDB持久方式，Redis会定期保存数据快照至一个rbd文件中，并在启动时自动加载rdb文件，恢复之前保存的数据。可以在配置文件中配置Redis进行快照保存的时机：
+save [seconds] [changes]`意为在[seconds]秒内如果发生了[changes]次数据修改，则进行一次RDB快照保存，例如
+会让Redis每60秒检查一次数据变更情况，如果发生了100次或以上的数据变更，则进行RDB快照保存。 可以配置多条save指令，让Redis执行多级的快照保存策略。 Redis默认开启RDB快照，默认的RDB策略如下：
+也可以通过BGSAVE命令手工触发RDB快照保存。
+RDB的优点：
+ 对性能影响最小。如前文所述，Redis在保存RDB快照时会fork出子进程进行，几乎不影响Redis处理客户端请求的效率。 每次快照会生成一个完整的数据快照文件，所以可以辅以其他手段保存多个时间点的快照（例如把每天0点的快照备份至其他存储媒介中），作为非常可靠的灾难恢复手段。 使用RDB文件进行数据恢复比使用AOF要快很多。  RDB的缺点：
+ 快照是定期生成的，所以在Redis crash时或多或少会丢失一部分数据。 如果数据集非常大且CPU不够强（比如单核CPU），Redis在fork子进程时可能会消耗相对较长的时间（长至1秒），影响这期间的客户端请求。  AOF 采用AOF持久方式时，Redis会把每一个写请求都记录在一个日志文件里。在Redis重启时，会把AOF文件中记录的所有写操作顺序执行一遍，确保数据恢复到最新。
+AOF默认是关闭的，如要开启，进行如下配置：
+AOF提供了三种fsync配置，always/everysec/no，通过配置项[appendfsync]指定：
+ appendfsync no：不进行fsync，将flush文件的时机交给OS决定，速度最快 appendfsync always：每写入一条日志就进行一次fsync操作，数据安全性最高，但速度最慢 appendfsync everysec：折中的做法，交由后台线程每秒fsync一次  随着AOF不断地记录写操作日志，必定会出现一些无用的日志，例如某个时间点执行了命令SET key1 &amp;ldquo;abc&amp;rdquo;，在之后某个时间点又执行了SET key1 &amp;ldquo;bcd&amp;rdquo;，那么第一条命令很显然是没有用的。大量的无用日志会让AOF文件过大，也会让数据恢复的时间过长。 所以Redis提供了AOF rewrite功能，可以重写AOF文件，只保留能够把数据恢复到最新状态的最小写操作集。 AOF rewrite可以通过BGREWRITEAOF命令触发，也可以配置Redis定期自动进行：
+上面两行配置的含义是，Redis在每次AOF rewrite时，会记录完成rewrite后的AOF日志大小，当AOF日志大小在该基础上增长了100%后，自动进行AOF rewrite。同时如果增长的大小没有达到64mb，则不会进行rewrite。
+AOF的优点：
+ 最安全，在启用appendfsync always时，任何已写入的数据都不会丢失，使用在启用appendfsync everysec也至多只会丢失1秒的数据。 AOF文件在发生断电等问题时也不会损坏，即使出现了某条日志只写入了一半的情况，也可以使用redis-check-aof工具轻松修复。 AOF文件易读，可修改，在进行了某些错误的数据清除操作后，只要AOF文件没有rewrite，就可以把AOF文件备份出来，把错误的命令删除，然后恢复数据。  AOF的缺点：
+ AOF文件通常比RDB文件更大 性能消耗比RDB高 数据恢复速度比RDB慢  内存管理与数据淘汰机制 最大内存设置 默认情况下，在32位OS中，Redis最大使用3GB的内存，在64位OS中则没有限制。</description>
+    </item>
+    
+    <item>
+      <title>Django的RBAC管理模型</title>
+      <link>/blog/django/13-django%E7%9A%84rbac%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Thu, 21 May 2020 13:56:48 +0800</pubDate>
+      
+      <guid>/blog/django/13-django%E7%9A%84rbac%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B/</guid>
+      <description>RBAC框架 from django.db import models # 时间模块快 from django.utils import timezone # 用户表 from django.contrib.auth.models import AbstractUser # Create your models here. # 基类表 class Base(models.Model): create_time = models.DateTimeField(default=timezone.now, null=True) # 添加数据时，自动写入当前添加时间 is_delete = models.IntegerField(default=0) # 逻辑关联删除字段({0:未删除,1:已删除}) class Meta: abstract = True # 用户 # 用户和角色是多对多 class User(AbstractUser): username = models.CharField(max_length=200, unique=True) # 用户名 password = models.CharField(max_length=200) # 密码 phone = models.CharField(max_length=11) # 手机号 photo = models.CharField(max_length=200, default=&amp;quot;1.jpg&amp;quot;) # 头像 oid = models.</description>
+    </item>
+    
+    <item>
+      <title>Django与MySql物理外键</title>
+      <link>/blog/django/12-django%E4%B8%8Emysql%E7%89%A9%E7%90%86%E5%A4%96%E9%94%AE/</link>
+      <pubDate>Thu, 21 May 2020 12:45:14 +0800</pubDate>
+      
+      <guid>/blog/django/12-django%E4%B8%8Emysql%E7%89%A9%E7%90%86%E5%A4%96%E9%94%AE/</guid>
+      <description>一套常用的、最不容易出bug的外键操作逻辑 创建外键 创建一个外键，使用models.ForeignKey()字段。 字段名为对象名，而非id，比如office 在创建外键后，这个office在数据库中的字段名体现为office_id
+它会在数据库中表现为int类型，在django查询时自动转化为目标对象
+class User(AbstractUser): username = models.CharField(max_length=200, unique=True) # 用户名 password = models.CharField(max_length=200) # 密码 phone = models.CharField(max_length=11) # 手机号 photo = models.CharField(max_length=200, default=&amp;quot;1.jpg&amp;quot;) # 头像 # 外键字段 office = models.ForeignKey(&#39;Office&#39;, on_delete=models.SET_NULL, null=True) # 公司id is_delete = models.IntegerField(default=0) # 逻辑删除 # on_delete的用法： on_delete=None, # 删除关联表中的数据时,当前表与其关联的field的行为 on_delete=models.CASCADE, # 删除关联数据,与之关联也删除 on_delete=models.DO_NOTHING, # 删除关联数据,什么也不做 on_delete=models.PROTECT, # 删除关联数据,引发错误ProtectedError # models.ForeignKey(&#39;关联表&#39;, on_delete=models.SET_NULL, blank=True, null=True) on_delete=models.SET_NULL, # 删除关联数据,与之关联的值设置为null（前提FK字段需要设置为可空,一对一同理） # models.ForeignKey(&#39;关联表&#39;, on_delete=models.SET_DEFAULT, default=&#39;默认值&#39;) on_delete=models.</description>
+    </item>
     
     <item>
       <title>Vue中的高德地图</title>

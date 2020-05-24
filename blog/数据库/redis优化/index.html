@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Redis优化 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Redis优化">
+<meta itemprop="description" content="redis优化
+数据持久化 Redis提供了将数据定期自动持久化至硬盘的能力，包括RDB和AOF两种方案，两种方案分别有其长处和短板，可以配合起来同时运行，确保数据的稳定性。
+必须使用数据持久化吗？ Redis的数据持久化机制是可以关闭的。如果你只把Redis作为缓存服务使用，Redis中存储的所有数据都不是该数据的主体而仅仅是同步过来的备份，那么可以关闭Redis的数据持久化机制。 但通常来说，仍然建议至少开启RDB方式的数据持久化，因为：
+ RDB方式的持久化几乎不损耗Redis本身的性能，在进行RDB持久化时，Redis主进程唯一需要做的事情就是fork出一个子进程，所有持久化工作都由子进程完成 Redis无论因为什么原因crash掉之后，重启时能够自动恢复到上一次RDB快照中记录的数据。这省去了手工从其他数据源（如DB）同步数据的过程，而且要比其他任何的数据恢复方式都要快 现在硬盘那么大，真的不缺那一点地方  RDB 采用RDB持久方式，Redis会定期保存数据快照至一个rbd文件中，并在启动时自动加载rdb文件，恢复之前保存的数据。可以在配置文件中配置Redis进行快照保存的时机：
+save [seconds] [changes]`意为在[seconds]秒内如果发生了[changes]次数据修改，则进行一次RDB快照保存，例如
+会让Redis每60秒检查一次数据变更情况，如果发生了100次或以上的数据变更，则进行RDB快照保存。 可以配置多条save指令，让Redis执行多级的快照保存策略。 Redis默认开启RDB快照，默认的RDB策略如下：
+也可以通过BGSAVE命令手工触发RDB快照保存。
+RDB的优点：
+ 对性能影响最小。如前文所述，Redis在保存RDB快照时会fork出子进程进行，几乎不影响Redis处理客户端请求的效率。 每次快照会生成一个完整的数据快照文件，所以可以辅以其他手段保存多个时间点的快照（例如把每天0点的快照备份至其他存储媒介中），作为非常可靠的灾难恢复手段。 使用RDB文件进行数据恢复比使用AOF要快很多。  RDB的缺点：
+ 快照是定期生成的，所以在Redis crash时或多或少会丢失一部分数据。 如果数据集非常大且CPU不够强（比如单核CPU），Redis在fork子进程时可能会消耗相对较长的时间（长至1秒），影响这期间的客户端请求。  AOF 采用AOF持久方式时，Redis会把每一个写请求都记录在一个日志文件里。在Redis重启时，会把AOF文件中记录的所有写操作顺序执行一遍，确保数据恢复到最新。
+AOF默认是关闭的，如要开启，进行如下配置：
+AOF提供了三种fsync配置，always/everysec/no，通过配置项[appendfsync]指定：
+ appendfsync no：不进行fsync，将flush文件的时机交给OS决定，速度最快 appendfsync always：每写入一条日志就进行一次fsync操作，数据安全性最高，但速度最慢 appendfsync everysec：折中的做法，交由后台线程每秒fsync一次  随着AOF不断地记录写操作日志，必定会出现一些无用的日志，例如某个时间点执行了命令SET key1 &ldquo;abc&rdquo;，在之后某个时间点又执行了SET key1 &ldquo;bcd&rdquo;，那么第一条命令很显然是没有用的。大量的无用日志会让AOF文件过大，也会让数据恢复的时间过长。 所以Redis提供了AOF rewrite功能，可以重写AOF文件，只保留能够把数据恢复到最新状态的最小写操作集。 AOF rewrite可以通过BGREWRITEAOF命令触发，也可以配置Redis定期自动进行：
+上面两行配置的含义是，Redis在每次AOF rewrite时，会记录完成rewrite后的AOF日志大小，当AOF日志大小在该基础上增长了100%后，自动进行AOF rewrite。同时如果增长的大小没有达到64mb，则不会进行rewrite。
+AOF的优点：
+ 最安全，在启用appendfsync always时，任何已写入的数据都不会丢失，使用在启用appendfsync everysec也至多只会丢失1秒的数据。 AOF文件在发生断电等问题时也不会损坏，即使出现了某条日志只写入了一半的情况，也可以使用redis-check-aof工具轻松修复。 AOF文件易读，可修改，在进行了某些错误的数据清除操作后，只要AOF文件没有rewrite，就可以把AOF文件备份出来，把错误的命令删除，然后恢复数据。  AOF的缺点：
+ AOF文件通常比RDB文件更大 性能消耗比RDB高 数据恢复速度比RDB慢  内存管理与数据淘汰机制 最大内存设置 默认情况下，在32位OS中，Redis最大使用3GB的内存，在64位OS中则没有限制。">
+<meta itemprop="datePublished" content="2020-05-24T22:45:47&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-24T22:45:47&#43;08:00" />
+<meta itemprop="wordCount" content="145">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Redis优化" />
+<meta property="og:description" content="redis优化
+数据持久化 Redis提供了将数据定期自动持久化至硬盘的能力，包括RDB和AOF两种方案，两种方案分别有其长处和短板，可以配合起来同时运行，确保数据的稳定性。
+必须使用数据持久化吗？ Redis的数据持久化机制是可以关闭的。如果你只把Redis作为缓存服务使用，Redis中存储的所有数据都不是该数据的主体而仅仅是同步过来的备份，那么可以关闭Redis的数据持久化机制。 但通常来说，仍然建议至少开启RDB方式的数据持久化，因为：
+ RDB方式的持久化几乎不损耗Redis本身的性能，在进行RDB持久化时，Redis主进程唯一需要做的事情就是fork出一个子进程，所有持久化工作都由子进程完成 Redis无论因为什么原因crash掉之后，重启时能够自动恢复到上一次RDB快照中记录的数据。这省去了手工从其他数据源（如DB）同步数据的过程，而且要比其他任何的数据恢复方式都要快 现在硬盘那么大，真的不缺那一点地方  RDB 采用RDB持久方式，Redis会定期保存数据快照至一个rbd文件中，并在启动时自动加载rdb文件，恢复之前保存的数据。可以在配置文件中配置Redis进行快照保存的时机：
+save [seconds] [changes]`意为在[seconds]秒内如果发生了[changes]次数据修改，则进行一次RDB快照保存，例如
+会让Redis每60秒检查一次数据变更情况，如果发生了100次或以上的数据变更，则进行RDB快照保存。 可以配置多条save指令，让Redis执行多级的快照保存策略。 Redis默认开启RDB快照，默认的RDB策略如下：
+也可以通过BGSAVE命令手工触发RDB快照保存。
+RDB的优点：
+ 对性能影响最小。如前文所述，Redis在保存RDB快照时会fork出子进程进行，几乎不影响Redis处理客户端请求的效率。 每次快照会生成一个完整的数据快照文件，所以可以辅以其他手段保存多个时间点的快照（例如把每天0点的快照备份至其他存储媒介中），作为非常可靠的灾难恢复手段。 使用RDB文件进行数据恢复比使用AOF要快很多。  RDB的缺点：
+ 快照是定期生成的，所以在Redis crash时或多或少会丢失一部分数据。 如果数据集非常大且CPU不够强（比如单核CPU），Redis在fork子进程时可能会消耗相对较长的时间（长至1秒），影响这期间的客户端请求。  AOF 采用AOF持久方式时，Redis会把每一个写请求都记录在一个日志文件里。在Redis重启时，会把AOF文件中记录的所有写操作顺序执行一遍，确保数据恢复到最新。
+AOF默认是关闭的，如要开启，进行如下配置：
+AOF提供了三种fsync配置，always/everysec/no，通过配置项[appendfsync]指定：
+ appendfsync no：不进行fsync，将flush文件的时机交给OS决定，速度最快 appendfsync always：每写入一条日志就进行一次fsync操作，数据安全性最高，但速度最慢 appendfsync everysec：折中的做法，交由后台线程每秒fsync一次  随着AOF不断地记录写操作日志，必定会出现一些无用的日志，例如某个时间点执行了命令SET key1 &ldquo;abc&rdquo;，在之后某个时间点又执行了SET key1 &ldquo;bcd&rdquo;，那么第一条命令很显然是没有用的。大量的无用日志会让AOF文件过大，也会让数据恢复的时间过长。 所以Redis提供了AOF rewrite功能，可以重写AOF文件，只保留能够把数据恢复到最新状态的最小写操作集。 AOF rewrite可以通过BGREWRITEAOF命令触发，也可以配置Redis定期自动进行：
+上面两行配置的含义是，Redis在每次AOF rewrite时，会记录完成rewrite后的AOF日志大小，当AOF日志大小在该基础上增长了100%后，自动进行AOF rewrite。同时如果增长的大小没有达到64mb，则不会进行rewrite。
+AOF的优点：
+ 最安全，在启用appendfsync always时，任何已写入的数据都不会丢失，使用在启用appendfsync everysec也至多只会丢失1秒的数据。 AOF文件在发生断电等问题时也不会损坏，即使出现了某条日志只写入了一半的情况，也可以使用redis-check-aof工具轻松修复。 AOF文件易读，可修改，在进行了某些错误的数据清除操作后，只要AOF文件没有rewrite，就可以把AOF文件备份出来，把错误的命令删除，然后恢复数据。  AOF的缺点：
+ AOF文件通常比RDB文件更大 性能消耗比RDB高 数据恢复速度比RDB慢  内存管理与数据淘汰机制 最大内存设置 默认情况下，在32位OS中，Redis最大使用3GB的内存，在64位OS中则没有限制。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BC%98%E5%8C%96/" />
+<meta property="article:published_time" content="2020-05-24T22:45:47+08:00" />
+<meta property="article:modified_time" content="2020-05-24T22:45:47+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis优化"/>
+<meta name="twitter:description" content="redis优化
+数据持久化 Redis提供了将数据定期自动持久化至硬盘的能力，包括RDB和AOF两种方案，两种方案分别有其长处和短板，可以配合起来同时运行，确保数据的稳定性。
+必须使用数据持久化吗？ Redis的数据持久化机制是可以关闭的。如果你只把Redis作为缓存服务使用，Redis中存储的所有数据都不是该数据的主体而仅仅是同步过来的备份，那么可以关闭Redis的数据持久化机制。 但通常来说，仍然建议至少开启RDB方式的数据持久化，因为：
+ RDB方式的持久化几乎不损耗Redis本身的性能，在进行RDB持久化时，Redis主进程唯一需要做的事情就是fork出一个子进程，所有持久化工作都由子进程完成 Redis无论因为什么原因crash掉之后，重启时能够自动恢复到上一次RDB快照中记录的数据。这省去了手工从其他数据源（如DB）同步数据的过程，而且要比其他任何的数据恢复方式都要快 现在硬盘那么大，真的不缺那一点地方  RDB 采用RDB持久方式，Redis会定期保存数据快照至一个rbd文件中，并在启动时自动加载rdb文件，恢复之前保存的数据。可以在配置文件中配置Redis进行快照保存的时机：
+save [seconds] [changes]`意为在[seconds]秒内如果发生了[changes]次数据修改，则进行一次RDB快照保存，例如
+会让Redis每60秒检查一次数据变更情况，如果发生了100次或以上的数据变更，则进行RDB快照保存。 可以配置多条save指令，让Redis执行多级的快照保存策略。 Redis默认开启RDB快照，默认的RDB策略如下：
+也可以通过BGSAVE命令手工触发RDB快照保存。
+RDB的优点：
+ 对性能影响最小。如前文所述，Redis在保存RDB快照时会fork出子进程进行，几乎不影响Redis处理客户端请求的效率。 每次快照会生成一个完整的数据快照文件，所以可以辅以其他手段保存多个时间点的快照（例如把每天0点的快照备份至其他存储媒介中），作为非常可靠的灾难恢复手段。 使用RDB文件进行数据恢复比使用AOF要快很多。  RDB的缺点：
+ 快照是定期生成的，所以在Redis crash时或多或少会丢失一部分数据。 如果数据集非常大且CPU不够强（比如单核CPU），Redis在fork子进程时可能会消耗相对较长的时间（长至1秒），影响这期间的客户端请求。  AOF 采用AOF持久方式时，Redis会把每一个写请求都记录在一个日志文件里。在Redis重启时，会把AOF文件中记录的所有写操作顺序执行一遍，确保数据恢复到最新。
+AOF默认是关闭的，如要开启，进行如下配置：
+AOF提供了三种fsync配置，always/everysec/no，通过配置项[appendfsync]指定：
+ appendfsync no：不进行fsync，将flush文件的时机交给OS决定，速度最快 appendfsync always：每写入一条日志就进行一次fsync操作，数据安全性最高，但速度最慢 appendfsync everysec：折中的做法，交由后台线程每秒fsync一次  随着AOF不断地记录写操作日志，必定会出现一些无用的日志，例如某个时间点执行了命令SET key1 &ldquo;abc&rdquo;，在之后某个时间点又执行了SET key1 &ldquo;bcd&rdquo;，那么第一条命令很显然是没有用的。大量的无用日志会让AOF文件过大，也会让数据恢复的时间过长。 所以Redis提供了AOF rewrite功能，可以重写AOF文件，只保留能够把数据恢复到最新状态的最小写操作集。 AOF rewrite可以通过BGREWRITEAOF命令触发，也可以配置Redis定期自动进行：
+上面两行配置的含义是，Redis在每次AOF rewrite时，会记录完成rewrite后的AOF日志大小，当AOF日志大小在该基础上增长了100%后，自动进行AOF rewrite。同时如果增长的大小没有达到64mb，则不会进行rewrite。
+AOF的优点：
+ 最安全，在启用appendfsync always时，任何已写入的数据都不会丢失，使用在启用appendfsync everysec也至多只会丢失1秒的数据。 AOF文件在发生断电等问题时也不会损坏，即使出现了某条日志只写入了一半的情况，也可以使用redis-check-aof工具轻松修复。 AOF文件易读，可修改，在进行了某些错误的数据清除操作后，只要AOF文件没有rewrite，就可以把AOF文件备份出来，把错误的命令删除，然后恢复数据。  AOF的缺点：
+ AOF文件通常比RDB文件更大 性能消耗比RDB高 数据恢复速度比RDB慢  内存管理与数据淘汰机制 最大内存设置 默认情况下，在32位OS中，Redis最大使用3GB的内存，在64位OS中则没有限制。"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e4%bc%98%e5%8c%96&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f&amp;title=Redis%e4%bc%98%e5%8c%96" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f&amp;title=Redis%e4%bc%98%e5%8c%96" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f&amp;description=Redis%e4%bc%98%e5%8c%96" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BC%98%E5%8C%96/">Redis优化</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-05-24 22:45:47 &#43;0800 CST">
+      May 24, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e4%bc%98%e5%8c%96&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f&amp;title=Redis%e4%bc%98%e5%8c%96" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f&amp;title=Redis%e4%bc%98%e5%8c%96" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f&amp;description=Redis%e4%bc%98%e5%8c%96" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BC%2598%25E5%258C%2596%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p><a href="https://www.cnblogs.com/ppzhang/p/10202988.html">redis优化</a></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h2 id="数据持久化">数据持久化</h2>
+<p>Redis提供了将数据定期自动持久化至硬盘的能力，包括RDB和AOF两种方案，两种方案分别有其长处和短板，可以配合起来同时运行，确保数据的稳定性。</p>
+<h3 id="必须使用数据持久化吗">必须使用数据持久化吗？</h3>
+<p>Redis的数据持久化机制是可以关闭的。如果你只把Redis作为缓存服务使用，Redis中存储的所有数据都不是该数据的主体而仅仅是同步过来的备份，那么可以关闭Redis的数据持久化机制。
+但通常来说，仍然建议至少开启RDB方式的数据持久化，因为：</p>
+<ul>
+<li>RDB方式的持久化几乎不损耗Redis本身的性能，在进行RDB持久化时，Redis主进程唯一需要做的事情就是fork出一个子进程，所有持久化工作都由子进程完成</li>
+<li>Redis无论因为什么原因crash掉之后，重启时能够自动恢复到上一次RDB快照中记录的数据。这省去了手工从其他数据源（如DB）同步数据的过程，而且要比其他任何的数据恢复方式都要快</li>
+<li>现在硬盘那么大，真的不缺那一点地方</li>
+</ul>
+<h3 id="rdb">RDB</h3>
+<p>采用RDB持久方式，Redis会定期保存数据快照至一个rbd文件中，并在启动时自动加载rdb文件，恢复之前保存的数据。可以在配置文件中配置Redis进行快照保存的时机：</p>
+<p>save <!-- raw HTML omitted -->[seconds] <!-- raw HTML omitted -->[changes]<!-- raw HTML omitted --><!-- raw HTML omitted -->`<!-- raw HTML omitted --></p>
+<p>意为在[seconds]秒内如果发生了[changes]次数据修改，则进行一次RDB快照保存，例如</p>
+<!-- raw HTML omitted -->
+<p>会让Redis每60秒检查一次数据变更情况，如果发生了100次或以上的数据变更，则进行RDB快照保存。
+可以配置多条save指令，让Redis执行多级的快照保存策略。
+Redis默认开启RDB快照，默认的RDB策略如下：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>也可以通过<strong>BGSAVE</strong>命令手工触发RDB快照保存。</p>
+<p><strong>RDB的优点：</strong></p>
+<ul>
+<li>对性能影响最小。如前文所述，Redis在保存RDB快照时会fork出子进程进行，几乎不影响Redis处理客户端请求的效率。</li>
+<li>每次快照会生成一个完整的数据快照文件，所以可以辅以其他手段保存多个时间点的快照（例如把每天0点的快照备份至其他存储媒介中），作为非常可靠的灾难恢复手段。</li>
+<li>使用RDB文件进行数据恢复比使用AOF要快很多。</li>
+</ul>
+<p><strong>RDB的缺点：</strong></p>
+<ul>
+<li>快照是定期生成的，所以在Redis crash时或多或少会丢失一部分数据。</li>
+<li>如果数据集非常大且CPU不够强（比如单核CPU），Redis在fork子进程时可能会消耗相对较长的时间（长至1秒），影响这期间的客户端请求。</li>
+</ul>
+<h3 id="aof">AOF</h3>
+<p>采用AOF持久方式时，Redis会把每一个写请求都记录在一个日志文件里。在Redis重启时，会把AOF文件中记录的所有写操作顺序执行一遍，确保数据恢复到最新。</p>
+<p>AOF默认是关闭的，如要开启，进行如下配置：</p>
+<!-- raw HTML omitted -->
+<p>AOF提供了三种fsync配置，always/everysec/no，通过配置项[appendfsync]指定：</p>
+<ul>
+<li>appendfsync no：不进行fsync，将flush文件的时机交给OS决定，速度最快</li>
+<li>appendfsync always：每写入一条日志就进行一次fsync操作，数据安全性最高，但速度最慢</li>
+<li>appendfsync everysec：折中的做法，交由后台线程每秒fsync一次</li>
+</ul>
+<p>随着AOF不断地记录写操作日志，必定会出现一些无用的日志，例如某个时间点执行了命令<strong>SET key1 &ldquo;abc&rdquo;</strong>，在之后某个时间点又执行了<strong>SET key1 &ldquo;bcd&rdquo;</strong>，那么第一条命令很显然是没有用的。大量的无用日志会让AOF文件过大，也会让数据恢复的时间过长。
+所以Redis提供了AOF rewrite功能，可以重写AOF文件，只保留能够把数据恢复到最新状态的最小写操作集。
+AOF rewrite可以通过<strong>BGREWRITEAOF</strong>命令触发，也可以配置Redis定期自动进行：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>上面两行配置的含义是，Redis在每次AOF rewrite时，会记录完成rewrite后的AOF日志大小，当AOF日志大小在该基础上增长了100%后，自动进行AOF rewrite。同时如果增长的大小没有达到64mb，则不会进行rewrite。</p>
+<p><strong>AOF的优点：</strong></p>
+<ul>
+<li>最安全，在启用appendfsync always时，任何已写入的数据都不会丢失，使用在启用appendfsync everysec也至多只会丢失1秒的数据。</li>
+<li>AOF文件在发生断电等问题时也不会损坏，即使出现了某条日志只写入了一半的情况，也可以使用redis-check-aof工具轻松修复。</li>
+<li>AOF文件易读，可修改，在进行了某些错误的数据清除操作后，只要AOF文件没有rewrite，就可以把AOF文件备份出来，把错误的命令删除，然后恢复数据。</li>
+</ul>
+<p><strong>AOF的缺点：</strong></p>
+<ul>
+<li>AOF文件通常比RDB文件更大</li>
+<li>性能消耗比RDB高</li>
+<li>数据恢复速度比RDB慢</li>
+</ul>
+<h2 id="内存管理与数据淘汰机制">内存管理与数据淘汰机制</h2>
+<h3 id="最大内存设置">最大内存设置</h3>
+<p>默认情况下，在32位OS中，Redis最大使用3GB的内存，在64位OS中则没有限制。</p>
+<p>在使用Redis时，应该对数据占用的最大空间有一个基本准确的预估，并为Redis设定最大使用的内存。否则在64位OS中Redis会无限制地占用内存（当物理内存被占满后会使用swap空间），容易引发各种各样的问题。</p>
+<p>通过如下配置控制Redis使用的最大内存：</p>
+<!-- raw HTML omitted -->
+<p>在内存占用达到了maxmemory后，再向Redis写入数据时，Redis会：</p>
+<ul>
+<li>根据配置的数据淘汰策略尝试淘汰数据，释放空间</li>
+<li>如果没有数据可以淘汰，或者没有配置数据淘汰策略，那么Redis会对所有写请求返回错误，但读请求仍然可以正常执行</li>
+</ul>
+<p>在为Redis设置maxmemory时，需要注意：</p>
+<ul>
+<li>如果采用了Redis的主从同步，主节点向从节点同步数据时，会占用掉一部分内存空间，如果maxmemory过于接近主机的可用内存，导致数据同步时内存不足。所以设置的maxmemory不要过于接近主机可用的内存，留出一部分预留用作主从同步。</li>
+</ul>
+<h3 id="数据淘汰机制">数据淘汰机制</h3>
+<p>Redis提供了5种数据淘汰策略：</p>
+<ul>
+<li>volatile-lru：使用LRU算法进行数据淘汰（淘汰上次使用时间最早的，且使用次数最少的key），只淘汰设定了有效期的key</li>
+<li>allkeys-lru：使用LRU算法进行数据淘汰，所有的key都可以被淘汰</li>
+<li>volatile-random：随机淘汰数据，只淘汰设定了有效期的key</li>
+<li>allkeys-random：随机淘汰数据，所有的key都可以被淘汰</li>
+<li>volatile-ttl：淘汰剩余有效期最短的key</li>
+</ul>
+<p>最好为Redis指定一种有效的数据淘汰策略以配合maxmemory设置，避免在内存使用满后发生写入失败的情况。</p>
+<p>一般来说，推荐使用的策略是volatile-lru，并辨识Redis中保存的数据的重要性。对于那些重要的，绝对不能丢弃的数据（如配置类数据等），应不设置有效期，这样Redis就永远不会淘汰这些数据。对于那些相对不是那么重要的，并且能够热加载的数据（比如缓存最近登录的用户信息，当在Redis中找不到时，程序会去DB中读取），可以设置上有效期，这样在内存不够时Redis就会淘汰这部分数据。</p>
+<p>配置方法：</p>
+<!-- raw HTML omitted -->
+<h2 id="pipelining">Pipelining</h2>
+<h3 id="pipelining-1">Pipelining</h3>
+<p>Redis提供许多批量操作的命令，如MSET/MGET/HMSET/HMGET等等，这些命令存在的意义是减少维护网络连接和传输数据所消耗的资源和时间。
+例如连续使用5次SET命令设置5个不同的key，比起使用一次MSET命令设置5个不同的key，效果是一样的，但前者会消耗更多的RTT(Round Trip Time)时长，永远应优先使用后者。</p>
+<p>然而，如果客户端要连续执行的多次操作无法通过Redis命令组合在一起，例如：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>此时便可以使用Redis提供的pipelining功能来实现在一次交互中执行多条命令。
+使用pipelining时，只需要从客户端一次向Redis发送多条命令（以\r\n）分隔，Redis就会依次执行这些命令，并且把每个命令的返回按顺序组装在一起一次返回，比如：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>大部分的Redis客户端都对Pipelining提供支持，所以开发者通常并不需要自己手工拼装命令列表。</p>
+<h5 id="pipelining的局限性">Pipelining的局限性</h5>
+<p>Pipelining只能用于执行<strong>连续且无相关性</strong>的命令，当某个命令的生成需要依赖于前一个命令的返回时，就无法使用Pipelining了。</p>
+<p>通过Scripting功能，可以规避这一局限性</p>
+<h2 id="事务与scripting">事务与Scripting</h2>
+<p>Pipelining能够让Redis在一次交互中处理多条命令，然而在一些场景下，我们可能需要在此基础上确保这一组命令是连续执行的。</p>
+<p>比如获取当前累计的PV数并将其清0</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>如果在GET和SET命令之间插进来一个INCR vCount，就会使客户端拿到的vCount不准确。</p>
+<p>Redis的事务可以确保复数命令执行时的原子性。也就是说Redis能够保证：一个事务中的一组命令是绝对连续执行的，在这些命令执行完成之前，绝对不会有来自于其他连接的其他命令插进去执行。</p>
+<p>通过MULTI和EXEC命令来把这两个命令加入一个事务中：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>Redis在接收到MULTI命令后便会开启一个事务，这之后的所有读写命令都会保存在队列中但并不执行，直到接收到EXEC命令后，Redis会把队列中的所有命令连续顺序执行，并以数组形式返回每个命令的返回结果。</p>
+<p>可以使用DISCARD命令放弃当前的事务，将保存的命令队列清空。</p>
+<p>需要注意的是，<strong>Redis事务不支持回滚</strong>：
+如果一个事务中的命令出现了语法错误，大部分客户端驱动会返回错误，2.6.5版本以上的Redis也会在执行EXEC时检查队列中的命令是否存在语法错误，如果存在，则会自动放弃事务并返回错误。
+但如果一个事务中的命令有非语法类的错误（比如对String执行HSET操作），无论客户端驱动还是Redis都无法在真正执行这条命令之前发现，所以事务中的所有命令仍然会被依次执行。在这种情况下，会出现一个事务中部分命令成功部分命令失败的情况，然而与RDBMS不同，Redis不提供事务回滚的功能，所以只能通过其他方法进行数据的回滚。</p>
+<h3 id="通过事务实现cas">通过事务实现CAS</h3>
+<p>Redis提供了WATCH命令与事务搭配使用，实现CAS乐观锁的机制。</p>
+<p>假设要实现将某个商品的状态改为已售：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>这一伪代码执行时，无法确保并发安全性，有可能多个客户端都获取到了&quot;in stock&quot;的状态，导致一个库存被售卖多次。</p>
+<p>使用WATCH命令和事务可以解决这一问题：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>WATCH的机制是：在事务EXEC命令执行时，Redis会检查被WATCH的key，只有被WATCH的key从WATCH起始时至今没有发生过变更，EXEC才会被执行。如果WATCH的key在WATCH命令到EXEC命令之间发生过变化，则EXEC命令会返回失败。</p>
+<h3 id="scripting">Scripting</h3>
+<p>通过EVAL与EVALSHA命令，可以让Redis执行LUA脚本。这就类似于RDBMS的存储过程一样，可以把客户端与Redis之间密集的读/写交互放在服务端进行，避免过多的数据交互，提升性能。</p>
+<p>Scripting功能是作为事务功能的替代者诞生的，事务提供的所有能力Scripting都可以做到。Redis官方推荐使用LUA Script来代替事务，前者的效率和便利性都超过了事务。</p>
+<p>关于Scripting的具体使用，本文不做详细介绍，请参考官方文档 <a href="https://redis.io/commands/eval">https://redis.io/commands/eval</a></p>
+<h2 id="redis性能调优">Redis性能调优</h2>
+<p>尽管Redis是一个非常快速的内存数据存储媒介，也并不代表Redis不会产生性能问题。
+前文中提到过，Redis采用单线程模型，所有的命令都是由一个线程串行执行的，所以当某个命令执行耗时较长时，会拖慢其后的所有命令，这使得Redis对每个任务的执行效率更加敏感。</p>
+<p>针对Redis的性能优化，主要从下面几个层面入手：</p>
+<ul>
+<li>最初的也是最重要的，确保没有让Redis执行耗时长的命令</li>
+<li>使用pipelining将连续执行的命令组合执行</li>
+<li>操作系统的Transparent huge pages功能必须关闭：</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>如果在虚拟机中运行Redis，可能天然就有虚拟机环境带来的固有延迟。可以通过./redis-cli &ndash;intrinsic-latency 100命令查看固有延迟。同时如果对Redis的性能有较高要求的话，应尽可能在物理机上直接部署Redis。</li>
+<li>检查数据持久化策略</li>
+<li>考虑引入读写分离机制</li>
+</ul>
+<h3 id="长耗时命令">长耗时命令</h3>
+<p>Redis绝大多数读写命令的时间复杂度都在O(1)到O(N)之间，在文本和官方文档中均对每个命令的时间复杂度有说明。</p>
+<p>通常来说，O(1)的命令是安全的，O(N)命令在使用时需要注意，如果N的数量级不可预知，则应避免使用。例如对一个field数未知的Hash数据执行HGETALL/HKEYS/HVALS命令，通常来说这些命令执行的很快，但如果这个Hash中的field数量极多，耗时就会成倍增长。
+又如使用SUNION对两个Set执行Union操作，或使用SORT对List/Set执行排序操作等时，都应该严加注意。</p>
+<p>避免在使用这些O(N)命令时发生问题主要有几个办法：</p>
+<ul>
+<li>不要把List当做列表使用，仅当做队列来使用</li>
+<li>通过机制严格控制Hash、Set、Sorted Set的大小</li>
+<li>可能的话，将排序、并集、交集等操作放在客户端执行</li>
+<li>绝对禁止使用KEYS命令</li>
+<li>避免一次性遍历集合类型的所有成员，而应使用SCAN类的命令进行分批的，游标式的遍历</li>
+</ul>
+<p>Redis提供了SCAN命令，可以对Redis中存储的所有key进行游标式的遍历，避免使用KEYS命令带来的性能问题。同时还有SSCAN/HSCAN/ZSCAN等命令，分别用于对Set/Hash/Sorted Set中的元素进行游标式遍历。SCAN类命令的使用请参考官方文档：<a href="https://redis.io/commands/scan">https://redis.io/commands/scan</a></p>
+<p>Redis提供了Slow Log功能，可以自动记录耗时较长的命令。相关的配置参数有两个：</p>
+<!-- raw HTML omitted -->
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/django/13-django%E7%9A%84rbac%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9E%8B/" class="button"><div class="previous"><div>Django的RBAC管理模型</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/python/python%E5%9F%BA%E7%A1%801/" class="button"><div class="next"><div>Python基础1</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/os%E6%A8%A1%E5%9D%97/">Os模块</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%803/">Python基础3</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%802/">Python基础2</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%801/">Python基础1</a></h1>
+          <time class="published" datetime="">May 24, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BC%98%E5%8C%96/">Redis优化</a></h1>
+          <time class="published" datetime="">May 24, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
