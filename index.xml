@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 May 2020 00:41:02 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 01 Jun 2020 08:21:48 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Mon, 25 May 2020 00:41:02 +0800</pubDate>
+      <pubDate>Mon, 01 Jun 2020 08:21:48 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -45,6 +45,34 @@
  05-pygame中的draw
  06-pygame中的event
  07-pygame中的font</description>
+    </item>
+    
+    <item>
+      <title>多版本python下的pip安装与指令</title>
+      <link>/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/</link>
+      <pubDate>Mon, 01 Jun 2020 08:06:42 +0800</pubDate>
+      
+      <guid>/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/</guid>
+      <description>多版本Python下pip安装 sudo apt-get install python-pip
+sudo apt-get install python3-pip
+如果是卸载，将install替换成remove
+多版本Python下pip使用 在一个环境中同时装有python2 和python3
+使用python3版本，要在pip指令前加上python3 -m
+更改源 临时使用
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+设为默认
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip命令 可以通过pip指令查看所有命令。
+在线安装
+pip install 包名
+从requirements.txt安装
+pip install -r requirements.txt
+通过使用== &amp;gt;= &amp;lt;= &amp;gt; &amp;lt;来指定版本，不写则安装最新版
+安装本地安装包
+pip install &amp;lt;目录&amp;gt;/&amp;lt;文件名&amp;gt; 或 pip install --use-wheel --no-index --find-links=wheelhouse/ &amp;lt;包名&amp;gt;
+卸载安装包
+pip uninstall &amp;lt;包名&amp;gt; 或 pip uninstall -r requirements.</description>
     </item>
     
     <item>

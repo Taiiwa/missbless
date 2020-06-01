@@ -4,51 +4,84 @@
 
   
   <meta charset="utf-8">
-<title>Pygame中的draw - Issac Loveless</title>
+<title>多版本python下的pip安装与指令 - Issac Loveless</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Pygame中的draw">
-<meta itemprop="description" content="画一个矩形的形状pygame.draw.rect
-绘制具有任意数量边的形状pygame.draw.polygon
-围绕一个点画一个圆圈pygame.draw.circle
-在矩形内绘制圆形pygame.draw.ellipse
-绘制椭圆的局部剖面pygame.draw.arc
-绘制一条直线段pygame.draw.line
-绘制多个连续的线段pygame.draw.lines
-绘制精细的抗锯齿线pygame.draw.aaline
-绘制连接的抗锯齿线序列pygame.draw.aalines">
-<meta itemprop="datePublished" content="2020-04-09T01:25:13&#43;08:00" />
-<meta itemprop="dateModified" content="2020-04-09T01:25:13&#43;08:00" />
-<meta itemprop="wordCount" content="9">
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="多版本python下的pip安装与指令">
+<meta itemprop="description" content="多版本Python下pip安装 sudo apt-get install python-pip
+sudo apt-get install python3-pip
+如果是卸载，将install替换成remove
+多版本Python下pip使用 在一个环境中同时装有python2 和python3
+使用python3版本，要在pip指令前加上python3 -m
+更改源 临时使用
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+设为默认
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip命令 可以通过pip指令查看所有命令。
+在线安装
+pip install 包名
+从requirements.txt安装
+pip install -r requirements.txt
+通过使用== &gt;= &lt;= &gt; &lt;来指定版本，不写则安装最新版
+安装本地安装包
+pip install &lt;目录&gt;/&lt;文件名&gt; 或 pip install --use-wheel --no-index --find-links=wheelhouse/ &lt;包名&gt;
+卸载安装包
+pip uninstall &lt;包名&gt; 或 pip uninstall -r requirements.">
+<meta itemprop="datePublished" content="2020-06-01T08:06:42&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-01T08:06:42&#43;08:00" />
+<meta itemprop="wordCount" content="136">
 
 
 
-<meta itemprop="keywords" content="" /><meta property="og:title" content="Pygame中的draw" />
-<meta property="og:description" content="画一个矩形的形状pygame.draw.rect
-绘制具有任意数量边的形状pygame.draw.polygon
-围绕一个点画一个圆圈pygame.draw.circle
-在矩形内绘制圆形pygame.draw.ellipse
-绘制椭圆的局部剖面pygame.draw.arc
-绘制一条直线段pygame.draw.line
-绘制多个连续的线段pygame.draw.lines
-绘制精细的抗锯齿线pygame.draw.aaline
-绘制连接的抗锯齿线序列pygame.draw.aalines" />
+<meta itemprop="keywords" content="" /><meta property="og:title" content="多版本python下的pip安装与指令" />
+<meta property="og:description" content="多版本Python下pip安装 sudo apt-get install python-pip
+sudo apt-get install python3-pip
+如果是卸载，将install替换成remove
+多版本Python下pip使用 在一个环境中同时装有python2 和python3
+使用python3版本，要在pip指令前加上python3 -m
+更改源 临时使用
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+设为默认
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip命令 可以通过pip指令查看所有命令。
+在线安装
+pip install 包名
+从requirements.txt安装
+pip install -r requirements.txt
+通过使用== &gt;= &lt;= &gt; &lt;来指定版本，不写则安装最新版
+安装本地安装包
+pip install &lt;目录&gt;/&lt;文件名&gt; 或 pip install --use-wheel --no-index --find-links=wheelhouse/ &lt;包名&gt;
+卸载安装包
+pip uninstall &lt;包名&gt; 或 pip uninstall -r requirements." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/" />
-<meta property="article:published_time" content="2020-04-09T01:25:13+08:00" />
-<meta property="article:modified_time" content="2020-04-09T01:25:13+08:00" />
+<meta property="og:url" content="/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/" />
+<meta property="article:published_time" content="2020-06-01T08:06:42+08:00" />
+<meta property="article:modified_time" content="2020-06-01T08:06:42+08:00" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Pygame中的draw"/>
-<meta name="twitter:description" content="画一个矩形的形状pygame.draw.rect
-绘制具有任意数量边的形状pygame.draw.polygon
-围绕一个点画一个圆圈pygame.draw.circle
-在矩形内绘制圆形pygame.draw.ellipse
-绘制椭圆的局部剖面pygame.draw.arc
-绘制一条直线段pygame.draw.line
-绘制多个连续的线段pygame.draw.lines
-绘制精细的抗锯齿线pygame.draw.aaline
-绘制连接的抗锯齿线序列pygame.draw.aalines"/>
+<meta name="twitter:title" content="多版本python下的pip安装与指令"/>
+<meta name="twitter:description" content="多版本Python下pip安装 sudo apt-get install python-pip
+sudo apt-get install python3-pip
+如果是卸载，将install替换成remove
+多版本Python下pip使用 在一个环境中同时装有python2 和python3
+使用python3版本，要在pip指令前加上python3 -m
+更改源 临时使用
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+设为默认
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip命令 可以通过pip指令查看所有命令。
+在线安装
+pip install 包名
+从requirements.txt安装
+pip install -r requirements.txt
+通过使用== &gt;= &lt;= &gt; &lt;来指定版本，不写则安装最新版
+安装本地安装包
+pip install &lt;目录&gt;/&lt;文件名&gt; 或 pip install --use-wheel --no-index --find-links=wheelhouse/ &lt;包名&gt;
+卸载安装包
+pip uninstall &lt;包名&gt; 或 pip uninstall -r requirements."/>
 <link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
         <link rel="stylesheet" href="/css/add-on.css">
 
@@ -167,37 +200,37 @@
 
   
     
-    <a href="//twitter.com/share?text=Pygame%e4%b8%ad%e7%9a%84draw&amp;url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f" target="_blank" rel="noopener" class="share-btn twitter">
+    <a href="//twitter.com/share?text=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4&amp;url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f" target="_blank" rel="noopener" class="share-btn twitter">
         <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
       </a>
   
 
   
-      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f" target="_blank" rel="noopener" class="share-btn facebook">
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f" target="_blank" rel="noopener" class="share-btn facebook">
         <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
         </a>
   
 
   
-    <a href="//www.reddit.com/submit?url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84draw" target="_blank" rel="noopener" class="share-btn reddit">
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f&amp;title=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4" target="_blank" rel="noopener" class="share-btn reddit">
           <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
         </a>
   
 
   
-        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84draw" target="_blank" rel="noopener" class="share-btn linkedin">
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f&amp;title=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4" target="_blank" rel="noopener" class="share-btn linkedin">
             <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
           </a>
   
 
   
-        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f&amp;description=Pygame%e4%b8%ad%e7%9a%84draw" target="_blank" rel="noopener" class="share-btn pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f&amp;description=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4" target="_blank" rel="noopener" class="share-btn pinterest">
           <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
         </a>
   
 
   
-        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f" target="_blank" class="share-btn email" data-proofer-ignore>
           <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
         </a>
   
@@ -272,13 +305,13 @@
   <header>
   <div class="title">
     
-      <h2><a href="/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/">Pygame中的draw</a></h2>
+      <h2><a href="/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/">多版本python下的pip安装与指令</a></h2>
     
     
   </div>
   <div class="meta">
-    <time class="published" datetime="2020-04-09 01:25:13 &#43;0800 CST">
-      April 9, 2020
+    <time class="published" datetime="2020-06-01 08:06:42 &#43;0800 CST">
+      June 1, 2020
     </time>
     <span class="author">Issac loveless</span>
     
@@ -295,37 +328,37 @@
 
   
     
-    <a href="//twitter.com/share?text=Pygame%e4%b8%ad%e7%9a%84draw&amp;url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f" target="_blank" rel="noopener" class="share-btn twitter">
+    <a href="//twitter.com/share?text=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4&amp;url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f" target="_blank" rel="noopener" class="share-btn twitter">
         <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
       </a>
   
 
   
-      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f" target="_blank" rel="noopener" class="share-btn facebook">
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f" target="_blank" rel="noopener" class="share-btn facebook">
         <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
         </a>
   
 
   
-    <a href="//www.reddit.com/submit?url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84draw" target="_blank" rel="noopener" class="share-btn reddit">
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f&amp;title=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4" target="_blank" rel="noopener" class="share-btn reddit">
           <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
         </a>
   
 
   
-        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84draw" target="_blank" rel="noopener" class="share-btn linkedin">
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f&amp;title=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4" target="_blank" rel="noopener" class="share-btn linkedin">
             <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
           </a>
   
 
   
-        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f&amp;description=Pygame%e4%b8%ad%e7%9a%84draw" target="_blank" rel="noopener" class="share-btn pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f&amp;description=%e5%a4%9a%e7%89%88%e6%9c%acpython%e4%b8%8b%e7%9a%84pip%e5%ae%89%e8%a3%85%e4%b8%8e%e6%8c%87%e4%bb%a4" target="_blank" rel="noopener" class="share-btn pinterest">
           <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
         </a>
   
 
   
-        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpygame%2f05-pygame%25E4%25B8%25AD%25E7%259A%2584draw%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E5%25A4%259A%25E7%2589%2588%25E6%259C%25ACpython%25E4%25B8%258B%25E7%259A%2584pip%2f" target="_blank" class="share-btn email" data-proofer-ignore>
           <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
         </a>
   
@@ -336,15 +369,52 @@
 
   <div class="content">
     <hr>
-<p>画一个矩形的形状<code>pygame.draw.rect</code></p>
-<p>绘制具有任意数量边的形状<code>pygame.draw.polygon</code></p>
-<p>围绕一个点画一个圆圈<code>pygame.draw.circle</code></p>
-<p>在矩形内绘制圆形<code>pygame.draw.ellipse</code></p>
-<p>绘制椭圆的局部剖面<code>pygame.draw.arc</code></p>
-<p>绘制一条直线段<code>pygame.draw.line</code></p>
-<p>绘制多个连续的线段<code>pygame.draw.lines</code></p>
-<p>绘制精细的抗锯齿线<code>pygame.draw.aaline</code></p>
-<p>绘制连接的抗锯齿线序列<code>pygame.draw.aalines</code></p>
+<h2 id="多版本python下pip安装">多版本Python下pip安装</h2>
+<p><code>sudo apt-get install python-pip</code></p>
+<p><code>sudo apt-get install python3-pip</code></p>
+<p><em>如果是卸载，将install替换成remove</em></p>
+<h2 id="多版本python下pip使用">多版本Python下pip使用</h2>
+<p>在一个环境中同时装有python2 和python3</p>
+<p>使用python3版本，要在pip指令前加上<code>python3 -m</code></p>
+<h2 id="更改源">更改源</h2>
+<p>临时使用</p>
+<p><code>pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package</code></p>
+<p>设为默认</p>
+<p><code>pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U</code></p>
+<p><code>pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></p>
+<h2 id="pip命令">pip命令</h2>
+<p>可以通过pip指令查看所有命令。</p>
+<p>在线安装</p>
+<p><code>pip install 包名</code></p>
+<p>从requirements.txt安装</p>
+<p><code>pip install -r requirements.txt</code></p>
+<p><em>通过使用== &gt;= &lt;= &gt; &lt;来指定版本，不写则安装最新版</em></p>
+<p>安装本地安装包</p>
+<p><code>pip install &lt;目录&gt;/&lt;文件名&gt; 或 pip install --use-wheel --no-index --find-links=wheelhouse/ &lt;包名&gt;</code></p>
+<p>卸载安装包</p>
+<p><code>pip uninstall &lt;包名&gt; 或 pip uninstall -r requirements.txt</code></p>
+<p>升级包</p>
+<p><code>pip install -U &lt;包名&gt;</code></p>
+<p><code>pip install &lt;包名&gt; --upgrade</code></p>
+<p>升级pip</p>
+<p><code>pip install -U pip</code></p>
+<pre><code>使用pip安装插件的时候报错：
+
+You are using pip version 8.1.1, however version 9.0.1 is available.
+You should consider upgrading via the 'python -m pip install --upgrade pip' command.
+
+升级命令： python -m pip install --upgrade pip
+</code></pre>
+<p>导出包信息</p>
+<p><code>pip freeze &gt; requirements.txt</code></p>
+<p>查看包</p>
+<p><code>pip list</code></p>
+<p>查看可升级的包</p>
+<p><code>pip list -o</code></p>
+<p>显示所在目录信息</p>
+<p><code>pip show 包名</code></p>
+<p>搜索包</p>
+<p><code>pip search &lt;搜索关键字&gt;</code></p>
 
   </div>
   <footer>
@@ -371,14 +441,12 @@
 
 <div class="pagination">
   
-    <a href="/blog/pygame/08-pygame%E4%B8%AD%E7%9A%84image/" class="button"><div class="previous"><div>Pygame中的image</div></div></a>
+    <a href="/blog/python/os%E6%A8%A1%E5%9D%97/" class="button"><div class="previous"><div>Os模块</div></div></a>
   
   
   <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
 
   
-  
-    <a href="/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/" class="button"><div class="next"><div>Pygame中的key</div></div></a>
   
 </div>
 
