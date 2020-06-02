@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Django的生产环境部署WSGI_nginx - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django的生产环境部署WSGI_nginx">
+<meta itemprop="description" content="django生产环境部署 生产环境中的数据流 参考文档：
+wsgi详解：https://blog.csdn.net/li_101357/article/details/52748323
+wsgi协议介绍（萌新版）：https://blog.csdn.net/j163you/article/details/80919360
+廖雪峰web编程讲解：https://www.liaoxuefeng.com/wiki/897692888725344/923057027806560
+WSGI是什么？   WSGI是一种规范，它定义了使用python编写的web app(django)与web server（uWSGI）之间接口格式，实现web app与web server间的解耦。
+  WSGI 没有官方的实现, 因为WSGI更像一个协议. 只要遵照这些协议,WSGI应用(Application)都可以在任何服务器(Server)上运行
+  WSGI实质：WSGI是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范、协议。
+  为什么需要web协议：
+　1）不同的框架有不同的开发方式，但是无论如何，开发出的应用程序都要和服务器程序配合，才能为用户提供服务。
+　2） 这样，服务器程序就需要为不同的框架提供不同的支持,只有支持它的服务器才能被开发出的应用使用，显然这是不可行的。
+　3）**web协议本质：**就是定义了Web服务器和Web应用程序或框架之间的一种简单而通用的接口规范。
+Web协议介绍
+　Web协议出现顺序： CGI -&gt; FCGI -&gt; WSGI -&gt; uwsgi
+　1. CGI： 最早的协议
+　2. FCGI： 比CGI快
+　3. WSGI： Python专用的协议 4. uwsgi： 比FCGI和WSGI都快，是uWSGI项目自有的协议，主要特征是采用二进制来存储数据， 议都是使用字符串，所以在存储空间和解析速度上，都优于字符串型协议.
+uwsgi是什么？  它是一个二进制协议，可以携带任何类型的数据。 一个uwsgi分组的头4个字节描述了这个分组包含的数据类型。 uwsgi是一种线路协议而不是通信协议，在此常用于在uWSGI服务器与其他网络服务器的数据通信；  uWSGI是什么？（web服务器 和nginx类似）   什么是uWSGI： uWSGI是一个全功能的HTTP服务器，实现了WSGI协议、uwsgi协议、http协议等。">
+<meta itemprop="datePublished" content="2020-06-02T19:38:10&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-02T19:38:10&#43;08:00" />
+<meta itemprop="wordCount" content="715">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django的生产环境部署WSGI_nginx" />
+<meta property="og:description" content="django生产环境部署 生产环境中的数据流 参考文档：
+wsgi详解：https://blog.csdn.net/li_101357/article/details/52748323
+wsgi协议介绍（萌新版）：https://blog.csdn.net/j163you/article/details/80919360
+廖雪峰web编程讲解：https://www.liaoxuefeng.com/wiki/897692888725344/923057027806560
+WSGI是什么？   WSGI是一种规范，它定义了使用python编写的web app(django)与web server（uWSGI）之间接口格式，实现web app与web server间的解耦。
+  WSGI 没有官方的实现, 因为WSGI更像一个协议. 只要遵照这些协议,WSGI应用(Application)都可以在任何服务器(Server)上运行
+  WSGI实质：WSGI是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范、协议。
+  为什么需要web协议：
+　1）不同的框架有不同的开发方式，但是无论如何，开发出的应用程序都要和服务器程序配合，才能为用户提供服务。
+　2） 这样，服务器程序就需要为不同的框架提供不同的支持,只有支持它的服务器才能被开发出的应用使用，显然这是不可行的。
+　3）**web协议本质：**就是定义了Web服务器和Web应用程序或框架之间的一种简单而通用的接口规范。
+Web协议介绍
+　Web协议出现顺序： CGI -&gt; FCGI -&gt; WSGI -&gt; uwsgi
+　1. CGI： 最早的协议
+　2. FCGI： 比CGI快
+　3. WSGI： Python专用的协议 4. uwsgi： 比FCGI和WSGI都快，是uWSGI项目自有的协议，主要特征是采用二进制来存储数据， 议都是使用字符串，所以在存储空间和解析速度上，都优于字符串型协议.
+uwsgi是什么？  它是一个二进制协议，可以携带任何类型的数据。 一个uwsgi分组的头4个字节描述了这个分组包含的数据类型。 uwsgi是一种线路协议而不是通信协议，在此常用于在uWSGI服务器与其他网络服务器的数据通信；  uWSGI是什么？（web服务器 和nginx类似）   什么是uWSGI： uWSGI是一个全功能的HTTP服务器，实现了WSGI协议、uwsgi协议、http协议等。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/14-django%E7%9A%84%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2wsgi_nginx/" />
+<meta property="article:published_time" content="2020-06-02T19:38:10+08:00" />
+<meta property="article:modified_time" content="2020-06-02T19:38:10+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django的生产环境部署WSGI_nginx"/>
+<meta name="twitter:description" content="django生产环境部署 生产环境中的数据流 参考文档：
+wsgi详解：https://blog.csdn.net/li_101357/article/details/52748323
+wsgi协议介绍（萌新版）：https://blog.csdn.net/j163you/article/details/80919360
+廖雪峰web编程讲解：https://www.liaoxuefeng.com/wiki/897692888725344/923057027806560
+WSGI是什么？   WSGI是一种规范，它定义了使用python编写的web app(django)与web server（uWSGI）之间接口格式，实现web app与web server间的解耦。
+  WSGI 没有官方的实现, 因为WSGI更像一个协议. 只要遵照这些协议,WSGI应用(Application)都可以在任何服务器(Server)上运行
+  WSGI实质：WSGI是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范、协议。
+  为什么需要web协议：
+　1）不同的框架有不同的开发方式，但是无论如何，开发出的应用程序都要和服务器程序配合，才能为用户提供服务。
+　2） 这样，服务器程序就需要为不同的框架提供不同的支持,只有支持它的服务器才能被开发出的应用使用，显然这是不可行的。
+　3）**web协议本质：**就是定义了Web服务器和Web应用程序或框架之间的一种简单而通用的接口规范。
+Web协议介绍
+　Web协议出现顺序： CGI -&gt; FCGI -&gt; WSGI -&gt; uwsgi
+　1. CGI： 最早的协议
+　2. FCGI： 比CGI快
+　3. WSGI： Python专用的协议 4. uwsgi： 比FCGI和WSGI都快，是uWSGI项目自有的协议，主要特征是采用二进制来存储数据， 议都是使用字符串，所以在存储空间和解析速度上，都优于字符串型协议.
+uwsgi是什么？  它是一个二进制协议，可以携带任何类型的数据。 一个uwsgi分组的头4个字节描述了这个分组包含的数据类型。 uwsgi是一种线路协议而不是通信协议，在此常用于在uWSGI服务器与其他网络服务器的数据通信；  uWSGI是什么？（web服务器 和nginx类似）   什么是uWSGI： uWSGI是一个全功能的HTTP服务器，实现了WSGI协议、uwsgi协议、http协议等。"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx&amp;url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f&amp;title=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f&amp;title=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f&amp;description=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/14-django%E7%9A%84%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2wsgi_nginx/">Django的生产环境部署WSGI_nginx</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-02 19:38:10 &#43;0800 CST">
+      June 2, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>4 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx&amp;url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f&amp;title=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f&amp;title=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f&amp;description=Django%e7%9a%84%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%83%a8%e7%bd%b2WSGI_nginx" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f14-django%25E7%259A%2584%25E7%2594%259F%25E4%25BA%25A7%25E7%258E%25AF%25E5%25A2%2583%25E9%2583%25A8%25E7%25BD%25B2wsgi_nginx%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h1 id="django生产环境部署">django生产环境部署</h1>
+<h2 id="生产环境中的数据流">生产环境中的数据流</h2>
+<p><img src="./pic/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2.png" alt="img"></p>
+<p>参考文档：</p>
+<p>wsgi详解：https://blog.csdn.net/li_101357/article/details/52748323</p>
+<p>wsgi协议介绍（萌新版）：https://blog.csdn.net/j163you/article/details/80919360</p>
+<p>廖雪峰web编程讲解：https://www.liaoxuefeng.com/wiki/897692888725344/923057027806560</p>
+<h4 id="wsgi是什么">WSGI是什么？</h4>
+<ol>
+<li>
+<p>WSGI是一种规范，它定义了使用python编写的web app(django)与web server（uWSGI）之间接口格式，实现web app与web server间的解耦。</p>
+</li>
+<li>
+<p>WSGI 没有官方的实现, 因为WSGI更像一个协议. 只要遵照这些协议,WSGI应用(Application)都可以在任何服务器(Server)上运行</p>
+</li>
+<li>
+<p><strong>WSGI</strong>实质：WSGI是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范、协议。</p>
+</li>
+</ol>
+<p><strong>为什么需要web协议：</strong></p>
+<p>　1）不同的框架有不同的开发方式，但是无论如何，开发出的应用程序都要和服务器程序配合，才能为用户提供服务。</p>
+<p>　2） 这样，服务器程序就需要为不同的框架提供不同的支持,只有支持它的服务器才能被开发出的应用使用，显然这是不可行的。</p>
+<p>　3）**web协议本质：**就是定义了Web服务器和Web应用程序或框架之间的一种简单而通用的接口规范。</p>
+<p><strong>Web协议介绍</strong></p>
+<p>　<strong>Web协议出现顺序：</strong> CGI -&gt; FCGI -&gt; WSGI -&gt; uwsgi</p>
+<p>　1. <strong>CGI：</strong> 最早的协议</p>
+<p>　2. <strong>FCGI：</strong> 比CGI快</p>
+<p>　3. <strong>WSGI：</strong> Python专用的协议
+　4. <strong>uwsgi：</strong> 比FCGI和WSGI都快，是uWSGI项目自有的协议，主要特征是采用二进制来存储数据，
+议都是使用字符串，所以在存储空间和解析速度上，都优于字符串型协议.</p>
+<h4 id="uwsgi是什么">uwsgi是什么？</h4>
+<ol>
+<li>它是一个二进制协议，可以携带任何类型的数据。</li>
+<li>一个uwsgi分组的头4个字节描述了这个分组包含的数据类型。</li>
+<li>uwsgi是一种线路协议而不是通信协议，在此常用于在uWSGI服务器与其他网络服务器的数据通信；</li>
+</ol>
+<h4 id="uwsgi是什么web服务器--和nginx类似">uWSGI是什么？（<strong>web服务器  和nginx类似</strong>）</h4>
+<ol>
+<li>
+<p><strong>什么是uWSGI：</strong> uWSGI是一个全功能的HTTP服务器，实现了WSGI协议、uwsgi协议、http协议等。</p>
+</li>
+<li>
+<p>**uWSGI****作用：**它要做的就是把HTTP协议转化成语言支持的网络协议，比如把HTTP协议转化成WSGI协议，让Python可以直接使用。</p>
+</li>
+<li>
+<p>uWSGI特点：轻量级，易部署，性能比nginx差很多</p>
+</li>
+</ol>
+<p>　<strong>注：</strong></p>
+<p>　　如果架构是Nginx+uWSGI+APP，uWSGI是一个中间件
+　　如果架构是uWSGI+APP，uWSGI是一个服务器</p>
+<h4 id="wsgi--uwsgi--uwsgi-这三个概念的区分">WSGI / uwsgi / uWSGI 这三个概念的区分。</h4>
+<ul>
+<li>WSGI是一种通信协议。通常用户django框架和uWSGI服务器之间通信。（如果说的更细致的话就是用来和Python WSGI model）</li>
+<li>uwsgi是一种线路协议而不是通信协议，在此常用于在uWSGI服务器与其他网络服务器的数据通信。</li>
+<li>而uWSGI是实现了uwsgi和WSGI等协议的Web服务器</li>
+</ul>
+<h4 id="nginx是什么">nginx是什么？</h4>
+<p>　1. Nginx是一个Web服务器,其中的HTTP服务器功能和uWSGI功能很类似
+　2. 但是Nginx还可以用作更多用途，比如最常用的反向代理、负载均衡、拦截攻击等，而且性能极高</p>
+<h4 id="django是什么">django是什么？</h4>
+<p>　1. Django是一个Web框架，框架的作用在于处理request和 reponse，其他的不是框架所关心的内容。</p>
+<p>　2. 所以如何部署Django不是Django所需要关心的。</p>
+<h4 id="请求处理整体流程"><strong>请求处理整体流程</strong>　　　　　</h4>
+<ul>
+<li>nginx接收到浏览器发送过来的http请求，将包进行解析，分析url</li>
+<li>**静态文件请求：**就直接访问用户给nginx配置的静态文件目录，直接返回用户请求的静态文件</li>
+<li>**动态接口请求：**那么nginx就将请求转发给uWSGI，最后到达django处理</li>
+</ul>
+<h4 id="各模块作用">各模块作用</h4>
+<p>　1. **nginx：**是对外的服务器，外部浏览器通过url访问nginx，nginx主要处理静态请求</p>
+<p>　2. **uWSGI：**是对内的服务器，主要用来处理动态请求</p>
+<p>　3. **uwsgi：**是一种web协议，接收到请求之后将包进行处理，处理成wsgi可以接受的格式，并发给wsgi</p>
+<p>　4. **WSGI：**是python专用的web协议，根据请求调用应用程序（django）的某个文件，某个文件的某个函数</p>
+<p>　5. **django：**是真正干活的，查询数据等资源，把处理的结果再次返回给WSGI， WSGI 将返回值进行打包，打包成uwsgi能够接收的格式</p>
+<p>　6. uwsgi接收wsgi发送的请求，并转发给nginx,nginx最终将返回值返回给浏览器</p>
+<h4 id="django--uwsgi方案"><strong>Django + uWSGI方案</strong></h4>
+<p>　1. 没有nginx而只有uwsgi的服务器，则是Internet请求直接由uwsgi处理，并反馈到web项目中。</p>
+<p>　2. nginx可以实现安全过滤，防DDOS等保护安全的操作，并且如果配置了多台服务器，nginx可以保证服务器的负载相对均衡。</p>
+<p>　3. 而uwWSGI则是一个web服务器，实现了WSGI协议(Web Server Gateway Interface)，http协议等，它可以接收和处理请求，发出响应等。所以只用uwsgi也是可以的。</p>
+<h4 id="nginx和uwsgi特点">nginx和uWSGI特点</h4>
+<h5 id="1nginx的作用">　1）nginx的作用</h5>
+<p>　　1.反向代理，可以拦截一些web攻击，保护后端的web服务器</p>
+<p>　　2.负载均衡，根据轮询算法，分配请求到多节点web服务器</p>
+<p>　　3.缓存静态资源，加快访问速度，释放web服务器的内存占用，专项专用</p>
+<p>​	<strong>2）uWSGI的适用</strong></p>
+<p>　　1.单节点服务器的简易部署</p>
+<p>　　2.轻量级，好部署</p>
+<h2 id="django--uwsgi-nginx-的生产环境部署">Django + uWSGI+ Nginx 的生产环境部署</h2>
+<p><strong>1、在centos 7中安装python3环境</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 1、yum更新yum源</span>
+yum update
+<span style="color:#75715e"># 2、安装Python 3.7所需的依赖否则安装后没有pip3包</span>
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel gcc make
+<span style="color:#75715e"># 3、在官网下载所需版本，这里用的是3.7.0版本</span>
+wget https://www.python.org/ftp/3.7.0/Python-3.7.0.tgz
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 1、yum更新yum源</span>
+yum update
+<span style="color:#75715e"># 2、安装Python 3.7所需的依赖否则安装后没有pip3包</span>
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel gcc make
+<span style="color:#75715e"># 3、在官网下载所需版本，这里用的是3.7.0版本</span>
+wget https://www.python.org/ftp/3.7.0/Python-3.7.0.tgz
+　　2、安装Python
+
+<span style="color:#75715e"># 1、解压</span>
+tar -xvf Python-3.7.0.tgz
+
+<span style="color:#75715e">#2、配置编译</span>
+cd Python-3.7.0
+./configure --prefix<span style="color:#f92672">=</span>/usr/local/python3  <span style="color:#75715e"># 配置编译的的路径（这里--prefix是指定编译安装的文件夹）</span>
+./configure --enable-optimizations  <span style="color:#75715e"># 执行该代码后，会编译安装到 /usr/local/bin/ 下，且不用添加软连接或环境变量</span>
+make <span style="color:#f92672">&amp;&amp;</span> make install
+ln -s /usr/local/python3/bin/python3 /usr/bin/python3  <span style="color:#75715e"># 添加软连接</span>
+ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
+
+<span style="color:#75715e">#3、将/usr/local/python3/bin加入PATH</span>
+<span style="color:#f92672">[</span>root@linux-node1 testProj<span style="color:#f92672">]</span><span style="color:#75715e"># vim /etc/profile</span>
+<span style="color:#75715e">#然后在文件末尾添加</span>
+export PATH<span style="color:#f92672">=</span>$PATH:/usr/local/python3/bin
+
+<span style="color:#f92672">[</span>root@linux-node1 testProj<span style="color:#f92672">]</span><span style="color:#75715e"># source /etc/profile # 修改完后，还需要让这个环境变量在配置信息中生效，执行命令</span>
+</code></pre></div><p><strong>2、初始化一个django项目</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># pip3 install django==2.0.4</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># mkdir /code/</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># cd /code/</span>
+<span style="color:#f92672">[</span>root@linux-node1 testProj<span style="color:#f92672">]</span><span style="color:#75715e"># django-admin startproject mmcsite</span>
+<span style="color:#f92672">[</span>root@linux-node1 testProj<span style="color:#f92672">]</span><span style="color:#75715e"># cd /code/mmcsite</span>
+<span style="color:#f92672">[</span>root@linux-node1 testProj<span style="color:#f92672">]</span><span style="color:#75715e"># python3 manage.py runserver 0.0.0.0:8000</span>
+<span style="color:#75715e"># 页面中访问：http://192.168.56.11:8000/</span>
+</code></pre></div><p><strong>3、安装uWSGI 并使用uWSGI启动这个服务</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#e6db74">&#39;&#39;&#39;1. 安装uwsgi&#39;&#39;&#39;</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># pip3 install uwsgi</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># ln -s /usr/local/python3/bin/uwsgi /usr/bin/uwsgi</span>
+
+<span style="color:#e6db74">&#39;&#39;&#39;2. 配置uwsgi.ini启动文件&#39;&#39;&#39;</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># vim uwsgi.ini</span>
+<span style="color:#f92672">[</span>uwsgi<span style="color:#f92672">]</span>
+socket <span style="color:#f92672">=</span> 0.0.0.0:3031
+chdir <span style="color:#f92672">=</span> /code/mmcsite
+wsgi-file <span style="color:#f92672">=</span> /code/mmcsite/wsgi.py
+processes <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">30</span>
+master <span style="color:#f92672">=</span> true
+daemonize <span style="color:#f92672">=</span> /code/mmcsite/uwsgi.log
+module<span style="color:#f92672">=</span>mmcsite.wsgi
+pidfile <span style="color:#f92672">=</span> /code/mmcsite/uwsgi.pid
+chmod-socket<span style="color:#f92672">=</span><span style="color:#ae81ff">666</span>
+enable-threads <span style="color:#f92672">=</span> true
+
+<span style="color:#e6db74">&#39;&#39;&#39;3. 使用uwsgi启动django：一定要在这个项目目录中&#39;&#39;&#39;</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span><span style="color:#75715e"># uwsgi --http 192.168.56.11:80 --file mmcsite/wsgi.py --static-map=/static=static</span>
+访问项目：http://192.168.56.11
+</code></pre></div><p>配置uWSGI文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#f92672">[</span>root@linux-node2 demo2<span style="color:#f92672">]</span><span style="color:#75715e"># vim /code/mmcsite/uwsgi.ini  # uwsgi.ini文件</span>
+<span style="color:#f92672">[</span>uwsgi<span style="color:#f92672">]</span>
+socket <span style="color:#f92672">=</span> 0.0.0.0:3031                  <span style="color:#75715e"># 指定socket监听的地址和端口</span>
+chdir <span style="color:#f92672">=</span> /code/mmcsite                  <span style="color:#75715e"># 项目路径</span> 
+wsgi-file <span style="color:#f92672">=</span> /code/mmcsite/wsgi.py      <span style="color:#75715e"># django的wsgi文件路径</span>
+processes <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>                          <span style="color:#75715e"># 启动五个进程</span>
+threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">30</span>                           <span style="color:#75715e"># 每个进程启动30个线程</span>
+master <span style="color:#f92672">=</span> true
+daemonize <span style="color:#f92672">=</span> /code/mmcsite/uwsgi.log    <span style="color:#75715e"># 日志存放路径</span>
+module<span style="color:#f92672">=</span>mmcsite.wsgi                    <span style="color:#75715e"># 使用mmcsite.wsgi模块</span>
+pidfile <span style="color:#f92672">=</span> /code/mmcsite/uwsgi.pid      <span style="color:#75715e"># uwsgi启动进程id存放路径</span>
+chmod-socket<span style="color:#f92672">=</span><span style="color:#ae81ff">666</span>                       <span style="color:#75715e"># socket权限</span>
+enable-threads <span style="color:#f92672">=</span> true                  <span style="color:#75715e"># 允许用内嵌的语言启动线程，这将允许你在app程序中产生一个子线程</span>
+</code></pre></div><p><strong>4、安装配置nginx</strong></p>
+<p>安装nginx</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#e6db74">&#39;&#39;&#39;1. 配置nginx YUM源&#39;&#39;&#39;</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span> vim /etc/yum.repos.d/nginx.repo
+<span style="color:#e6db74">```</span>
+<span style="color:#f92672">[</span>nginx<span style="color:#f92672">]</span>
+name<span style="color:#f92672">=</span>nginx repo
+<span style="color:#75715e"># 下面这行centos根据你自己的操作系统修改比如：OS/rehel</span>
+<span style="color:#75715e"># 6是你Linux系统的版本，可以通过URL查看路径是否正确</span>
+baseurl<span style="color:#f92672">=</span>http://nginx.org/packages/centos/7/$basearch/
+gpgcheck<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+enabled<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+<span style="color:#e6db74">```</span>
+<span style="color:#e6db74">&#39;&#39;&#39;2. 安装nginx&#39;&#39;&#39;</span>
+<span style="color:#f92672">[</span>root@linux-node1 /<span style="color:#f92672">]</span> yum -y install nginx
+</code></pre></div><p>配置nginx</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">[root@linux-node1</span> <span style="color:#e6db74">/]</span><span style="color:#75715e"># vim /etc/nginx/conf.d/django.conf 
+</span><span style="color:#75715e"></span><span style="color:#e6db74">server</span> {
+    <span style="color:#f92672">listen</span>       <span style="color:#ae81ff">8888</span>;
+    <span style="color:#f92672">server_name</span>  <span style="color:#ae81ff">192</span><span style="color:#e6db74">.168.56.11</span>;
+    <span style="color:#f92672">client_max_body_size</span> <span style="color:#e6db74">5M</span>;
+    <span style="color:#f92672">gzip</span> <span style="color:#66d9ef">on</span>;
+    <span style="color:#f92672">gzip_buffers</span> <span style="color:#ae81ff">32</span> <span style="color:#e6db74">4K</span>;<span style="color:#75715e">#压缩在内存中缓冲32块 每块4K
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">gzip_comp_level</span> <span style="color:#ae81ff">6</span> ;<span style="color:#75715e">#压缩级别 推荐6
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">gzip_min_length</span> <span style="color:#ae81ff">4000</span>;<span style="color:#75715e">#开始压缩的最小长度4bit
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">gzip_types</span> <span style="color:#e6db74">text/plain</span> <span style="color:#e6db74">application/json</span> <span style="color:#e6db74">application/javascript</span> <span style="color:#e6db74">application/x-javascript</span> <span style="color:#e6db74">application/css</span> <span style="color:#e6db74">application/xml</span> <span style="color:#e6db74">application/xml+rss</span> <span style="color:#e6db74">text/javascript</span> <span style="color:#e6db74">application/x-httpd-php</span> <span style="color:#e6db74">image/jpeg</span> <span style="color:#e6db74">image/gif</span> <span style="color:#e6db74">image/png</span> <span style="color:#e6db74">image/x-ms-bmp</span>;
+        <span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+              <span style="color:#f92672">include</span> <span style="color:#e6db74">uwsgi_params</span>;
+              <span style="color:#f92672">uwsgi_pass</span> 127.0.0.1:<span style="color:#ae81ff">3031</span>;
+              <span style="color:#f92672">uwsgi_ignore_client_abort</span> <span style="color:#66d9ef">on</span>;
+        }
+
+        <span style="color:#f92672">error_page</span> <span style="color:#ae81ff">404</span> <span style="color:#e6db74">/404.html</span>;
+            <span style="color:#f92672">location</span> = <span style="color:#e6db74">/40x.html</span> {
+        }
+
+        <span style="color:#f92672">error_page</span> <span style="color:#ae81ff">500</span> <span style="color:#ae81ff">502</span> <span style="color:#ae81ff">503</span> <span style="color:#ae81ff">504</span> <span style="color:#e6db74">/50x.html</span>;
+            <span style="color:#f92672">location</span> = <span style="color:#e6db74">/50x.html</span> {
+        }
+
+}
+</code></pre></div><p><strong>5、启动项目</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#f92672">[</span>root@linux-node1 demo2<span style="color:#f92672">]</span><span style="color:#75715e"># systemctl restart nginx   # 开启nginx</span>
+<span style="color:#f92672">[</span>root@linux-node1 demo2<span style="color:#f92672">]</span><span style="color:#75715e"># uwsgi --ini uwsgi.ini     # 启动uwsgi的django项目</span>
+<span style="color:#75715e"># http://192.168.56.11:8888/ 访问项目</span>
+<span style="color:#f92672">[</span>root@linux-node1 demo2<span style="color:#f92672">]</span><span style="color:#75715e"># uwsgi --stop uwsgi.pid    # 关闭uwsgi</span>
+</code></pre></div><h2 id="channelsdjangonginxdaphne部署websocket项目">channels+django+nginx+daphne部署websocket项目</h2>
+<p>​	当你的django项目中使用channels增加了websocket功能的时候，在使用runserver命令启动时，既可以访问http请求，又可以访问websocket请求。但是当你使用uWSGI+nginx的来启动项目的时候，你会发现http请求可用，但是websocket请求永远是404的错误。这是为什么呢？</p>
+<p>​	因为在我们的标准生产环境部署中，使用的事WSGI协议来启动的我们的项目，也就是使用的wsgi.py这个文件来对接的uWSGI服务器。但是我们channels使用的ASGI协议，在我们使用uWSGI来启动项目的时候，关于ASGI的一些配置他就找不到了。这就导致了你所有的websocket请求都是404。在查阅了大量的资料和阅读了官方文档以后终于解决了这个问题。</p>
+<h5 id="这个问题的解决有两种方案">这个问题的解决有两种方案：</h5>
+<ul>
+<li>启用uWSGI来处理所有的http请求，另外开启一个daphne服务来处理websocket请求。这样的好处是按照请求类型分流，两种请求方式互不干扰。</li>
+<li>另外一种则是启用daphne服务来处理http和websocket这两种请求。在daphne服务内部他会根据请求类型的不同分开处理。让你既可以访问websocket又可以访问http。</li>
+</ul>
+<p><strong>安装Daphne</strong></p>
+<p><code>pip install daphne</code></p>
+<p>在setting.py同级的目录下新建一个asgi.py文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#asgi.py</span>
+
+<span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">ASGI entrypoint. Configures Django and then runs the application
+</span><span style="color:#e6db74">defined in the ASGI_APPLICATION setting.
+</span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+
+<span style="color:#f92672">import</span> os
+<span style="color:#f92672">import</span> django
+<span style="color:#f92672">from</span> channels.routing <span style="color:#f92672">import</span> get_default_application
+
+os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>setdefault(<span style="color:#e6db74">&#34;DJANGO_SETTINGS_MODULE&#34;</span>, <span style="color:#e6db74">&#34;myproject.settings&#34;</span>)
+django<span style="color:#f92672">.</span>setup()
+application <span style="color:#f92672">=</span> get_default_application()
+</code></pre></div><h5 id="使用daphne来启动项目">使用Daphne来启动项目</h5>
+<p><code>daphne -b 0.0.0.0 -p 8001 myproject.asgi:application</code></p>
+<p>这种方式只是在后台启动了你的项目，我们为了保证项目的稳定性，保证项目在意外死亡以后可以迅速的重启，我们来使用supervisor来管理我们的daphne服务。</p>
+<h3 id="什么是supervisor"><strong>什么是supervisor</strong></h3>
+<ol>
+<li>
+<p>Supervisor是用Python开发的一个client/server服务，是Linux/Unix系统下的一个进程管理工具，不支持Windows系统。</p>
+</li>
+<li>
+<p>作用：它可以很方便的监听、启动、停止、重启一个或多个进程。</p>
+</li>
+<li>
+<p>用Supervisor管理的进程，当一个进程意外被杀死，supervisort监听到进程死后，会自动将它重新拉起</p>
+</li>
+<li>
+<p>很方便的做到进程自动恢复的功能，不再需要自己写shell脚本来控制。</p>
+</li>
+<li>
+<p>说白了，它真正有用的功能是俩个将非daemon(守护进程)程序变成deamon方式运行对程序进行监控，当程序退出时，可以自动拉起程序。</p>
+</li>
+<li>
+<p>但是它无法控制本身就是daemon的服务。</p>
+</li>
+</ol>
+<h4 id="安装supervisor">安装supervisor</h4>
+<p><code>yum install epel-release</code></p>
+<p><code>yum install supervisor</code></p>
+<p>不要使用pip下载supervisor，因为系统有python2.7和python3.6两个版本，有时候会因为版本问题倒是supervisor启动错误。而且pip的supervisor的安装和使用方式也更为繁琐一些。</p>
+<h4 id="使用supervisor">使用supervisor</h4>
+<p>在/etc/supervisord.d/文件夹下面配置被管理的服务的配置，然后启动supervisor即可管理该服务。</p>
+<p>下面使用supervisor来管理我们dephne服务</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#shiyanlou.ini</span>
+
+[program:asgi]
+directory<span style="color:#f92672">=/</span>code<span style="color:#f92672">/</span>shiyanloupro<span style="color:#f92672">/</span>
+command<span style="color:#f92672">=</span>daphne <span style="color:#f92672">-</span>b <span style="color:#ae81ff">0.0</span><span style="color:#f92672">.</span><span style="color:#ae81ff">0.0</span> <span style="color:#f92672">-</span>p <span style="color:#ae81ff">8000</span> <span style="color:#f92672">--</span>proxy<span style="color:#f92672">-</span>headers shiyanloupro<span style="color:#f92672">.</span>asgi:application
+autostart<span style="color:#f92672">=</span>true
+autorestart<span style="color:#f92672">=</span>true
+stdout_logfile<span style="color:#f92672">=/</span>tmp<span style="color:#f92672">/</span>websocket<span style="color:#f92672">.</span>log  <span style="color:#75715e">#日志</span>
+redirect_stderr<span style="color:#f92672">=</span>true
+</code></pre></div><p>supervisore的管理命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># supervisord -c /etc/supervisord.conf  # 启动supervisor</span>
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># systemctl enable supervisord    # 开机自启动</span>
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># systemctl start supervisord     # 启动supervisord服务</span>
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl reread				    # 重新读取多有的配置文件</span>
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl update            # 配置文件修改后使用该命令加载新的配置，常和reread连用</span>
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl reload            # 重新启动配置中的所有程序</span>
+
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl status            # 查看supervisor管理的所有进程状态</span>
+<span style="color:#f92672">[</span>root@linux-node1 supervisord.d<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl restart test            # 启动test程序</span>
+<span style="color:#f92672">[</span>root@linux-node1 supervisord.d<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl stop all                # 停止所有程序</span>
+<span style="color:#f92672">[</span>root@linux-node1 supervisord.d<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl stop es       # 停止名称es程序(如果停止所有换成all)</span>
+<span style="color:#f92672">[</span>root@linux-node1 tmp<span style="color:#f92672">]</span><span style="color:#75715e"># supervisorctl start es      # 启动项目名称es程序</span>
+
+</code></pre></div><h4 id="接下来就是配置nginx将请求转发发哦daphne服务器">接下来就是配置nginx将请求转发发哦daphne服务器</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">upstream</span> <span style="color:#e6db74">channels-backend</span> {
+    <span style="color:#f92672">server</span> localhost:<span style="color:#ae81ff">8000</span>;
+}
+<span style="color:#66d9ef">...</span>
+<span style="color:#e6db74">server</span> {
+    <span style="color:#f92672">...</span>
+    <span style="color:#e6db74">location</span> <span style="color:#e6db74">/</span> {
+        <span style="color:#f92672">try_files</span> $uri <span style="color:#e6db74">@proxy_to_app</span>;
+    }
+    <span style="color:#f92672">...</span>
+    <span style="color:#e6db74">location</span> <span style="color:#e6db74">@proxy_to_app</span> {
+        <span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://channels-backend</span>;
+
+        <span style="color:#f92672">proxy_http_version</span> <span style="color:#ae81ff">1</span><span style="color:#e6db74">.1</span>;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">Upgrade</span> $http_upgrade;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">Connection</span> <span style="color:#e6db74">&#34;upgrade&#34;</span>;
+
+        <span style="color:#f92672">proxy_redirect</span> <span style="color:#66d9ef">off</span>;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">Host</span> $host;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">X-Real-IP</span> $remote_addr;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">X-Forwarded-For</span> $proxy_add_x_forwarded_for;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">X-Forwarded-Host</span> $server_name;
+    }
+    <span style="color:#f92672">...</span>
+<span style="color:#960050;background-color:#1e0010">}</span>
+</code></pre></div><p>接下来开启你的nginx服务和dephne服务即可。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl restart nginx   <span style="color:#75715e">#重启nginx</span>
+supervisorctl reread			<span style="color:#75715e">#重新读取supervisor的配置</span>
+supervisorctl update			<span style="color:#75715e">#更新supervisor的配置</span>
+supervisorctl start asgi	<span style="color:#75715e">#启动asgi服务，也就是我们的daphne服务</span>
+</code></pre></div>
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/" class="button"><div class="previous"><div>多版本python下的pip安装与指令</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/" class="button"><div class="next"><div>Element上传头像到七牛云</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/">Element上传头像到七牛云</a></h1>
+          <time class="published" datetime="">June 2, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/14-django%E7%9A%84%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2wsgi_nginx/">Django的生产环境部署WSGI_nginx</a></h1>
+          <time class="published" datetime="">June 2, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/">多版本python下的pip安装与指令</a></h1>
+          <time class="published" datetime="">June 1, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/os%E6%A8%A1%E5%9D%97/">Os模块</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%9F%BA%E7%A1%803/">Python基础3</a></h1>
+          <time class="published" datetime="">May 25, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

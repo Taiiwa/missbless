@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 01 Jun 2020 08:21:48 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 02 Jun 2020 20:19:20 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Mon, 01 Jun 2020 08:21:48 +0800</pubDate>
+      <pubDate>Tue, 02 Jun 2020 20:19:20 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -30,6 +30,7 @@
  11-Django中的联合索引
  12-Django与MySql物理外键
  13-Django的RBAC管理模型
+ 14-Django的生产环境部署WSGI_nginx
  git   01-git常用指令
  02-git配置代理
  03-git解决push问题
@@ -43,8 +44,41 @@
  03-pygame中的color
  04-pygame中的display
  05-pygame中的draw
- 06-pygame中的event
- 07-pygame中的font</description>
+ 06-pygame中的event</description>
+    </item>
+    
+    <item>
+      <title>Element上传头像到七牛云</title>
+      <link>/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/</link>
+      <pubDate>Tue, 02 Jun 2020 19:51:09 +0800</pubDate>
+      
+      <guid>/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/</guid>
+      <description>&amp;lt;template&amp;gt; &amp;lt;el-upload class=&amp;quot;avatar-uploader&amp;quot; :auto-upload=&amp;quot;true&amp;quot; :data=&#39;qiniuData&#39; action=&amp;quot;http://up-z1.qiniu.com&amp;quot; :show-file-list=&amp;quot;false&amp;quot; :on-success=&amp;quot;handleAvatarSuccess&amp;quot; :before-upload=&amp;quot;beforeAvatarUpload&amp;quot;&amp;gt; &amp;lt;img v-if=&amp;quot;imageUrl&amp;quot; :src=&amp;quot;imageUrl&amp;quot; class=&amp;quot;avatar&amp;quot;&amp;gt; &amp;lt;i v-else class=&amp;quot;el-icon-plus avatar-uploader-icon&amp;quot;&amp;gt;&amp;lt;/i&amp;gt; &amp;lt;/el-upload&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;script&amp;gt; import { uptoken_get } from &amp;quot;../axios_api/api&amp;quot;; export default { data() { return { imageUrl: &amp;quot;&amp;quot;, qiniuData: { //上传图片携带的参数 token: &amp;quot;&amp;quot;, key: &amp;quot;&amp;quot; }, } }, mounted() { this.get_uptoken(); }, methods:{ // 生成uuid作为图片key guid2() { function S4() { return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1); } return ( S4() + S4() +&amp;quot;-&amp;quot; +S4() +&amp;quot;-&amp;quot; +S4() + &amp;quot;-&amp;quot; + S4() + &amp;quot;-&amp;quot; + S4() + S4() + S4() ); }, // 获取七牛云凭证 get_uptoken() { uptoken_get().</description>
+    </item>
+    
+    <item>
+      <title>Django的生产环境部署WSGI_nginx</title>
+      <link>/blog/django/14-django%E7%9A%84%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2wsgi_nginx/</link>
+      <pubDate>Tue, 02 Jun 2020 19:38:10 +0800</pubDate>
+      
+      <guid>/blog/django/14-django%E7%9A%84%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2wsgi_nginx/</guid>
+      <description>django生产环境部署 生产环境中的数据流 参考文档：
+wsgi详解：https://blog.csdn.net/li_101357/article/details/52748323
+wsgi协议介绍（萌新版）：https://blog.csdn.net/j163you/article/details/80919360
+廖雪峰web编程讲解：https://www.liaoxuefeng.com/wiki/897692888725344/923057027806560
+WSGI是什么？   WSGI是一种规范，它定义了使用python编写的web app(django)与web server（uWSGI）之间接口格式，实现web app与web server间的解耦。
+  WSGI 没有官方的实现, 因为WSGI更像一个协议. 只要遵照这些协议,WSGI应用(Application)都可以在任何服务器(Server)上运行
+  WSGI实质：WSGI是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范、协议。
+  为什么需要web协议：
+　1）不同的框架有不同的开发方式，但是无论如何，开发出的应用程序都要和服务器程序配合，才能为用户提供服务。
+　2） 这样，服务器程序就需要为不同的框架提供不同的支持,只有支持它的服务器才能被开发出的应用使用，显然这是不可行的。
+　3）**web协议本质：**就是定义了Web服务器和Web应用程序或框架之间的一种简单而通用的接口规范。
+Web协议介绍
+　Web协议出现顺序： CGI -&amp;gt; FCGI -&amp;gt; WSGI -&amp;gt; uwsgi
+　1. CGI： 最早的协议
+　2. FCGI： 比CGI快
+　3. WSGI： Python专用的协议 4. uwsgi： 比FCGI和WSGI都快，是uWSGI项目自有的协议，主要特征是采用二进制来存储数据， 议都是使用字符串，所以在存储空间和解析速度上，都优于字符串型协议.
+uwsgi是什么？  它是一个二进制协议，可以携带任何类型的数据。 一个uwsgi分组的头4个字节描述了这个分组包含的数据类型。 uwsgi是一种线路协议而不是通信协议，在此常用于在uWSGI服务器与其他网络服务器的数据通信；  uWSGI是什么？（web服务器 和nginx类似）   什么是uWSGI： uWSGI是一个全功能的HTTP服务器，实现了WSGI协议、uwsgi协议、http协议等。</description>
     </item>
     
     <item>
@@ -194,10 +228,10 @@ class User(AbstractUser): username = models.CharField(max_length=200, unique=Tru
     
     <item>
       <title>Vue中的高德地图</title>
-      <link>/blog/vue/vue%E4%B8%AD%E7%9A%84%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</link>
+      <link>/blog/vue/01-vue%E4%B8%AD%E7%9A%84%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</link>
       <pubDate>Wed, 20 May 2020 00:24:53 +0800</pubDate>
       
-      <guid>/blog/vue/vue%E4%B8%AD%E7%9A%84%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</guid>
+      <guid>/blog/vue/01-vue%E4%B8%AD%E7%9A%84%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</guid>
       <description>vue中高德地图的使用 1. 准备工作 vue搭建 高德开发key值申请（链接：高德开放平台），key值请放入以下需要对号入座的地方 地图样式挑选，需要申请到key值后，在高德开放平台自动移地图模板处挑选配置。此处用 极夜蓝模板来示例，也可选择其他模板。然后发布=&amp;gt;复制与分享=&amp;gt;辅助出来样式ID。如： bb7f5165253f57515d7ba226b2******，然后放入以下需要对号入座的地方 注：第二步和第三步申请的两个值需要对应使用
 2. 地图引入项目 入口文件index.html引入标签:
 &amp;lt;script src=&amp;quot;https://webapi.amap.com/maps?v=1.4.15&amp;amp;key=这里放入key值&amp;quot;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script src=&amp;quot;//webapi.amap.com/ui/1.0/main.js?v=1.0.11&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;  vue.config.js中配置:
@@ -257,13 +291,13 @@ RBAC3是RBAC1和RBAC2的合集，所以RBAC3既有角色分层，也包括可以
     
     <item>
       <title>Vue封装axios</title>
-      <link>/blog/vue/vue%E5%B0%81%E8%A3%85axios/</link>
+      <link>/blog/vue/02-vue%E5%B0%81%E8%A3%85axios/</link>
       <pubDate>Tue, 21 Apr 2020 09:41:28 +0800</pubDate>
       
-      <guid>/blog/vue/vue%E5%B0%81%E8%A3%85axios/</guid>
-      <description> 作用 封装请求的方式有多种多样，目的是便于管理vue项目中axios请求的路由。
+      <guid>/blog/vue/02-vue%E5%B0%81%E8%A3%85axios/</guid>
+      <description>作用 封装请求的方式有多种多样，目的是便于管理vue项目中axios请求的路由。
 步骤 https://www.cnblogs.com/ppzhang/p/12502019.html
-# 创建文件 components/axios_api/http.js # 导入axios import axios from &#39;axios&#39;  </description>
+# 创建文件 components/axios_api/http.js # 导入axios import axios from &#39;axios&#39;  封装：@/axios_api/http.js import axios from &#39;axios&#39; axios.defaults.baseURL=&amp;quot;http://127.0.0.1:8000/&amp;quot; axios.defaults.timeout = 1000000; axios.defaults.headers.post[&#39;Content-Type&#39;] = &#39;application/json&#39;; axios.defaults.headers.put[&#39;Content-Type&#39;] = &#39;application/json&#39;; axios.interceptors.request.use( config =&amp;gt; { // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了 const token = sessionStorage.getItem(&amp;quot;jwt_token&amp;quot;) console.log(token) if (token){ // 将token保存到头部信息的&#39;Authorization&#39;字段中，每次发起请求自动传入后端 config.headers.Authorization = token } return config; }, error =&amp;gt; { return Promise.error(error); }) axios.interceptors.response.use( // 请求成功 res =&amp;gt; res.status === 200 ? Promise.resolve(res) : Promise.reject(res), // 请求失败 error =&amp;gt; { if (error.</description>
     </item>
     
     <item>
