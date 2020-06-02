@@ -262,7 +262,11 @@
   
 
   
-  
+  <p>通过post请求七牛云的上传接口，可以将图片上传到七牛云。
+post除了携带文件以外，还需要传递令牌。令牌通过七牛云验证AK和SK来返回给开发者。
+还有一个可选参数key，作为上传文件的文件名。如果上传key，则用该key，如果没有上传，则由七牛云生成一个文件id。
+key不可重复，可以生成一个uuid作为key。
+element在template的标签中发起请求，我们无法接受post请求返回的文件名拼接url，所以事先写好key，如果上传成功，则将此key与七牛云的url进行拼接，从而实现图片预览的效果。</p>
   <footer>
     <a href="/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/" class="button big">Read more</a>
     <ul class="stats">
