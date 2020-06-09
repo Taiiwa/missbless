@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Python数据类型的底层实现 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Python数据类型的底层实现">
+<meta itemprop="description" content="字符串 根据维基百科定义：字符串是由零个或多个字符组成的有限序列。而在Python3中，它有着更明确的意思：字符串是由Unicode码点组成的不可变序列（Strings are immutable sequences of Unicode code points.），本质上是数组。
+字典与集合 字典和集合能如此高效，和它们内部的数据结构密不可分。不同于其他数据结构，字典和集合的内部结构都是一张哈希表： 对于字典而言，这张表存储了哈希值（hash）、键和值这 3 个元素。 而对集合来说，哈希表内只存储单一的元素。
+什么是哈希表，简单来说就是一张带索引和存储空间的表，对于任意可哈希对象，通过哈希索引的计算公式：hash(hashable)%k（对可哈希对象进行哈希计算，然后对结果进行取余运算），可将该对象映射为0到k-1之间的某个表索引，然后在该索引所对应的空间进行变量的存储/读取等操作。
+字典是Python的一种可变、无序容器数据结构，它的元素以键值对的形式存在，键值唯一，它的特点搜索速度很快：数据量增加10000倍，搜索时间增加不到2倍；当数据量很大的时候，字典的搜索速度要比列表快成百上千倍。
+  插入：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的表地址空间为空，将键值对存入该地址空间；    更新：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要更新的健一致，那么就更新该健所对应的值；    查询：
+ 对要查找的健进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要查询的健一致，那么就将该键值对取出来；    扩容：
+ 字典初始化的时候，会对应初始化一个有k个空间的表，等空间不够用的时候，系统就会自动扩容，这时候会对已经存在的键值对重新进行哈希取余运算（重新进行插入操作）保存到其它位置；    碰撞：
+ 有时候对于不同的键，经过哈希取余运算之后，得到的索引值一样，这时候怎么办？这时采用公开寻址的方式，运用固定的模式将键值对插入到其它的地址空间，比如线性寻址：如果第i个位置已经被使用，我们就看看第i&#43;1个，第i&#43;2个，第i&#43;3个有没有被使用…直到找到一个空间或者对空间进行扩容。 比如：我们想存储 {’小小‘：18}这个键值对，经过哈希和取余运算之后，我们发现，其对应的索引值是0，但是0所指向的空间已经被’小王‘占用了，这就是碰撞。怎么办呢？我们看看0&#43;1对应的所以有没有被占用，如果没有，我们就把’小小‘放在索引1所对应的地址空间中。取的时候，也按照同样的规则，进行探查。    复杂度    操作 操作说明 时间复杂度     copy 复制 O(n)   get(value) 获取 O(1)   set(value) 修改 O(1)   delete(value) 删除 O(1)   search(value) 字典搜索 O(1)   iterration(value) 字典迭代 O(n)    列表 list 本质上是一个长度可变的连续数组。其中 ob_item 是一个指针列表，里边的每一个指针都指向列表中的元素，而 allocated 则用于存储该列表目前已被分配的空间大小。">
+<meta itemprop="datePublished" content="2020-06-09T20:51:51&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-09T20:51:51&#43;08:00" />
+<meta itemprop="wordCount" content="113">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Python数据类型的底层实现" />
+<meta property="og:description" content="字符串 根据维基百科定义：字符串是由零个或多个字符组成的有限序列。而在Python3中，它有着更明确的意思：字符串是由Unicode码点组成的不可变序列（Strings are immutable sequences of Unicode code points.），本质上是数组。
+字典与集合 字典和集合能如此高效，和它们内部的数据结构密不可分。不同于其他数据结构，字典和集合的内部结构都是一张哈希表： 对于字典而言，这张表存储了哈希值（hash）、键和值这 3 个元素。 而对集合来说，哈希表内只存储单一的元素。
+什么是哈希表，简单来说就是一张带索引和存储空间的表，对于任意可哈希对象，通过哈希索引的计算公式：hash(hashable)%k（对可哈希对象进行哈希计算，然后对结果进行取余运算），可将该对象映射为0到k-1之间的某个表索引，然后在该索引所对应的空间进行变量的存储/读取等操作。
+字典是Python的一种可变、无序容器数据结构，它的元素以键值对的形式存在，键值唯一，它的特点搜索速度很快：数据量增加10000倍，搜索时间增加不到2倍；当数据量很大的时候，字典的搜索速度要比列表快成百上千倍。
+  插入：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的表地址空间为空，将键值对存入该地址空间；    更新：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要更新的健一致，那么就更新该健所对应的值；    查询：
+ 对要查找的健进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要查询的健一致，那么就将该键值对取出来；    扩容：
+ 字典初始化的时候，会对应初始化一个有k个空间的表，等空间不够用的时候，系统就会自动扩容，这时候会对已经存在的键值对重新进行哈希取余运算（重新进行插入操作）保存到其它位置；    碰撞：
+ 有时候对于不同的键，经过哈希取余运算之后，得到的索引值一样，这时候怎么办？这时采用公开寻址的方式，运用固定的模式将键值对插入到其它的地址空间，比如线性寻址：如果第i个位置已经被使用，我们就看看第i&#43;1个，第i&#43;2个，第i&#43;3个有没有被使用…直到找到一个空间或者对空间进行扩容。 比如：我们想存储 {’小小‘：18}这个键值对，经过哈希和取余运算之后，我们发现，其对应的索引值是0，但是0所指向的空间已经被’小王‘占用了，这就是碰撞。怎么办呢？我们看看0&#43;1对应的所以有没有被占用，如果没有，我们就把’小小‘放在索引1所对应的地址空间中。取的时候，也按照同样的规则，进行探查。    复杂度    操作 操作说明 时间复杂度     copy 复制 O(n)   get(value) 获取 O(1)   set(value) 修改 O(1)   delete(value) 删除 O(1)   search(value) 字典搜索 O(1)   iterration(value) 字典迭代 O(n)    列表 list 本质上是一个长度可变的连续数组。其中 ob_item 是一个指针列表，里边的每一个指针都指向列表中的元素，而 allocated 则用于存储该列表目前已被分配的空间大小。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/" />
+<meta property="article:published_time" content="2020-06-09T20:51:51+08:00" />
+<meta property="article:modified_time" content="2020-06-09T20:51:51+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Python数据类型的底层实现"/>
+<meta name="twitter:description" content="字符串 根据维基百科定义：字符串是由零个或多个字符组成的有限序列。而在Python3中，它有着更明确的意思：字符串是由Unicode码点组成的不可变序列（Strings are immutable sequences of Unicode code points.），本质上是数组。
+字典与集合 字典和集合能如此高效，和它们内部的数据结构密不可分。不同于其他数据结构，字典和集合的内部结构都是一张哈希表： 对于字典而言，这张表存储了哈希值（hash）、键和值这 3 个元素。 而对集合来说，哈希表内只存储单一的元素。
+什么是哈希表，简单来说就是一张带索引和存储空间的表，对于任意可哈希对象，通过哈希索引的计算公式：hash(hashable)%k（对可哈希对象进行哈希计算，然后对结果进行取余运算），可将该对象映射为0到k-1之间的某个表索引，然后在该索引所对应的空间进行变量的存储/读取等操作。
+字典是Python的一种可变、无序容器数据结构，它的元素以键值对的形式存在，键值唯一，它的特点搜索速度很快：数据量增加10000倍，搜索时间增加不到2倍；当数据量很大的时候，字典的搜索速度要比列表快成百上千倍。
+  插入：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的表地址空间为空，将键值对存入该地址空间；    更新：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要更新的健一致，那么就更新该健所对应的值；    查询：
+ 对要查找的健进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要查询的健一致，那么就将该键值对取出来；    扩容：
+ 字典初始化的时候，会对应初始化一个有k个空间的表，等空间不够用的时候，系统就会自动扩容，这时候会对已经存在的键值对重新进行哈希取余运算（重新进行插入操作）保存到其它位置；    碰撞：
+ 有时候对于不同的键，经过哈希取余运算之后，得到的索引值一样，这时候怎么办？这时采用公开寻址的方式，运用固定的模式将键值对插入到其它的地址空间，比如线性寻址：如果第i个位置已经被使用，我们就看看第i&#43;1个，第i&#43;2个，第i&#43;3个有没有被使用…直到找到一个空间或者对空间进行扩容。 比如：我们想存储 {’小小‘：18}这个键值对，经过哈希和取余运算之后，我们发现，其对应的索引值是0，但是0所指向的空间已经被’小王‘占用了，这就是碰撞。怎么办呢？我们看看0&#43;1对应的所以有没有被占用，如果没有，我们就把’小小‘放在索引1所对应的地址空间中。取的时候，也按照同样的规则，进行探查。    复杂度    操作 操作说明 时间复杂度     copy 复制 O(n)   get(value) 获取 O(1)   set(value) 修改 O(1)   delete(value) 删除 O(1)   search(value) 字典搜索 O(1)   iterration(value) 字典迭代 O(n)    列表 list 本质上是一个长度可变的连续数组。其中 ob_item 是一个指针列表，里边的每一个指针都指向列表中的元素，而 allocated 则用于存储该列表目前已被分配的空间大小。"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0&amp;url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f&amp;title=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f&amp;title=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f&amp;description=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">Python数据类型的底层实现</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-09 20:51:51 &#43;0800 CST">
+      June 9, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0&amp;url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f&amp;title=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f&amp;title=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f&amp;description=Python%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fpython%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%25E7%259A%2584%25E5%25BA%2595%25E5%25B1%2582%25E5%25AE%259E%25E7%258E%25B0%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="字符串">字符串</h2>
+<p>根据维基百科定义：字符串是由零个或多个字符组成的有限序列。而在Python3中，它有着更明确的意思：字符串是由Unicode码点组成的不可变序列（Strings are immutable sequences of Unicode code points.），本质上是数组。</p>
+<h2 id="字典与集合">字典与集合</h2>
+<p>字典和集合能如此高效，和它们内部的数据结构密不可分。不同于其他数据结构，字典和集合的内部结构都是一张<strong>哈希表</strong>：
+对于字典而言，这张表存储了哈希值（hash）、键和值这 3 个元素。
+而对集合来说，哈希表内只存储单一的元素。</p>
+<p>什么是哈希表，简单来说就是一张带索引和存储空间的表，对于任意可哈希对象，通过哈希索引的计算公式：hash(hashable)%k（对可哈希对象进行哈希计算，然后对结果进行取余运算），可将该对象映射为0到k-1之间的某个表索引，然后在该索引所对应的空间进行变量的存储/读取等操作。</p>
+<p>字典是Python的一种可变、无序容器数据结构，它的元素以键值对的形式存在，键值唯一，它的特点搜索速度很快：数据量增加10000倍，搜索时间增加不到2倍；当数据量很大的时候，字典的搜索速度要比列表快成百上千倍。</p>
+<ul>
+<li>
+<p>插入：</p>
+<ul>
+<li>对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的表地址空间为空，将键值对存入该地址空间；</li>
+</ul>
+</li>
+<li>
+<p>更新：</p>
+<ul>
+<li>对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要更新的健一致，那么就更新该健所对应的值；</li>
+</ul>
+</li>
+<li>
+<p>查询：</p>
+<ul>
+<li>对要查找的健进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要查询的健一致，那么就将该键值对取出来；</li>
+</ul>
+</li>
+<li>
+<p>扩容：</p>
+<ul>
+<li>字典初始化的时候，会对应初始化一个有k个空间的表，等空间不够用的时候，系统就会自动扩容，这时候会对已经存在的键值对重新进行哈希取余运算（重新进行插入操作）保存到其它位置；</li>
+</ul>
+</li>
+<li>
+<p>碰撞：</p>
+<ul>
+<li>有时候对于不同的键，经过哈希取余运算之后，得到的索引值一样，这时候怎么办？这时采用公开寻址的方式，运用固定的模式将键值对插入到其它的地址空间，比如线性寻址：如果第i个位置已经被使用，我们就看看第i+1个，第i+2个，第i+3个有没有被使用…直到找到一个空间或者对空间进行扩容。</li>
+<li>比如：我们想存储 {’小小‘：18}这个键值对，经过哈希和取余运算之后，我们发现，其对应的索引值是0，但是0所指向的空间已经被’小王‘占用了，这就是碰撞。怎么办呢？我们看看0+1对应的所以有没有被占用，如果没有，我们就把’小小‘放在索引1所对应的地址空间中。取的时候，也按照同样的规则，进行探查。</li>
+</ul>
+</li>
+</ul>
+<h3 id="复杂度">复杂度</h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>操作说明</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>copy</td>
+<td>复制</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>get(value)</td>
+<td>获取</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>set(value)</td>
+<td>修改</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>delete(value)</td>
+<td>删除</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>search(value)</td>
+<td>字典搜索</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>iterration(value)</td>
+<td>字典迭代</td>
+<td>O(n)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="列表">列表</h2>
+<p>list 本质上是一个长度可变的连续<strong>数组</strong>。其中 ob_item 是一个指针列表，里边的每一个指针都指向列表中的元素，而 allocated 则用于存储该列表目前已被分配的空间大小。</p>
+<p><em>tuple 和 list 相似，本质也是一个数组，但是空间大小固定。不同于一般数组，Python 的 tuple 做了许多优化，来提升在程序中的效率。</em></p>
+<h3 id="复杂度-1">复杂度</h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>操作说明</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a = index(value)</td>
+<td>索引赋值</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>index(value)</td>
+<td>查找list某个元素的索引</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>append(value)</td>
+<td>队尾添加</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>pop()</td>
+<td>队尾删除</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>pop(index)</td>
+<td>根据索引删除某个元素</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>insert(index, value)</td>
+<td>根据索引插入某个元素</td>
+<td>O(n) iterration</td>
+</tr>
+<tr>
+<td>search(in)</td>
+<td>列表搜索（其实就是in关键字）</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>slice [x:y]</td>
+<td>切片, 获取x, y为O(1), 获取x,y 中间的值为O(k)</td>
+<td>O(k)</td>
+</tr>
+<tr>
+<td>del slice [x:y]</td>
+<td>删除切片，删除切片后数据需要重新移动/合并</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>reverse</td>
+<td>列表反转</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>排序</td>
+<td>O(nlogn)</td>
+</tr>
+</tbody>
+</table>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/python%E4%B8%ADgil%E9%94%81%E4%B8%8E%E4%BA%92%E6%96%A5%E9%94%81lock%E7%9A%84%E5%8C%BA%E5%88%AB/" class="button"><div class="previous"><div>Python中GIL锁与互斥锁Lock的区别</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/" class="button"><div class="next"><div>Python判断链表成环</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/">Python判断链表成环</a></h1>
+          <time class="published" datetime="">June 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">Python数据类型的底层实现</a></h1>
+          <time class="published" datetime="">June 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E4%B8%ADgil%E9%94%81%E4%B8%8E%E4%BA%92%E6%96%A5%E9%94%81lock%E7%9A%84%E5%8C%BA%E5%88%AB/">Python中GIL锁与互斥锁Lock的区别</a></h1>
+          <time class="published" datetime="">June 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/">Element上传头像到七牛云</a></h1>
+          <time class="published" datetime="">June 2, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/14-django%E7%9A%84%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2wsgi_nginx/">Django的生产环境部署WSGI_nginx</a></h1>
+          <time class="published" datetime="">June 2, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

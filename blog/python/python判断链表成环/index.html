@@ -4,27 +4,42 @@
 
   
   <meta charset="utf-8">
-<title>递归斐波那契 - Issac Loveless</title>
+<title>Python判断链表成环 - Issac Loveless</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="递归斐波那契">
-<meta itemprop="description" content=" def fun(i): if i == 0: return 0 elif i == 1: return 1 else: return fun(i-2) &#43; fei(i-1) if __name__ == &#39;__main__&#39;: for i in range(10): print(fun(i),end=&quot; &quot;) ">
-<meta itemprop="datePublished" content="2020-04-12T23:17:57&#43;08:00" />
-<meta itemprop="dateModified" content="2020-04-12T23:17:57&#43;08:00" />
-<meta itemprop="wordCount" content="29">
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Python判断链表成环">
+<meta itemprop="description" content="判断一个单链表是否有环 可以用 set 存放每一个 节点, 这样每次 访问后把节点丢到这个集合里面. 其实 可以遍历这个单链表, 访问过后, 如果这个节点 不在 set 里面, 把这个节点放入到 set 集合里面. 如果这个节点在 set 里面 , 说明曾经访问过, 所以这个链表有重新 走到了这个节点, 因此一定有环 如果链表都走完了, 把所有的节点都放完了. 还是没有重复的节点, 那说明没有环.
+我们用快慢指针解决这个问题：
+输入为空，则一定不是环形链表；
+定义慢指针p1和快指针p2，每次分别走一步和两步，如果快指针走到了链表结尾，说明不是链表不是环形；
+如果存在环形结构，则快慢指针一定会相遇，返回True即可。
+class Solution(object): def hasCycle(self, head): &quot;&quot;&quot; :type head: ListNode :rtype: bool &quot;&quot;&quot; if not head: # 输入为空，一定不是环形链表 return False p1 = p2 = head # 定义慢指针p1和快指针p2 while p2 and p2.next: # 如果快指针没有走到链表结尾 p1 = p1.next # 慢指针走一步 p2 = p2.">
+<meta itemprop="datePublished" content="2020-06-09T21:39:14&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-09T21:39:14&#43;08:00" />
+<meta itemprop="wordCount" content="89">
 
 
 
-<meta itemprop="keywords" content="" /><meta property="og:title" content="递归斐波那契" />
-<meta property="og:description" content=" def fun(i): if i == 0: return 0 elif i == 1: return 1 else: return fun(i-2) &#43; fei(i-1) if __name__ == &#39;__main__&#39;: for i in range(10): print(fun(i),end=&quot; &quot;) " />
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Python判断链表成环" />
+<meta property="og:description" content="判断一个单链表是否有环 可以用 set 存放每一个 节点, 这样每次 访问后把节点丢到这个集合里面. 其实 可以遍历这个单链表, 访问过后, 如果这个节点 不在 set 里面, 把这个节点放入到 set 集合里面. 如果这个节点在 set 里面 , 说明曾经访问过, 所以这个链表有重新 走到了这个节点, 因此一定有环 如果链表都走完了, 把所有的节点都放完了. 还是没有重复的节点, 那说明没有环.
+我们用快慢指针解决这个问题：
+输入为空，则一定不是环形链表；
+定义慢指针p1和快指针p2，每次分别走一步和两步，如果快指针走到了链表结尾，说明不是链表不是环形；
+如果存在环形结构，则快慢指针一定会相遇，返回True即可。
+class Solution(object): def hasCycle(self, head): &quot;&quot;&quot; :type head: ListNode :rtype: bool &quot;&quot;&quot; if not head: # 输入为空，一定不是环形链表 return False p1 = p2 = head # 定义慢指针p1和快指针p2 while p2 and p2.next: # 如果快指针没有走到链表结尾 p1 = p1.next # 慢指针走一步 p2 = p2." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/" />
-<meta property="article:published_time" content="2020-04-12T23:17:57+08:00" />
-<meta property="article:modified_time" content="2020-04-12T23:17:57+08:00" />
+<meta property="og:url" content="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/" />
+<meta property="article:published_time" content="2020-06-09T21:39:14+08:00" />
+<meta property="article:modified_time" content="2020-06-09T21:39:14+08:00" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="递归斐波那契"/>
-<meta name="twitter:description" content=" def fun(i): if i == 0: return 0 elif i == 1: return 1 else: return fun(i-2) &#43; fei(i-1) if __name__ == &#39;__main__&#39;: for i in range(10): print(fun(i),end=&quot; &quot;) "/>
+<meta name="twitter:title" content="Python判断链表成环"/>
+<meta name="twitter:description" content="判断一个单链表是否有环 可以用 set 存放每一个 节点, 这样每次 访问后把节点丢到这个集合里面. 其实 可以遍历这个单链表, 访问过后, 如果这个节点 不在 set 里面, 把这个节点放入到 set 集合里面. 如果这个节点在 set 里面 , 说明曾经访问过, 所以这个链表有重新 走到了这个节点, 因此一定有环 如果链表都走完了, 把所有的节点都放完了. 还是没有重复的节点, 那说明没有环.
+我们用快慢指针解决这个问题：
+输入为空，则一定不是环形链表；
+定义慢指针p1和快指针p2，每次分别走一步和两步，如果快指针走到了链表结尾，说明不是链表不是环形；
+如果存在环形结构，则快慢指针一定会相遇，返回True即可。
+class Solution(object): def hasCycle(self, head): &quot;&quot;&quot; :type head: ListNode :rtype: bool &quot;&quot;&quot; if not head: # 输入为空，一定不是环形链表 return False p1 = p2 = head # 定义慢指针p1和快指针p2 while p2 and p2.next: # 如果快指针没有走到链表结尾 p1 = p1.next # 慢指针走一步 p2 = p2."/>
 <link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
         <link rel="stylesheet" href="/css/add-on.css">
 
@@ -143,37 +158,37 @@
 
   
     
-    <a href="//twitter.com/share?text=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91&amp;url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f" target="_blank" rel="noopener" class="share-btn twitter">
+    <a href="//twitter.com/share?text=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af&amp;url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f" target="_blank" rel="noopener" class="share-btn twitter">
         <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
       </a>
   
 
   
-      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f" target="_blank" rel="noopener" class="share-btn facebook">
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f" target="_blank" rel="noopener" class="share-btn facebook">
         <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
         </a>
   
 
   
-    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f&amp;title=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91" target="_blank" rel="noopener" class="share-btn reddit">
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f&amp;title=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af" target="_blank" rel="noopener" class="share-btn reddit">
           <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
         </a>
   
 
   
-        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f&amp;title=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91" target="_blank" rel="noopener" class="share-btn linkedin">
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f&amp;title=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af" target="_blank" rel="noopener" class="share-btn linkedin">
             <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
           </a>
   
 
   
-        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f&amp;description=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91" target="_blank" rel="noopener" class="share-btn pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f&amp;description=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af" target="_blank" rel="noopener" class="share-btn pinterest">
           <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
         </a>
   
 
   
-        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f" target="_blank" class="share-btn email" data-proofer-ignore>
           <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
         </a>
   
@@ -248,13 +263,13 @@
   <header>
   <div class="title">
     
-      <h2><a href="/blog/python/%E9%80%92%E5%BD%92%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91/">递归斐波那契</a></h2>
+      <h2><a href="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/">Python判断链表成环</a></h2>
     
     
   </div>
   <div class="meta">
-    <time class="published" datetime="2020-04-12 23:17:57 &#43;0800 CST">
-      April 12, 2020
+    <time class="published" datetime="2020-06-09 21:39:14 &#43;0800 CST">
+      June 9, 2020
     </time>
     <span class="author">Issac loveless</span>
     
@@ -271,37 +286,37 @@
 
   
     
-    <a href="//twitter.com/share?text=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91&amp;url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f" target="_blank" rel="noopener" class="share-btn twitter">
+    <a href="//twitter.com/share?text=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af&amp;url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f" target="_blank" rel="noopener" class="share-btn twitter">
         <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
       </a>
   
 
   
-      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f" target="_blank" rel="noopener" class="share-btn facebook">
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f" target="_blank" rel="noopener" class="share-btn facebook">
         <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
         </a>
   
 
   
-    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f&amp;title=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91" target="_blank" rel="noopener" class="share-btn reddit">
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f&amp;title=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af" target="_blank" rel="noopener" class="share-btn reddit">
           <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
         </a>
   
 
   
-        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f&amp;title=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91" target="_blank" rel="noopener" class="share-btn linkedin">
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f&amp;title=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af" target="_blank" rel="noopener" class="share-btn linkedin">
             <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
           </a>
   
 
   
-        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f&amp;description=%e9%80%92%e5%bd%92%e6%96%90%e6%b3%a2%e9%82%a3%e5%a5%91" target="_blank" rel="noopener" class="share-btn pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f&amp;description=Python%e5%88%a4%e6%96%ad%e9%93%be%e8%a1%a8%e6%88%90%e7%8e%af" target="_blank" rel="noopener" class="share-btn pinterest">
           <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
         </a>
   
 
   
-        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2f%25E9%2580%2592%25E5%25BD%2592%25E6%2596%2590%25E6%25B3%25A2%25E9%2582%25A3%25E5%25A5%2591%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fpython%25E5%2588%25A4%25E6%2596%25AD%25E9%2593%25BE%25E8%25A1%25A8%25E6%2588%2590%25E7%258E%25AF%2f" target="_blank" class="share-btn email" data-proofer-ignore>
           <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
         </a>
   
@@ -312,16 +327,34 @@
 
   <div class="content">
     <hr>
-<pre><code>def fun(i):
-    if i == 0:
-        return 0
-    elif i == 1:
-        return 1
-    else:
-        return fun(i-2) + fei(i-1)
-if __name__ == '__main__':
-    for i in range(10):
-        print(fun(i),end=&quot; &quot;)</code></pre>
+<h2 id="判断一个单链表是否有环">判断一个单链表是否有环</h2>
+<p>可以用 set 存放每一个 节点, 这样每次 访问后把节点丢到这个集合里面.
+其实 可以遍历这个单链表, 访问过后,
+如果这个节点 不在 set 里面, 把这个节点放入到 set 集合里面.
+如果这个节点在 set 里面 , 说明曾经访问过, 所以这个链表有重新 走到了这个节点, 因此一定有环
+如果链表都走完了, 把所有的节点都放完了. 还是没有重复的节点, 那说明没有环.</p>
+<p>我们用快慢指针解决这个问题：</p>
+<p>输入为空，则一定不是环形链表；</p>
+<p>定义慢指针p1和快指针p2，每次分别走一步和两步，如果快指针走到了链表结尾，说明不是链表不是环形；</p>
+<p>如果存在环形结构，则快慢指针一定会相遇，返回True即可。</p>
+<pre><code>class Solution(object):
+    def hasCycle(self, head):
+        &quot;&quot;&quot;
+        :type head: ListNode
+        :rtype: bool
+        &quot;&quot;&quot;
+        
+        if not head:            # 输入为空，一定不是环形链表
+            return False
+
+        p1 = p2 = head          # 定义慢指针p1和快指针p2
+        while p2 and p2.next:   # 如果快指针没有走到链表结尾
+            p1 = p1.next        # 慢指针走一步
+            p2 = p2.next.next   # 快指针走两步
+            if p1 == p2:        # 如果快慢指针相遇
+                return True     # 是环形链表
+        return False            # 否则不是
+</code></pre>
 
   </div>
   <footer>
@@ -348,14 +381,12 @@ if __name__ == '__main__':
 
 <div class="pagination">
   
-    <a href="/blog/python/%E5%BF%AB%E6%8E%92/" class="button"><div class="previous"><div>快排</div></div></a>
+    <a href="/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/" class="button"><div class="previous"><div>Python数据类型的底层实现</div></div></a>
   
   
   <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
 
   
-  
-    <a href="/blog/python/%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6/" class="button"><div class="next"><div>青蛙跳台阶</div></div></a>
   
 </div>
 

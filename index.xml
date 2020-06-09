@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 08 Jun 2020 20:14:30 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jun 2020 21:45:20 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Mon, 08 Jun 2020 20:14:30 +0800</pubDate>
+      <pubDate>Tue, 09 Jun 2020 21:45:20 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -45,6 +45,38 @@
  04-pygame中的display
  05-pygame中的draw
  06-pygame中的event</description>
+    </item>
+    
+    <item>
+      <title>Python判断链表成环</title>
+      <link>/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/</link>
+      <pubDate>Tue, 09 Jun 2020 21:39:14 +0800</pubDate>
+      
+      <guid>/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/</guid>
+      <description>判断一个单链表是否有环 可以用 set 存放每一个 节点, 这样每次 访问后把节点丢到这个集合里面. 其实 可以遍历这个单链表, 访问过后, 如果这个节点 不在 set 里面, 把这个节点放入到 set 集合里面. 如果这个节点在 set 里面 , 说明曾经访问过, 所以这个链表有重新 走到了这个节点, 因此一定有环 如果链表都走完了, 把所有的节点都放完了. 还是没有重复的节点, 那说明没有环.
+我们用快慢指针解决这个问题：
+输入为空，则一定不是环形链表；
+定义慢指针p1和快指针p2，每次分别走一步和两步，如果快指针走到了链表结尾，说明不是链表不是环形；
+如果存在环形结构，则快慢指针一定会相遇，返回True即可。
+class Solution(object): def hasCycle(self, head): &amp;quot;&amp;quot;&amp;quot; :type head: ListNode :rtype: bool &amp;quot;&amp;quot;&amp;quot; if not head: # 输入为空，一定不是环形链表 return False p1 = p2 = head # 定义慢指针p1和快指针p2 while p2 and p2.next: # 如果快指针没有走到链表结尾 p1 = p1.next # 慢指针走一步 p2 = p2.</description>
+    </item>
+    
+    <item>
+      <title>Python数据类型的底层实现</title>
+      <link>/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 09 Jun 2020 20:51:51 +0800</pubDate>
+      
+      <guid>/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/</guid>
+      <description>字符串 根据维基百科定义：字符串是由零个或多个字符组成的有限序列。而在Python3中，它有着更明确的意思：字符串是由Unicode码点组成的不可变序列（Strings are immutable sequences of Unicode code points.），本质上是数组。
+字典与集合 字典和集合能如此高效，和它们内部的数据结构密不可分。不同于其他数据结构，字典和集合的内部结构都是一张哈希表： 对于字典而言，这张表存储了哈希值（hash）、键和值这 3 个元素。 而对集合来说，哈希表内只存储单一的元素。
+什么是哈希表，简单来说就是一张带索引和存储空间的表，对于任意可哈希对象，通过哈希索引的计算公式：hash(hashable)%k（对可哈希对象进行哈希计算，然后对结果进行取余运算），可将该对象映射为0到k-1之间的某个表索引，然后在该索引所对应的空间进行变量的存储/读取等操作。
+字典是Python的一种可变、无序容器数据结构，它的元素以键值对的形式存在，键值唯一，它的特点搜索速度很快：数据量增加10000倍，搜索时间增加不到2倍；当数据量很大的时候，字典的搜索速度要比列表快成百上千倍。
+  插入：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的表地址空间为空，将键值对存入该地址空间；    更新：
+ 对键进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要更新的健一致，那么就更新该健所对应的值；    查询：
+ 对要查找的健进行哈希和取余运算，得到一个哈希表的索引，如果该索引所对应的地址空间中健与要查询的健一致，那么就将该键值对取出来；    扩容：
+ 字典初始化的时候，会对应初始化一个有k个空间的表，等空间不够用的时候，系统就会自动扩容，这时候会对已经存在的键值对重新进行哈希取余运算（重新进行插入操作）保存到其它位置；    碰撞：
+ 有时候对于不同的键，经过哈希取余运算之后，得到的索引值一样，这时候怎么办？这时采用公开寻址的方式，运用固定的模式将键值对插入到其它的地址空间，比如线性寻址：如果第i个位置已经被使用，我们就看看第i+1个，第i+2个，第i+3个有没有被使用…直到找到一个空间或者对空间进行扩容。 比如：我们想存储 {’小小‘：18}这个键值对，经过哈希和取余运算之后，我们发现，其对应的索引值是0，但是0所指向的空间已经被’小王‘占用了，这就是碰撞。怎么办呢？我们看看0+1对应的所以有没有被占用，如果没有，我们就把’小小‘放在索引1所对应的地址空间中。取的时候，也按照同样的规则，进行探查。    复杂度    操作 操作说明 时间复杂度     copy 复制 O(n)   get(value) 获取 O(1)   set(value) 修改 O(1)   delete(value) 删除 O(1)   search(value) 字典搜索 O(1)   iterration(value) 字典迭代 O(n)    列表 list 本质上是一个长度可变的连续数组。其中 ob_item 是一个指针列表，里边的每一个指针都指向列表中的元素，而 allocated 则用于存储该列表目前已被分配的空间大小。</description>
     </item>
     
     <item>
@@ -573,7 +605,21 @@ mysql的rollback与redis的discard的区别:
       <pubDate>Sun, 12 Apr 2020 22:48:39 +0800</pubDate>
       
       <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
-      <description> 说明：  redis中所有数据结构都以唯一的key字符串作为名称，然后通过这个唯一的key来获取对应的value 不同的数据类型数据结构差异就在于value的结构不一样  1. 字符串（string） value的数据结构（数组）  字符串value数据结构类似于数组，采用与分配容易空间来减少内存频繁分配 当字符串长度小于1M时，扩容就是加倍现有空间 如果字符串长度操作1M时，扩容时最多扩容1M空间，字符串最大长度为 512M  字符串的使用场景（缓存）  字符串一个常见的用途是缓存用户信息，我们将用户信息使用JSON序列化成字符串 取用户信息时会经过一次反序列化的过程  2. list（列表） value的数据结构（双向链表）  列表的数据结构是双向链表，这意味着插入和删除的时间复杂度是0(1)，索引的时间复杂度位0(n) 当列表弹出最后一个元素后，该数据结构会被自动删除，内存被回手  列表的使用场景（队列、栈） 3. hash（字典） value的数据结构（HashMap）  redis中的字典也是HashMap（数组+列表）的二维结构 不同的是redis的字典的值只能是字符串  hash的使用场景（缓存）  hash可以用来缓存用户信息，与字符串一次性全部序列化整个对象不同，hash可以对每个字段进行单独存储 这样可以部分获取用户信息，节约网络流量 hash也有缺点，hash结构的存储消耗要高于单个字符串  </description>
+      <description>Redis的对象redisObject 当我们执行set hello world命令时，会有以下数据模型:
+dictEntry：Redis给每个key-value键值对分配一个dictEntry，里面有着key和val的指针，next指向下一个dictEntry形成链表，这个指针可以将多个哈希值相同的键值对链接在一起，由此来解决哈希冲突问题(链地址法)。
+sds：键key“hello”是以SDS（简单动态字符串）存储，后面详细介绍。
+redisObject：值val“world”存储在redisObject中。实际上，redis常用5中类型都是以redisObject来存储的；而redisObject中的type字段指明了Value对象的类型，ptr字段则指向对象所在的地址。
+ String 简单动态字符串(SDS)
+字符串对象的底层实现可以是int(整数)、raw(简单动态字符串)、embstr（embstr编码的简单动态字符串）。embstr编码是通过调用一次内存分配函数来分配一块连续的空间，而raw需要调用两次。
+int编码字符串对象和embstr编码字符串对象在一定条件下会转化为raw编码字符串对象。embstr：&amp;lt;=39字节的字符串。int：8个字节的长整型。raw：大于39个字节的字符串。
+复杂度 get：sdsrange&amp;mdash;O(n) set：sdscpy—O(n) create：sdsnew&amp;mdash;O(1) len：sdslen&amp;mdash;O(1)
+ List 快速列表(quicklist)
+快速列表，是ziplist 压缩列表 和linkedlist 双端链表 的组合
+Redis中的列表支持两端插入和弹出，并可以获得指定位置（或范围）的元素，可以充当数组、队列、栈等。
+  linkedlist（双端链表）
+ Redis的linkedlist双端链表有以下特性：节点带有prev、next指针、head指针和tail指针，获取前置节点、后置节点、表头节点和表尾节点的复杂度都是O（1）。len属性获取节点数量也为O（1）。    ziplist（压缩列表）
+ ziplist是Redis为了节约内存而开发的，是由一系列特殊编码的连续内存块(而不是像双端链表一样每个节点是指针)    quicklist
+ quickList 是 zipList 和 linkedList 的混合体。它将 linkedList 按段切分，每一段使用 zipList 来紧凑存储，多个 zipList 之间使用双向指针串接起来。因为链表的附加空间相对太高，prev 和 next 指针就要占去 16 个字节 (64bit 系统的指针是 8 个字节)，另外每个节点的内存都是单独分配，会加剧内存的碎片化，影响内存管理效率。 quicklist 默认的压缩深度是 0，也就是不压缩。为了支持快速的 push/pop 操作，quicklist 的首尾两个 ziplist 不压缩，此时深度就是 1。为了进一步节约空间，Redis 还会对 ziplist 进行压缩存储，使用 LZF 算法压缩。    复杂度 rpush: listAddNodeHead &amp;mdash;O(1) lpush: listAddNodeTail &amp;mdash;O(1) push: listInsertNode &amp;mdash;O(1) index : listIndex &amp;mdash;O(N) pop: ListFirst/listLast &amp;mdash;O(1) llen: listLength &amp;mdash;O(N)</description>
     </item>
     
     <item>
