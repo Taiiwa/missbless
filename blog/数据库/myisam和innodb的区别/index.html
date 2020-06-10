@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>MyIsAM和InnoDB的区别 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="MyIsAM和InnoDB的区别">
+<meta itemprop="description" content="区别：  InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一； InnoDB 支持外键，而 MyISAM 不支持。对一个包含外键的 InnoDB 表转为 MYISAM 会失败； InnoDB 是聚集索引，MyISAM 是非聚集索引。聚簇索引的文件存放在主键索引的叶子节点上，因此 InnoDB 必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而 MyISAM 是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。 InnoDB 不保存表的具体行数，执行 select count(*) from table 时需要全表扫描。而MyISAM 用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快； InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。一个更新语句会锁住整张表，导致其他查询和更新都会被阻塞，因此并发访问受限。这也是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一  如何选择：  是否要支持事务，如果要请选择 InnoDB，如果不需要可以考虑 MyISAM； 如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读写也挺频繁，请使用InnoDB。 系统崩溃后，MyISAM恢复起来更困难，能否接受，不能接受就选 InnoDB； MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。如果你不知道用什么存储引擎，那就用InnoDB，至少不会差。  Innodb引擎概述 Innodb引擎提供了对数据库ACID事务的支持，并且实现了SQL标准的四种隔离级别。该引擎还提供了行级锁和外键约束，它的设计目标是处理大容量数据库系统，它本身其实就是基于MySQL后台的完整数据库系统，MySQL运行时Innodb会在内存中建立缓冲池，用于缓冲数据和索引。但是该引擎不支持FULLTEXT类型的索引，而且它没有保存表的行数，当SELECT COUNT(*) FROM TABLE时需要扫描全表。当需要使用数据库事务时，该引擎当然是首选。由于锁的粒度更小，写操作不会锁定全表，所以在并发较高时，使用Innodb引擎会提升效率。但是使用行级锁也不是绝对的，如果在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表。
+MyISAM引擎概述 MyISAM是MySQL默认的引擎，但是它没有提供对数据库事务的支持，也不支持行级锁和外键，因此当INSERT(插入)或UPDATE(更新)数据时即写操作需要锁定整个表，效率便会低一些。不过和Innodb不同，MyISAM中存储了表的行数，于是SELECT COUNT(*) FROM TABLE时只需要直接读取已经保存好的值而不需要进行全表扫描。如果表的读操作远远多于写操作且不需要数据库事务的支持，那么MyISAM也是很好的选择。
+简单介绍区别  MyISAM是非事务安全的，而InnoDB是事务安全的 MyISAM锁的粒度是表级的，而InnoDB支持行级锁 MyISAM支持全文类型索引，而InnoDB不支持全文索引 MyISAM相对简单，效率上要优于InnoDB，小型应用可以考虑使用MyISAM MyISAM表保存成文件形式，跨平台使用更加方便  应用场景  MyISAM管理非事务表，提供高速存储和检索以及全文搜索能力，如果再应用中执行大量select操作，应该选择MyISAM InnoDB用于事务处理，具有ACID事务支持等特性，如果在应用中执行大量insert和update操作，应该选择InnoDB  本文链接">
+<meta itemprop="datePublished" content="2020-06-10T20:17:25&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-10T20:17:25&#43;08:00" />
+<meta itemprop="wordCount" content="71">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="MyIsAM和InnoDB的区别" />
+<meta property="og:description" content="区别：  InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一； InnoDB 支持外键，而 MyISAM 不支持。对一个包含外键的 InnoDB 表转为 MYISAM 会失败； InnoDB 是聚集索引，MyISAM 是非聚集索引。聚簇索引的文件存放在主键索引的叶子节点上，因此 InnoDB 必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而 MyISAM 是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。 InnoDB 不保存表的具体行数，执行 select count(*) from table 时需要全表扫描。而MyISAM 用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快； InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。一个更新语句会锁住整张表，导致其他查询和更新都会被阻塞，因此并发访问受限。这也是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一  如何选择：  是否要支持事务，如果要请选择 InnoDB，如果不需要可以考虑 MyISAM； 如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读写也挺频繁，请使用InnoDB。 系统崩溃后，MyISAM恢复起来更困难，能否接受，不能接受就选 InnoDB； MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。如果你不知道用什么存储引擎，那就用InnoDB，至少不会差。  Innodb引擎概述 Innodb引擎提供了对数据库ACID事务的支持，并且实现了SQL标准的四种隔离级别。该引擎还提供了行级锁和外键约束，它的设计目标是处理大容量数据库系统，它本身其实就是基于MySQL后台的完整数据库系统，MySQL运行时Innodb会在内存中建立缓冲池，用于缓冲数据和索引。但是该引擎不支持FULLTEXT类型的索引，而且它没有保存表的行数，当SELECT COUNT(*) FROM TABLE时需要扫描全表。当需要使用数据库事务时，该引擎当然是首选。由于锁的粒度更小，写操作不会锁定全表，所以在并发较高时，使用Innodb引擎会提升效率。但是使用行级锁也不是绝对的，如果在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表。
+MyISAM引擎概述 MyISAM是MySQL默认的引擎，但是它没有提供对数据库事务的支持，也不支持行级锁和外键，因此当INSERT(插入)或UPDATE(更新)数据时即写操作需要锁定整个表，效率便会低一些。不过和Innodb不同，MyISAM中存储了表的行数，于是SELECT COUNT(*) FROM TABLE时只需要直接读取已经保存好的值而不需要进行全表扫描。如果表的读操作远远多于写操作且不需要数据库事务的支持，那么MyISAM也是很好的选择。
+简单介绍区别  MyISAM是非事务安全的，而InnoDB是事务安全的 MyISAM锁的粒度是表级的，而InnoDB支持行级锁 MyISAM支持全文类型索引，而InnoDB不支持全文索引 MyISAM相对简单，效率上要优于InnoDB，小型应用可以考虑使用MyISAM MyISAM表保存成文件形式，跨平台使用更加方便  应用场景  MyISAM管理非事务表，提供高速存储和检索以及全文搜索能力，如果再应用中执行大量select操作，应该选择MyISAM InnoDB用于事务处理，具有ACID事务支持等特性，如果在应用中执行大量insert和update操作，应该选择InnoDB  本文链接" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/" />
+<meta property="article:published_time" content="2020-06-10T20:17:25+08:00" />
+<meta property="article:modified_time" content="2020-06-10T20:17:25+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MyIsAM和InnoDB的区别"/>
+<meta name="twitter:description" content="区别：  InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一； InnoDB 支持外键，而 MyISAM 不支持。对一个包含外键的 InnoDB 表转为 MYISAM 会失败； InnoDB 是聚集索引，MyISAM 是非聚集索引。聚簇索引的文件存放在主键索引的叶子节点上，因此 InnoDB 必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而 MyISAM 是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。 InnoDB 不保存表的具体行数，执行 select count(*) from table 时需要全表扫描。而MyISAM 用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快； InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。一个更新语句会锁住整张表，导致其他查询和更新都会被阻塞，因此并发访问受限。这也是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一  如何选择：  是否要支持事务，如果要请选择 InnoDB，如果不需要可以考虑 MyISAM； 如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读写也挺频繁，请使用InnoDB。 系统崩溃后，MyISAM恢复起来更困难，能否接受，不能接受就选 InnoDB； MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。如果你不知道用什么存储引擎，那就用InnoDB，至少不会差。  Innodb引擎概述 Innodb引擎提供了对数据库ACID事务的支持，并且实现了SQL标准的四种隔离级别。该引擎还提供了行级锁和外键约束，它的设计目标是处理大容量数据库系统，它本身其实就是基于MySQL后台的完整数据库系统，MySQL运行时Innodb会在内存中建立缓冲池，用于缓冲数据和索引。但是该引擎不支持FULLTEXT类型的索引，而且它没有保存表的行数，当SELECT COUNT(*) FROM TABLE时需要扫描全表。当需要使用数据库事务时，该引擎当然是首选。由于锁的粒度更小，写操作不会锁定全表，所以在并发较高时，使用Innodb引擎会提升效率。但是使用行级锁也不是绝对的，如果在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表。
+MyISAM引擎概述 MyISAM是MySQL默认的引擎，但是它没有提供对数据库事务的支持，也不支持行级锁和外键，因此当INSERT(插入)或UPDATE(更新)数据时即写操作需要锁定整个表，效率便会低一些。不过和Innodb不同，MyISAM中存储了表的行数，于是SELECT COUNT(*) FROM TABLE时只需要直接读取已经保存好的值而不需要进行全表扫描。如果表的读操作远远多于写操作且不需要数据库事务的支持，那么MyISAM也是很好的选择。
+简单介绍区别  MyISAM是非事务安全的，而InnoDB是事务安全的 MyISAM锁的粒度是表级的，而InnoDB支持行级锁 MyISAM支持全文类型索引，而InnoDB不支持全文索引 MyISAM相对简单，效率上要优于InnoDB，小型应用可以考虑使用MyISAM MyISAM表保存成文件形式，跨平台使用更加方便  应用场景  MyISAM管理非事务表，提供高速存储和检索以及全文搜索能力，如果再应用中执行大量select操作，应该选择MyISAM InnoDB用于事务处理，具有ACID事务支持等特性，如果在应用中执行大量insert和update操作，应该选择InnoDB  本文链接"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f&amp;title=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f&amp;title=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f&amp;description=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/">MyIsAM和InnoDB的区别</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-10 20:17:25 &#43;0800 CST">
+      June 10, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f&amp;title=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f&amp;title=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f&amp;description=MyIsAM%e5%92%8cInnoDB%e7%9a%84%e5%8c%ba%e5%88%ab" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fmyisam%25E5%2592%258Cinnodb%25E7%259A%2584%25E5%258C%25BA%25E5%2588%25AB%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="区别">区别：</h2>
+<ol>
+<li>InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一；</li>
+<li>InnoDB 支持外键，而 MyISAM 不支持。对一个包含外键的 InnoDB 表转为 MYISAM 会失败；</li>
+<li>InnoDB 是聚集索引，MyISAM 是非聚集索引。聚簇索引的文件存放在主键索引的叶子节点上，因此 InnoDB 必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而 MyISAM 是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。</li>
+<li>InnoDB 不保存表的具体行数，执行 select count(*) from table 时需要全表扫描。而MyISAM 用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快；</li>
+<li>InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。一个更新语句会锁住整张表，导致其他查询和更新都会被阻塞，因此并发访问受限。这也是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一</li>
+</ol>
+<h2 id="如何选择">如何选择：</h2>
+<ol>
+<li>是否要支持事务，如果要请选择 InnoDB，如果不需要可以考虑 MyISAM；</li>
+<li>如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读写也挺频繁，请使用InnoDB。</li>
+<li>系统崩溃后，MyISAM恢复起来更困难，能否接受，不能接受就选 InnoDB；</li>
+<li>MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。如果你不知道用什么存储引擎，那就用InnoDB，至少不会差。</li>
+</ol>
+<h2 id="innodb引擎概述">Innodb引擎概述</h2>
+<p>Innodb引擎提供了对数据库ACID事务的支持，并且实现了SQL标准的四种隔离级别。该引擎还提供了行级锁和外键约束，它的设计目标是处理大容量数据库系统，它本身其实就是基于MySQL后台的完整数据库系统，MySQL运行时Innodb会在内存中建立缓冲池，用于缓冲数据和索引。但是该引擎不支持FULLTEXT类型的索引，而且它没有保存表的行数，当SELECT COUNT(*) FROM TABLE时需要扫描全表。当需要使用数据库事务时，该引擎当然是首选。由于锁的粒度更小，写操作不会锁定全表，所以在并发较高时，使用Innodb引擎会提升效率。但是使用行级锁也不是绝对的，如果在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表。</p>
+<h2 id="myisam引擎概述">MyISAM引擎概述</h2>
+<p>MyISAM是MySQL默认的引擎，但是它没有提供对数据库事务的支持，也不支持行级锁和外键，因此当INSERT(插入)或UPDATE(更新)数据时即写操作需要锁定整个表，效率便会低一些。不过和Innodb不同，MyISAM中存储了表的行数，于是SELECT COUNT(*) FROM TABLE时只需要直接读取已经保存好的值而不需要进行全表扫描。如果表的读操作远远多于写操作且不需要数据库事务的支持，那么MyISAM也是很好的选择。</p>
+<h2 id="简单介绍区别">简单介绍区别</h2>
+<ol>
+<li>MyISAM是非事务安全的，而InnoDB是事务安全的</li>
+<li>MyISAM锁的粒度是表级的，而InnoDB支持行级锁</li>
+<li>MyISAM支持全文类型索引，而InnoDB不支持全文索引</li>
+<li>MyISAM相对简单，效率上要优于InnoDB，小型应用可以考虑使用MyISAM</li>
+<li>MyISAM表保存成文件形式，跨平台使用更加方便</li>
+</ol>
+<h2 id="应用场景">应用场景</h2>
+<ol>
+<li>MyISAM管理非事务表，提供高速存储和检索以及全文搜索能力，如果再应用中执行大量select操作，应该选择MyISAM</li>
+<li>InnoDB用于事务处理，具有ACID事务支持等特性，如果在应用中执行大量insert和update操作，应该选择InnoDB</li>
+</ol>
+<p><a href="https://www.zhihu.com/question/20596402">本文链接</a></p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/" class="button"><div class="previous"><div>Python判断链表成环</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/">MyIsAM和InnoDB的区别</a></h1>
+          <time class="published" datetime="">June 10, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/">Python判断链表成环</a></h1>
+          <time class="published" datetime="">June 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">Python数据类型的底层实现</a></h1>
+          <time class="published" datetime="">June 9, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/python%E4%B8%ADgil%E9%94%81%E4%B8%8E%E4%BA%92%E6%96%A5%E9%94%81lock%E7%9A%84%E5%8C%BA%E5%88%AB/">Python中GIL锁与互斥锁Lock的区别</a></h1>
+          <time class="published" datetime="">June 8, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/">Element上传头像到七牛云</a></h1>
+          <time class="published" datetime="">June 2, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

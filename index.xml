@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 09 Jun 2020 21:45:20 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2020 20:20:43 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Tue, 09 Jun 2020 21:45:20 +0800</pubDate>
+      <pubDate>Wed, 10 Jun 2020 20:20:43 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -45,6 +45,17 @@
  04-pygame中的display
  05-pygame中的draw
  06-pygame中的event</description>
+    </item>
+    
+    <item>
+      <title>MyIsAM和InnoDB的区别</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
+      <pubDate>Wed, 10 Jun 2020 20:17:25 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
+      <description>区别：  InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一； InnoDB 支持外键，而 MyISAM 不支持。对一个包含外键的 InnoDB 表转为 MYISAM 会失败； InnoDB 是聚集索引，MyISAM 是非聚集索引。聚簇索引的文件存放在主键索引的叶子节点上，因此 InnoDB 必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而 MyISAM 是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。 InnoDB 不保存表的具体行数，执行 select count(*) from table 时需要全表扫描。而MyISAM 用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快； InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。一个更新语句会锁住整张表，导致其他查询和更新都会被阻塞，因此并发访问受限。这也是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一  如何选择：  是否要支持事务，如果要请选择 InnoDB，如果不需要可以考虑 MyISAM； 如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读写也挺频繁，请使用InnoDB。 系统崩溃后，MyISAM恢复起来更困难，能否接受，不能接受就选 InnoDB； MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。如果你不知道用什么存储引擎，那就用InnoDB，至少不会差。  Innodb引擎概述 Innodb引擎提供了对数据库ACID事务的支持，并且实现了SQL标准的四种隔离级别。该引擎还提供了行级锁和外键约束，它的设计目标是处理大容量数据库系统，它本身其实就是基于MySQL后台的完整数据库系统，MySQL运行时Innodb会在内存中建立缓冲池，用于缓冲数据和索引。但是该引擎不支持FULLTEXT类型的索引，而且它没有保存表的行数，当SELECT COUNT(*) FROM TABLE时需要扫描全表。当需要使用数据库事务时，该引擎当然是首选。由于锁的粒度更小，写操作不会锁定全表，所以在并发较高时，使用Innodb引擎会提升效率。但是使用行级锁也不是绝对的，如果在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表。
+MyISAM引擎概述 MyISAM是MySQL默认的引擎，但是它没有提供对数据库事务的支持，也不支持行级锁和外键，因此当INSERT(插入)或UPDATE(更新)数据时即写操作需要锁定整个表，效率便会低一些。不过和Innodb不同，MyISAM中存储了表的行数，于是SELECT COUNT(*) FROM TABLE时只需要直接读取已经保存好的值而不需要进行全表扫描。如果表的读操作远远多于写操作且不需要数据库事务的支持，那么MyISAM也是很好的选择。
+简单介绍区别  MyISAM是非事务安全的，而InnoDB是事务安全的 MyISAM锁的粒度是表级的，而InnoDB支持行级锁 MyISAM支持全文类型索引，而InnoDB不支持全文索引 MyISAM相对简单，效率上要优于InnoDB，小型应用可以考虑使用MyISAM MyISAM表保存成文件形式，跨平台使用更加方便  应用场景  MyISAM管理非事务表，提供高速存储和检索以及全文搜索能力，如果再应用中执行大量select操作，应该选择MyISAM InnoDB用于事务处理，具有ACID事务支持等特性，如果在应用中执行大量insert和update操作，应该选择InnoDB  本文链接</description>
     </item>
     
     <item>
