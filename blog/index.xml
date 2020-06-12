@@ -6,10 +6,70 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 10 Jun 2020 20:17:25 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 12 Jun 2020 19:17:06 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Django&#43;channels&#43;daphen部署websocket</title>
+      <link>/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</link>
+      <pubDate>Fri, 12 Jun 2020 19:17:06 +0800</pubDate>
+      
+      <guid>/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</guid>
+      <description>channels+django+nginx+daphne部署websocket项目 ​	当你的django项目中使用channels增加了websocket功能的时候，在使用runserver命令启动时，既可以访问http请求，又可以访问websocket请求。但是当你使用uWSGI+nginx的来启动项目的时候，你会发现http请求可用，但是websocket请求永远是404的错误。这是为什么呢？
+​	因为在我们的标准生产环境部署中，使用的事WSGI协议来启动的我们的项目，也就是使用的wsgi.py这个文件来对接的uWSGI服务器。但是我们channels使用的ASGI协议，在我们使用uWSGI来启动项目的时候，关于ASGI的一些配置他就找不到了。这就导致了你所有的websocket请求都是404。在查阅了大量的资料和阅读了官方文档以后终于解决了这个问题。
+这个问题的解决有两种方案：  启用uWSGI来处理所有的http请求，另外开启一个daphne服务来处理websocket请求。这样的好处是按照请求类型分流，两种请求方式互不干扰。 另外一种则是启用daphne服务来处理http和websocket这两种请求。在daphne服务内部他会根据请求类型的不同分开处理。让你既可以访问websocket又可以访问http。  安装Daphne
+pip install daphne
+在setting.py同级的目录下新建一个asgi.py文件
+#asgi.py &amp;#34;&amp;#34;&amp;#34; ASGI entrypoint. Configures Django and then runs the application defined in the ASGI_APPLICATION setting. &amp;#34;&amp;#34;&amp;#34; import os import django from channels.routing import get_default_application os.environ.setdefault(&amp;#34;DJANGO_SETTINGS_MODULE&amp;#34;, &amp;#34;myproject.settings&amp;#34;) django.setup() application = get_default_application() 使用Daphne来启动项目 daphne -b 0.0.0.0 -p 8001 myproject.asgi:application
+这种方式只是在后台启动了你的项目，我们为了保证项目的稳定性，保证项目在意外死亡以后可以迅速的重启，我们来使用supervisor来管理我们的daphne服务。
+什么是supervisor   Supervisor是用Python开发的一个client/server服务，是Linux/Unix系统下的一个进程管理工具，不支持Windows系统。
+  作用：它可以很方便的监听、启动、停止、重启一个或多个进程。
+  用Supervisor管理的进程，当一个进程意外被杀死，supervisort监听到进程死后，会自动将它重新拉起
+  很方便的做到进程自动恢复的功能，不再需要自己写shell脚本来控制。
+  说白了，它真正有用的功能是俩个将非daemon(守护进程)程序变成deamon方式运行对程序进行监控，当程序退出时，可以自动拉起程序。</description>
+    </item>
+    
+    <item>
+      <title>消息队列</title>
+      <link>/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</link>
+      <pubDate>Fri, 12 Jun 2020 17:33:12 +0800</pubDate>
+      
+      <guid>/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</guid>
+      <description>MQ对比之RabbitMQ &amp;amp; Redis ​
+消息队列选择：RabbitMQ &amp;amp; Redis RabbitMQ RabbitMQ是一个由erlang开发的AMQP（Advanced Message Queue ）的开源实现的产品，RabbitMQ是一个消息代理，从“生产者”接收消息并传递消息至“消费者”，期间可根据规则路由、缓存、持久化消息。“生产者”也即message发送者以下简称P，相对应的“消费者”乃message接收者以下简称C，message通过queue由P到C，queue存在于RabbitMQ，可存储尽可能多的message，多个P可向同一queue发送message，多个C可从同一个queue接收message RabbitMQ架构：
+组件：
+ Message （消息）：RabbitMQ 转发的二进制对象，包括Headers（头）、Properties （属性）和 Data （数据），其中数据部分不是必要的； Producer（生产者）： 消息的生产者，负责产生消息并把消息发到交换机Exhange的应用： Consumer （消费者）：使用队列 Queue 从 Exchange 中获取消息的应用； Exchange （交换机）：负责接收生产者的消息并把它转到到合适的队列； Queue （队列）：一个存储Exchange 发来的消息的缓冲，并将消息主动发送给Consumer，或者 Consumer 主动来获取消息。 Binding （绑定）：队列 和 交换机之间的关系。Exchange 根据消息的属性和 Binding 的属性来转发消息。绑定的一个重要属性是 binding_key。 Connection （连接）和 Channel （通道）：生产者和消费者需要和 RabbitMQ 建立 TCP 连接。一些应用需要多个connection，为了节省TCP 连接，可以使用 Channel，它可以被认为是一种轻型的共享 TCP 连接的连接。连接需要用户认证，并且支持 TLS (SSL)。连接需要显式关闭。  Redis Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。
+Redis 与其他 key - value 缓存产品有以下三个特点：
+ Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。 Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。 Redis支持数据的备份，即master-slave模式的数据备份。  Redis 优势  性能极高 – Redis能读的速度是110000次/s,写的速度是81000次/s 。 丰富的数据类型 – Redis支持二进制案例的 Strings, Lists, Hashes, Sets 及 Ordered Sets 数据类型操作。 原子 – Redis的所有操作都是原子性的，意思就是要么成功执行要么失败完全不执行。单个操作是原子性的。多个操作也支持事务，即原子性，通过MULTI和EXEC指令包起来。 丰富的特性 – Redis还支持 publish/subscribe, 通知, key 过期等等特性。  首先Redis的设计是用来做缓存的，但是由于它自身的某种特性使得他可以用来做消息队列(Redis的List数据结构比较适合做MQ)。它有几个阻塞式的API可以使用，正是这些阻塞式的API让他有做消息队列的能力。 另外做消息队列的其他特性，例如FIFO也很容易实现，只需要一个list对象从头取数据，从尾部塞数据即可实现。 Redis能做消息队列得益于它的list对象blpop brpop接口以及Pub/Sub(发布/订阅)的某些接口。他们都是阻塞版的，所以可以用来做消息队列。</description>
+    </item>
+    
+    <item>
+      <title>Django Accountkit</title>
+      <link>/blog/django/16-django-accountkit/</link>
+      <pubDate>Fri, 12 Jun 2020 16:10:01 +0800</pubDate>
+      
+      <guid>/blog/django/16-django-accountkit/</guid>
+      <description>facebook开放平台
+此软件包允许使用带有django身份验证的facebook accountkit
+如果您想了解更多有关Facebook AccountKit的信息，请查看以下资源
+ https://auth0.com/blog/facebook-account-kit-passwordless-authentication/ https://developers.facebook.com/docs/accountkit  要求 Python（&amp;gt;；=2.7，&amp;lt;；=3.7） django（&amp;gt;；=1.11）
+安装 使用pip
+pip install django-accountkit  然后要将django accountkit添加到项目中，请将应用程序accountkitlogin添加到INSTALLED_APPS。
+现在在settings.py文件中添加以下设置
+APP_ID = &amp;lt;Accountkit App ID&amp;gt; ACCOUNT_KIT_APP_SECRET = &amp;lt;Accountkit App Secret&amp;gt; ACCOUNT_KIT_VERSION = &amp;quot;v1.0&amp;quot; ACCOUNT_KIT_SUCCESS_REDIRECT = &amp;lt;The URL for the page where user will land after authenticating&amp;gt; (Please Use absolute path only) #Example ACCOUNT_KIT_SUCCESS_REDIRECT = &amp;quot;http://localhost:8000/success&amp;quot;  然后在settings.py文件中添加以下内容
+AUTHENTICATION_BACKENDS = ( &#39;accountkitlogin.authenticate.GetOrCreateUser&#39;, )  使用accountkitlogin 视图 使用accountkit验证用户导入from accountkitlogin.views import login_status</description>
+    </item>
+    
+    <item>
+      <title>Django中的乐观锁与悲观锁</title>
+      <link>/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/</link>
+      <pubDate>Fri, 12 Jun 2020 15:35:59 +0800</pubDate>
+      
+      <guid>/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/</guid>
+      <description>悲观锁用法： # 使用原生的SQL语句 update tb_goodsinfo set stock=5 where id=1 and stock=10; # 使用Django中的语法 GoodsInfo.objects.filter(id=1, stock=10).update(stock=5) # GoodsInfo：模型类， id：商品id， stock：库存  乐观锁用法： from django.http import HttpResponse from rest_framework.generics import GenericAPIView from app01.models import GoodsInfo class Goods(GenericAPIView): &amp;quot;&amp;quot;&amp;quot; 购买商品 &amp;quot;&amp;quot;&amp;quot; def post(self, request): # 获取请求头中查询字符串数据 goods_id = request.GET.get(&#39;goods_id&#39;) count = int(request.GET.get(&#39;count&#39;)) while True: # 查询商品对象 goods = GoodsInfo.objects.filter(id=goods_id).first() # 获取原始库存 origin_stock = goods.stock # 判断商品库存是否充足 if origin_stock &amp;lt; count: return HttpResponse(content=&amp;quot;商品库存不足&amp;quot;, status=400) # 演示并发请求 import time time.</description>
+    </item>
     
     <item>
       <title>MyIsAM和InnoDB的区别</title>

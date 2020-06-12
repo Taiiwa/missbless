@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Django Accountkit - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Django Accountkit">
+<meta itemprop="description" content="facebook开放平台
+此软件包允许使用带有django身份验证的facebook accountkit
+如果您想了解更多有关Facebook AccountKit的信息，请查看以下资源
+ https://auth0.com/blog/facebook-account-kit-passwordless-authentication/ https://developers.facebook.com/docs/accountkit  要求 Python（&gt;；=2.7，&lt;；=3.7） django（&gt;；=1.11）
+安装 使用pip
+pip install django-accountkit  然后要将django accountkit添加到项目中，请将应用程序accountkitlogin添加到INSTALLED_APPS。
+现在在settings.py文件中添加以下设置
+APP_ID = &lt;Accountkit App ID&gt; ACCOUNT_KIT_APP_SECRET = &lt;Accountkit App Secret&gt; ACCOUNT_KIT_VERSION = &quot;v1.0&quot; ACCOUNT_KIT_SUCCESS_REDIRECT = &lt;The URL for the page where user will land after authenticating&gt; (Please Use absolute path only) #Example ACCOUNT_KIT_SUCCESS_REDIRECT = &quot;http://localhost:8000/success&quot;  然后在settings.py文件中添加以下内容
+AUTHENTICATION_BACKENDS = ( &#39;accountkitlogin.authenticate.GetOrCreateUser&#39;, )  使用accountkitlogin 视图 使用accountkit验证用户导入from accountkitlogin.views import login_status">
+<meta itemprop="datePublished" content="2020-06-12T16:10:01&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-12T16:10:01&#43;08:00" />
+<meta itemprop="wordCount" content="102">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Django Accountkit" />
+<meta property="og:description" content="facebook开放平台
+此软件包允许使用带有django身份验证的facebook accountkit
+如果您想了解更多有关Facebook AccountKit的信息，请查看以下资源
+ https://auth0.com/blog/facebook-account-kit-passwordless-authentication/ https://developers.facebook.com/docs/accountkit  要求 Python（&gt;；=2.7，&lt;；=3.7） django（&gt;；=1.11）
+安装 使用pip
+pip install django-accountkit  然后要将django accountkit添加到项目中，请将应用程序accountkitlogin添加到INSTALLED_APPS。
+现在在settings.py文件中添加以下设置
+APP_ID = &lt;Accountkit App ID&gt; ACCOUNT_KIT_APP_SECRET = &lt;Accountkit App Secret&gt; ACCOUNT_KIT_VERSION = &quot;v1.0&quot; ACCOUNT_KIT_SUCCESS_REDIRECT = &lt;The URL for the page where user will land after authenticating&gt; (Please Use absolute path only) #Example ACCOUNT_KIT_SUCCESS_REDIRECT = &quot;http://localhost:8000/success&quot;  然后在settings.py文件中添加以下内容
+AUTHENTICATION_BACKENDS = ( &#39;accountkitlogin.authenticate.GetOrCreateUser&#39;, )  使用accountkitlogin 视图 使用accountkit验证用户导入from accountkitlogin.views import login_status" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/16-django-accountkit/" />
+<meta property="article:published_time" content="2020-06-12T16:10:01+08:00" />
+<meta property="article:modified_time" content="2020-06-12T16:10:01+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Django Accountkit"/>
+<meta name="twitter:description" content="facebook开放平台
+此软件包允许使用带有django身份验证的facebook accountkit
+如果您想了解更多有关Facebook AccountKit的信息，请查看以下资源
+ https://auth0.com/blog/facebook-account-kit-passwordless-authentication/ https://developers.facebook.com/docs/accountkit  要求 Python（&gt;；=2.7，&lt;；=3.7） django（&gt;；=1.11）
+安装 使用pip
+pip install django-accountkit  然后要将django accountkit添加到项目中，请将应用程序accountkitlogin添加到INSTALLED_APPS。
+现在在settings.py文件中添加以下设置
+APP_ID = &lt;Accountkit App ID&gt; ACCOUNT_KIT_APP_SECRET = &lt;Accountkit App Secret&gt; ACCOUNT_KIT_VERSION = &quot;v1.0&quot; ACCOUNT_KIT_SUCCESS_REDIRECT = &lt;The URL for the page where user will land after authenticating&gt; (Please Use absolute path only) #Example ACCOUNT_KIT_SUCCESS_REDIRECT = &quot;http://localhost:8000/success&quot;  然后在settings.py文件中添加以下内容
+AUTHENTICATION_BACKENDS = ( &#39;accountkitlogin.authenticate.GetOrCreateUser&#39;, )  使用accountkitlogin 视图 使用accountkit验证用户导入from accountkitlogin.views import login_status"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%20Accountkit&amp;url=%2fblog%2fdjango%2f16-django-accountkit%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f16-django-accountkit%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f16-django-accountkit%2f&amp;title=Django%20Accountkit" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f16-django-accountkit%2f&amp;title=Django%20Accountkit" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f16-django-accountkit%2f&amp;description=Django%20Accountkit" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f16-django-accountkit%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/16-django-accountkit/">Django Accountkit</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 16:10:01 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Django%20Accountkit&amp;url=%2fblog%2fdjango%2f16-django-accountkit%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f16-django-accountkit%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f16-django-accountkit%2f&amp;title=Django%20Accountkit" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f16-django-accountkit%2f&amp;title=Django%20Accountkit" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f16-django-accountkit%2f&amp;description=Django%20Accountkit" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f16-django-accountkit%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p><a href="https://developers.facebook.com/products/facebook-login/">facebook开放平台</a></p>
+<p>此软件包允许使用带有django身份验证的facebook accountkit</p>
+<p>如果您想了解更多有关Facebook AccountKit的信息，请查看以下资源</p>
+<ul>
+<li><a href="https://auth0.com/blog/facebook-account-kit-passwordless-authentication/">https://auth0.com/blog/facebook-account-kit-passwordless-authentication/</a></li>
+<li><a href="https://developers.facebook.com/docs/accountkit">https://developers.facebook.com/docs/accountkit</a></li>
+</ul>
+<h2 id="要求">要求</h2>
+<p>Python（&gt;；=2.7，&lt;；=3.7）
+django（&gt;；=1.11）</p>
+<h2 id="安装">安装</h2>
+<p>使用pip</p>
+<pre><code>pip install django-accountkit
+</code></pre>
+<p>然后要将django accountkit添加到项目中，请将应用程序accountkitlogin添加到INSTALLED_APPS。</p>
+<p>现在在settings.py文件中添加以下设置</p>
+<pre><code>APP_ID = &lt;Accountkit App ID&gt;
+ACCOUNT_KIT_APP_SECRET = &lt;Accountkit App Secret&gt;
+ACCOUNT_KIT_VERSION = &quot;v1.0&quot;
+ACCOUNT_KIT_SUCCESS_REDIRECT = &lt;The URL for the page where user will land after authenticating&gt; (Please Use absolute path only)
+#Example ACCOUNT_KIT_SUCCESS_REDIRECT = &quot;http://localhost:8000/success&quot;
+</code></pre>
+<p>然后在settings.py文件中添加以下内容</p>
+<pre><code>AUTHENTICATION_BACKENDS = (
+    'accountkitlogin.authenticate.GetOrCreateUser',
+)
+</code></pre>
+<h2 id="使用accountkitlogin">使用accountkitlogin</h2>
+<h3 id="视图">视图</h3>
+<p>使用accountkit验证用户导入from accountkitlogin.views import login_status</p>
+<p>然后在您的视图中使用login_status</p>
+<pre><code>@csrf_exempt
+def success_page(request):
+    context = login_status(request)
+</code></pre>
+<p>注意，csrf豁免是必需的，因为facebook accountkit会将用户重定向到您的成功页面url，这可能会引发跨源错误</p>
+<p><code>login_status</code>函数接受请求作为参数，并返回一个字典，其中</p>
+<ul>
+<li>密钥“authenticated”为真或假</li>
+<li>键“消息”与用户是否经过身份验证有关的消息</li>
+<li>当“authenticated”为true时，键“user”返回用户实例</li>
+</ul>
+<p>为您在<code>ACCOUNT_KIT_SUCCESS_REDIRECT</code>设置中定义的成功页面url添加url.py文件的视图</p>
+<h3 id="模板标签">模板标签</h3>
+<p>在模板开始处添加<code>{% load accountkit %}</code>，并将以下模板标记添加到要在其中显示登录按钮的文件中</p>
+<ol>
+<li>在标签中添加<code>{% accountkitjs %}</code></li>
+<li>在标签中添加<code>{% accountkitform %}</code></li>
+<li>在body部分的任何地方添加<code>{% smslogin %}</code>和/或<code>{% emaillogin %}</code>以显示登录按钮。这两个标记都接受两个参数classname和text，您可以在其中添加自定义css类和要在按钮上显示的文本。示例<code>{% emaillogin &quot;button&quot; &quot;Use the email&quot; %}</code></li>
+</ol>
+<p><a href="https://www.cnpython.com/pypi/django-accountkit">参考文档</a></p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/" class="button"><div class="previous"><div>Django中的乐观锁与悲观锁</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="button"><div class="next"><div>消息队列</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/">Django&#43;channels&#43;daphen部署websocket</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/16-django-accountkit/">Django Accountkit</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/">Django中的乐观锁与悲观锁</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/">MyIsAM和InnoDB的区别</a></h1>
+          <time class="published" datetime="">June 10, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

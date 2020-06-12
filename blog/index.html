@@ -13,7 +13,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/blog/" />
-<meta property="og:updated_time" content="2020-06-10T20:17:25+08:00" />
+<meta property="og:updated_time" content="2020-06-12T19:17:06+08:00" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Blog"/>
 <meta name="twitter:description" content=""/>
@@ -239,6 +239,207 @@
 
       <main id="site-main">
         
+        
+          <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/">Django&#43;channels&#43;daphen部署websocket</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 19:17:06 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  
+
+  
+  <p>​	当你的django项目中使用channels增加了websocket功能的时候，在使用runserver命令启动时，既可以访问http请求，又可以访问websocket请求。但是当你使用uWSGI+nginx的来启动项目的时候，你会发现http请求可用，但是websocket请求永远是404的错误。这是为什么呢？</p>
+  <footer>
+    <a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/" class="button big">Read more</a>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+        
+          <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 17:33:12 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  
+
+  
+  <p>​</p>
+  <footer>
+    <a href="/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="button big">Read more</a>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+        
+          <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/16-django-accountkit/">Django Accountkit</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 16:10:01 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  
+
+  
+  <p><a href="https://developers.facebook.com/products/facebook-login/">facebook开放平台</a></p>
+  <footer>
+    <a href="/blog/django/16-django-accountkit/" class="button big">Read more</a>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+        
+          <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/">Django中的乐观锁与悲观锁</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 15:35:59 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  
+
+  
+  <pre><code># 使用原生的SQL语句
+update tb_goodsinfo set stock=5 where id=1 and stock=10;
+
+# 使用Django中的语法
+GoodsInfo.objects.filter(id=1, stock=10).update(stock=5)
+
+# GoodsInfo：模型类，  id：商品id，  stock：库存
+</code></pre>
+<h2 id="乐观锁用法">乐观锁用法：</h2>
+<pre><code>from django.http import HttpResponse
+from rest_framework.generics import GenericAPIView
+from app01.models import GoodsInfo
+
+class Goods(GenericAPIView):
+    &quot;&quot;&quot; 购买商品 &quot;&quot;&quot;
+    def post(self, request):
+        # 获取请求头中查询字符串数据
+        goods_id = request.GET.get('goods_id')&hellip;</code></pre>
+  <footer>
+    <a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/" class="button big">Read more</a>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
         
           <article class="post">
   <header>
@@ -524,190 +725,6 @@ element在template的标签中发起请求，我们无法接受post请求返回�
 </article>
 
         
-          <article class="post">
-  <header>
-  <div class="title">
-    
-      <h2><a href="/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/">多版本python下的pip安装与指令</a></h2>
-    
-    
-  </div>
-  <div class="meta">
-    <time class="published" datetime="2020-06-01 08:06:42 &#43;0800 CST">
-      June 1, 2020
-    </time>
-    <span class="author">Issac loveless</span>
-    
-      <p>1 minute read</p>
-    
-  </div>
-</header>
-
-  
-
-  
-  <p><code>sudo apt-get install python-pip</code></p>
-  <footer>
-    <a href="/blog/python/%E5%A4%9A%E7%89%88%E6%9C%ACpython%E4%B8%8B%E7%9A%84pip/" class="button big">Read more</a>
-    <ul class="stats">
-  
-    <li class="categories">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-  
-    <li class="tags">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-</ul>
-
-  </footer>
-</article>
-
-        
-          <article class="post">
-  <header>
-  <div class="title">
-    
-      <h2><a href="/blog/python/os%E6%A8%A1%E5%9D%97/">Os模块</a></h2>
-    
-    
-  </div>
-  <div class="meta">
-    <time class="published" datetime="2020-05-25 00:39:26 &#43;0800 CST">
-      May 25, 2020
-    </time>
-    <span class="author">Issac loveless</span>
-    
-      <p>1 minute read</p>
-    
-  </div>
-</header>
-
-  
-
-  
-  <p>os.getcwd()</p>
-  <footer>
-    <a href="/blog/python/os%E6%A8%A1%E5%9D%97/" class="button big">Read more</a>
-    <ul class="stats">
-  
-    <li class="categories">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-  
-    <li class="tags">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-</ul>
-
-  </footer>
-</article>
-
-        
-          <article class="post">
-  <header>
-  <div class="title">
-    
-      <h2><a href="/blog/python/python%E5%9F%BA%E7%A1%803/">Python基础3</a></h2>
-    
-    
-  </div>
-  <div class="meta">
-    <time class="published" datetime="2020-05-25 00:34:18 &#43;0800 CST">
-      May 25, 2020
-    </time>
-    <span class="author">Issac loveless</span>
-    
-      <p>0 minutes read</p>
-    
-  </div>
-</header>
-
-  
-
-  
-  
-  <footer>
-    <a href="/blog/python/python%E5%9F%BA%E7%A1%803/" class="button big">Read more</a>
-    <ul class="stats">
-  
-    <li class="categories">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-  
-    <li class="tags">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-</ul>
-
-  </footer>
-</article>
-
-        
-          <article class="post">
-  <header>
-  <div class="title">
-    
-      <h2><a href="/blog/python/python%E5%9F%BA%E7%A1%802/">Python基础2</a></h2>
-    
-    
-  </div>
-  <div class="meta">
-    <time class="published" datetime="2020-05-25 00:09:04 &#43;0800 CST">
-      May 25, 2020
-    </time>
-    <span class="author">Issac loveless</span>
-    
-      <p>2 minutes read</p>
-    
-  </div>
-</header>
-
-  
-
-  
-  <p><code>定义my_str为一个字符串</code></p>
-  <footer>
-    <a href="/blog/python/python%E5%9F%BA%E7%A1%802/" class="button big">Read more</a>
-    <ul class="stats">
-  
-    <li class="categories">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-  
-    <li class="tags">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-</ul>
-
-  </footer>
-</article>
-
-        
         
 <div class="pagination">
   
@@ -732,52 +749,52 @@ element在template的标签中发起请求，我们无法接受post请求返回�
 
         </section>
         <header>
+          <h1><a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/">Django&#43;channels&#43;daphen部署websocket</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/16-django-accountkit/">Django Accountkit</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/">Django中的乐观锁与悲观锁</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
           <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/myisam%E5%92%8Cinnodb%E7%9A%84%E5%8C%BA%E5%88%AB/">MyIsAM和InnoDB的区别</a></h1>
           <time class="published" datetime="">June 10, 2020</time>
-        </header>
-      </article>
-      
-      <article class="mini-post">
-        <section>
-          
-
-        </section>
-        <header>
-          <h1><a href="/blog/python/python%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%88%90%E7%8E%AF/">Python判断链表成环</a></h1>
-          <time class="published" datetime="">June 9, 2020</time>
-        </header>
-      </article>
-      
-      <article class="mini-post">
-        <section>
-          
-
-        </section>
-        <header>
-          <h1><a href="/blog/python/python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">Python数据类型的底层实现</a></h1>
-          <time class="published" datetime="">June 9, 2020</time>
-        </header>
-      </article>
-      
-      <article class="mini-post">
-        <section>
-          
-
-        </section>
-        <header>
-          <h1><a href="/blog/python/python%E4%B8%ADgil%E9%94%81%E4%B8%8E%E4%BA%92%E6%96%A5%E9%94%81lock%E7%9A%84%E5%8C%BA%E5%88%AB/">Python中GIL锁与互斥锁Lock的区别</a></h1>
-          <time class="published" datetime="">June 8, 2020</time>
-        </header>
-      </article>
-      
-      <article class="mini-post">
-        <section>
-          
-
-        </section>
-        <header>
-          <h1><a href="/blog/vue/03-element%E4%B8%8A%E4%BC%A0%E5%A4%B4%E5%83%8F%E5%88%B0%E4%B8%83%E7%89%9B%E4%BA%91/">Element上传头像到七牛云</a></h1>
-          <time class="published" datetime="">June 2, 2020</time>
         </header>
       </article>
       
