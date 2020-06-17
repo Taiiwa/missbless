@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 12 Jun 2020 20:30:22 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2020 20:02:52 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Fri, 12 Jun 2020 20:30:22 +0800</pubDate>
+      <pubDate>Wed, 17 Jun 2020 20:02:52 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -45,6 +45,22 @@
  pygame   01-pygame初始化
  02-pygame中的music
  03-pygame中的color</description>
+    </item>
+    
+    <item>
+      <title>Redis事务管理模式</title>
+      <link>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 17 Jun 2020 20:01:09 +0800</pubDate>
+      
+      <guid>/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
+      <description>redis对事务控制的实现
+1、正常情况 一般为三步：
+开启事务（MULTI）==&amp;gt; 写操作 ==&amp;gt; 执行事务（EXEC）
+开启事务（MULTI）：用MULTI命令告诉Redis，接下来要执行的命令你先不要执行，而是把它们暂时存起来 （开启事务）
+写操作：N条命令进入等待队列（命令入队）
+执行事务（EXEC）：告知redis执行前面发送的两条命令（提交事务）
+127.0.0.1:6379&amp;gt; MULTI #开启事务 OK 127.0.0.1:6379&amp;gt; sadd user1 1 #写操作 QUEUED 127.0.0.1:6379&amp;gt; SADD user2 2 #写操作 QUEUED 127.0.0.1:6379&amp;gt; EXEC #执行操作 1) (integer) 1 2) (integer) 1 127.0.0.1:6379&amp;gt; keys * #检查是否操作执行 1) &amp;quot;user1&amp;quot; 2) &amp;quot;user2&amp;quot;  2、异常情况 如果操作语句错误
+127.0.0.1:6379&amp;gt; MULTI #开启事务 OK 127.0.0.1:6379&amp;gt; set key value #第一条操作 QUEUED 127.0.0.1:6379&amp;gt; set key #错误操作 (error) ERR wrong number of arguments for &#39;set&#39; command 127.</description>
     </item>
     
     <item>

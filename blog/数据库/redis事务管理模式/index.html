@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Redis事务管理模式 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Redis事务管理模式">
+<meta itemprop="description" content="redis对事务控制的实现
+1、正常情况 一般为三步：
+开启事务（MULTI）==&gt; 写操作 ==&gt; 执行事务（EXEC）
+开启事务（MULTI）：用MULTI命令告诉Redis，接下来要执行的命令你先不要执行，而是把它们暂时存起来 （开启事务）
+写操作：N条命令进入等待队列（命令入队）
+执行事务（EXEC）：告知redis执行前面发送的两条命令（提交事务）
+127.0.0.1:6379&gt; MULTI #开启事务 OK 127.0.0.1:6379&gt; sadd user1 1 #写操作 QUEUED 127.0.0.1:6379&gt; SADD user2 2 #写操作 QUEUED 127.0.0.1:6379&gt; EXEC #执行操作 1) (integer) 1 2) (integer) 1 127.0.0.1:6379&gt; keys * #检查是否操作执行 1) &quot;user1&quot; 2) &quot;user2&quot;  2、异常情况 如果操作语句错误
+127.0.0.1:6379&gt; MULTI #开启事务 OK 127.0.0.1:6379&gt; set key value #第一条操作 QUEUED 127.0.0.1:6379&gt; set key #错误操作 (error) ERR wrong number of arguments for &#39;set&#39; command 127.">
+<meta itemprop="datePublished" content="2020-06-17T20:01:09&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-17T20:01:09&#43;08:00" />
+<meta itemprop="wordCount" content="215">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Redis事务管理模式" />
+<meta property="og:description" content="redis对事务控制的实现
+1、正常情况 一般为三步：
+开启事务（MULTI）==&gt; 写操作 ==&gt; 执行事务（EXEC）
+开启事务（MULTI）：用MULTI命令告诉Redis，接下来要执行的命令你先不要执行，而是把它们暂时存起来 （开启事务）
+写操作：N条命令进入等待队列（命令入队）
+执行事务（EXEC）：告知redis执行前面发送的两条命令（提交事务）
+127.0.0.1:6379&gt; MULTI #开启事务 OK 127.0.0.1:6379&gt; sadd user1 1 #写操作 QUEUED 127.0.0.1:6379&gt; SADD user2 2 #写操作 QUEUED 127.0.0.1:6379&gt; EXEC #执行操作 1) (integer) 1 2) (integer) 1 127.0.0.1:6379&gt; keys * #检查是否操作执行 1) &quot;user1&quot; 2) &quot;user2&quot;  2、异常情况 如果操作语句错误
+127.0.0.1:6379&gt; MULTI #开启事务 OK 127.0.0.1:6379&gt; set key value #第一条操作 QUEUED 127.0.0.1:6379&gt; set key #错误操作 (error) ERR wrong number of arguments for &#39;set&#39; command 127." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F/" />
+<meta property="article:published_time" content="2020-06-17T20:01:09+08:00" />
+<meta property="article:modified_time" content="2020-06-17T20:01:09+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis事务管理模式"/>
+<meta name="twitter:description" content="redis对事务控制的实现
+1、正常情况 一般为三步：
+开启事务（MULTI）==&gt; 写操作 ==&gt; 执行事务（EXEC）
+开启事务（MULTI）：用MULTI命令告诉Redis，接下来要执行的命令你先不要执行，而是把它们暂时存起来 （开启事务）
+写操作：N条命令进入等待队列（命令入队）
+执行事务（EXEC）：告知redis执行前面发送的两条命令（提交事务）
+127.0.0.1:6379&gt; MULTI #开启事务 OK 127.0.0.1:6379&gt; sadd user1 1 #写操作 QUEUED 127.0.0.1:6379&gt; SADD user2 2 #写操作 QUEUED 127.0.0.1:6379&gt; EXEC #执行操作 1) (integer) 1 2) (integer) 1 127.0.0.1:6379&gt; keys * #检查是否操作执行 1) &quot;user1&quot; 2) &quot;user2&quot;  2、异常情况 如果操作语句错误
+127.0.0.1:6379&gt; MULTI #开启事务 OK 127.0.0.1:6379&gt; set key value #第一条操作 QUEUED 127.0.0.1:6379&gt; set key #错误操作 (error) ERR wrong number of arguments for &#39;set&#39; command 127."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f&amp;title=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f&amp;title=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f&amp;description=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F/">Redis事务管理模式</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-17 20:01:09 &#43;0800 CST">
+      June 17, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f&amp;url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f&amp;title=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f&amp;title=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f&amp;description=Redis%e4%ba%8b%e5%8a%a1%e7%ae%a1%e7%90%86%e6%a8%a1%e5%bc%8f" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2fredis%25E4%25BA%258B%25E5%258A%25A1%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%25BC%258F%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p>redis对事务控制的实现</p>
+<p>1、正常情况
+一般为三步：</p>
+<p>开启事务（MULTI）==&gt; 写操作 ==&gt; 执行事务（EXEC）</p>
+<p>开启事务（MULTI）：用MULTI命令告诉Redis，接下来要执行的命令你先不要执行，而是把它们暂时存起来 （开启事务）</p>
+<p>写操作：N条命令进入等待队列（命令入队）</p>
+<p>执行事务（EXEC）：告知redis执行前面发送的两条命令（提交事务）</p>
+<pre><code>127.0.0.1:6379&gt; MULTI  #开启事务
+OK
+127.0.0.1:6379&gt; sadd user1 1   #写操作
+QUEUED
+127.0.0.1:6379&gt; SADD user2 2   #写操作
+QUEUED
+127.0.0.1:6379&gt; EXEC   #执行操作
+1) (integer) 1
+2) (integer) 1
+
+127.0.0.1:6379&gt; keys *  #检查是否操作执行
+1) &quot;user1&quot;
+2) &quot;user2&quot;
+</code></pre>
+<p>2、异常情况
+如果操作语句错误</p>
+<pre><code>127.0.0.1:6379&gt; MULTI  #开启事务
+OK
+
+127.0.0.1:6379&gt; set key value #第一条操作
+QUEUED
+
+127.0.0.1:6379&gt; set key  #错误操作
+(error) ERR wrong number of arguments for 'set' command
+
+127.0.0.1:6379&gt; EXEC  #无法执行事务，那么第一条正确的命令也不会执行，所以key的值不会设置成功
+(error) EXECABORT Transaction discarded because of previous errors.
+
+127.0.0.1:6379&gt; keys *  #查看key并没有生成第一条操作的key
+1) &quot;runtime&quot; 
+2) &quot;caches&quot;
+</code></pre>
+<p>3、例外情况</p>
+<pre><code>127.0.0.1:6379&gt; MULTI #开启事务
+OK
+
+127.0.0.1:6379&gt; set key v1  #操作语句
+QUEUED
+
+127.0.0.1:6379&gt; INCR key  #此命令错误，字符串不能自增
+QUEUED                    #但是入队成功
+
+127.0.0.1:6379&gt; EXEC   #事务依然提交了，key的值被设置为v1，自增操作执行失败，但整个事务没有回滚
+1) OK  #语句一成功
+2) (error) ERR value is not an integer or out of range  #语句二报错
+</code></pre>
+<p>4、放弃情况
+当我们事务写到一半，出现了错误，或者不想执行此事务，可以使用discard放弃事务</p>
+<pre><code>127.0.0.1:6379&gt; MULTI   #开启事务
+OK
+
+127.0.0.1:6379&gt; set age 25  #命令入队
+QUEUED
+
+127.0.0.1:6379&gt; set age 30  #命令入队
+QUEUED
+
+127.0.0.1:6379&gt; DISCARD  #放弃事务，则命令队列不会被执行
+OK
+
+127.0.0.1:6379&gt; keys *  #查看已有key
+1) &quot;runtime&quot;
+2) &quot;key&quot;
+3) &quot;caches&quot;
+</code></pre>
+<p>5、复杂情况
+5.1 悲观锁
+悲观锁(Pessimistic Lock)， 顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改该数据，所以每次在拿数据的时候都会先上锁，这样别人想拿这个数据就会block阻塞直到它拿到锁。传统的关系型数据库里边就用到了很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁，让别人无法操作该数据。</p>
+<p>5.2 乐观锁（防止并发操作）
+乐观锁(Optimistic Lock)，顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改该数据，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这条数据，一般使用版本号机制进行判断。乐观锁适用于多读的应用类型，这样可以提高吞吐量。</p>
+<p>乐观锁大多数情况是基于数据版本号（version）的机制实现的。何谓数据版本？即为数据增加一个版本标识，在基于数据库表的版本解决方案中，一般是通过为数据库表添加一个“version”字段来实现读取出数据时，将此版本号一同读出，之后更新时，对此版本号加1。此时，将提交数据的版本号与数据库表对应记录的当前版本号进行比对，如果提交的数据版本号大于数据库表当前版本号，则予以更新，否则认为是过期数据，不予更新。</p>
+<p>乐观锁实现举例：</p>
+<p>5.3 Redis的watch机制实现乐观锁
+监视一个(或多个) key ，如果在事务exec执行之前这个(或这些) key 被其他命令所改动，那么事务将被打断</p>
+<p>下面这个例子：我们在观察的时候k1值为1，但是事务执行的时候k1值为2，k1被修改了所以不能执行事务。</p>
+<pre><code>127.0.0.1:6379&gt; set k1 1 #设置k1值为1
+OK
+127.0.0.1:6379&gt; WATCH k1 #监视k1 （当已经开始监控k1，则其他客户端不能修改k1的值）
+OK
+127.0.0.1:6379&gt; set k1 2 #设置k1值为2，此操作可能由其他客户端执行
+OK
+127.0.0.1:6379&gt; MULTI #开始事务
+OK
+127.0.0.1:6379&gt; set k1 3 #修改k值为3
+QUEUED 
+127.0.0.1:6379&gt; EXEC #提交事务，但k1值不会被修改为3，k1的值仍然是2，因为在事务开启之前k1的值被修改了
+(nil)
+127.0.0.1:6379&gt; get k1
+&quot;2&quot;
+</code></pre>
+<p>作者：菠萝_gopher
+链接：https://www.jianshu.com/p/e45e22c5abef
+来源：简书</p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/" class="button"><div class="previous"><div>Django&#43;channels&#43;daphen部署websocket</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F/">Redis事务管理模式</a></h1>
+          <time class="published" datetime="">June 17, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/">Django&#43;channels&#43;daphen部署websocket</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/16-django-accountkit/">Django Accountkit</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/">Django中的乐观锁与悲观锁</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
