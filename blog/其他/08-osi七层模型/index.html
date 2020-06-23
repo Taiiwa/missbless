@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>OSI七层模型 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="OSI七层模型">
+<meta itemprop="description" content="起源 当网络刚开始出现的时候，只能在同一制造商的计算机产品之间进行通信。
+20世纪70年代后期，国际标准化组织（ISO）创建了开放系统互连参考模型（OSI），从而打破了这一壁垒。
+OSI参考模型将计算机分为七层，通俗一点来说就是七个步骤，并规定了每个步骤实现的功能。
+这样互联网设备的厂家以及软件开发人员就能参照OSI参考模型来设计自己的硬件和软件，不同供应商的网络设备之间就能互相去协同工作。
+OSI网络模型是面向网络构建的最基本的网络模型，该模型采用分层的方法来实现数据和网络信息从一台计算机的应用程序——进过网络介质——传送到另一台计算机的应用程序。
+OSI参考模型是一张概念上的蓝图，描述了通信是怎样进行的。它解决了实现有效通信所需要的所有过程。并将这些通信过程划分为逻辑上的层。
+分层 国际标准化组织（ISO）把计算机通信分为七层，从上到下依次为：应用层、表示层、会话层、传输层、网络层，数据链路层和物理层。也就是说要实现计算机之间的通信需要这七方面的工作。
+一到四层被认为是，这些层与数据传输密切相关。五到七层为高层，包含应用程序级的数据，每一层负责一项具体的工作，然后把数据传输到下一层。
+   在通信主机上完成的功能
+   层 介绍     应用层 提供用户接口，特指能够发起网络通信的应用程序，比如客户端程序：QQ等，服务器程序：web服务器、邮件服务器等。   表示层 使用何种编码方式。比如要传输的数据使用ASCII码，Unicode编码还是二进制文件，是否需要加密和压缩。发送端和接收端必须使用相同的编码方式，才能正常显示，否则就会乱码。   会话层 通信的应用程序之间建立、维护和释放面向用户的链接。通信的应用程序之间建立会话。   传输层 负责在通信的两个计算机之间建立连接，实现可靠的或不可靠的数据通信，能够实现发送端和接收端的丢包重传、流量控制      在网络设备间完成的功能
+   层 介绍     网络层 路由器查看数据包目标ip地址，根据路由表为数据包选择路径。路由表中的条目可以人工添加（静态路由），也可以动态生成（动态路由）。   数据链路层 不同的网络类型，发送数据的机制不同，数据链路层就是将数据包封装成能够在不同网络传输的帧。能够进行差错检查，但不纠错，检测出错误丢掉的帧。   物理层 该层规定了网络设备的接口标准、电压标准。尽可能的通过频分复用、时分复用技术在通信链路上更快地传输数据。       实例 1.">
+<meta itemprop="datePublished" content="2020-06-23T16:06:36&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-23T16:06:36&#43;08:00" />
+<meta itemprop="wordCount" content="81">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="OSI七层模型" />
+<meta property="og:description" content="起源 当网络刚开始出现的时候，只能在同一制造商的计算机产品之间进行通信。
+20世纪70年代后期，国际标准化组织（ISO）创建了开放系统互连参考模型（OSI），从而打破了这一壁垒。
+OSI参考模型将计算机分为七层，通俗一点来说就是七个步骤，并规定了每个步骤实现的功能。
+这样互联网设备的厂家以及软件开发人员就能参照OSI参考模型来设计自己的硬件和软件，不同供应商的网络设备之间就能互相去协同工作。
+OSI网络模型是面向网络构建的最基本的网络模型，该模型采用分层的方法来实现数据和网络信息从一台计算机的应用程序——进过网络介质——传送到另一台计算机的应用程序。
+OSI参考模型是一张概念上的蓝图，描述了通信是怎样进行的。它解决了实现有效通信所需要的所有过程。并将这些通信过程划分为逻辑上的层。
+分层 国际标准化组织（ISO）把计算机通信分为七层，从上到下依次为：应用层、表示层、会话层、传输层、网络层，数据链路层和物理层。也就是说要实现计算机之间的通信需要这七方面的工作。
+一到四层被认为是，这些层与数据传输密切相关。五到七层为高层，包含应用程序级的数据，每一层负责一项具体的工作，然后把数据传输到下一层。
+   在通信主机上完成的功能
+   层 介绍     应用层 提供用户接口，特指能够发起网络通信的应用程序，比如客户端程序：QQ等，服务器程序：web服务器、邮件服务器等。   表示层 使用何种编码方式。比如要传输的数据使用ASCII码，Unicode编码还是二进制文件，是否需要加密和压缩。发送端和接收端必须使用相同的编码方式，才能正常显示，否则就会乱码。   会话层 通信的应用程序之间建立、维护和释放面向用户的链接。通信的应用程序之间建立会话。   传输层 负责在通信的两个计算机之间建立连接，实现可靠的或不可靠的数据通信，能够实现发送端和接收端的丢包重传、流量控制      在网络设备间完成的功能
+   层 介绍     网络层 路由器查看数据包目标ip地址，根据路由表为数据包选择路径。路由表中的条目可以人工添加（静态路由），也可以动态生成（动态路由）。   数据链路层 不同的网络类型，发送数据的机制不同，数据链路层就是将数据包封装成能够在不同网络传输的帧。能够进行差错检查，但不纠错，检测出错误丢掉的帧。   物理层 该层规定了网络设备的接口标准、电压标准。尽可能的通过频分复用、时分复用技术在通信链路上更快地传输数据。       实例 1." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/" />
+<meta property="article:published_time" content="2020-06-23T16:06:36+08:00" />
+<meta property="article:modified_time" content="2020-06-23T16:06:36+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="OSI七层模型"/>
+<meta name="twitter:description" content="起源 当网络刚开始出现的时候，只能在同一制造商的计算机产品之间进行通信。
+20世纪70年代后期，国际标准化组织（ISO）创建了开放系统互连参考模型（OSI），从而打破了这一壁垒。
+OSI参考模型将计算机分为七层，通俗一点来说就是七个步骤，并规定了每个步骤实现的功能。
+这样互联网设备的厂家以及软件开发人员就能参照OSI参考模型来设计自己的硬件和软件，不同供应商的网络设备之间就能互相去协同工作。
+OSI网络模型是面向网络构建的最基本的网络模型，该模型采用分层的方法来实现数据和网络信息从一台计算机的应用程序——进过网络介质——传送到另一台计算机的应用程序。
+OSI参考模型是一张概念上的蓝图，描述了通信是怎样进行的。它解决了实现有效通信所需要的所有过程。并将这些通信过程划分为逻辑上的层。
+分层 国际标准化组织（ISO）把计算机通信分为七层，从上到下依次为：应用层、表示层、会话层、传输层、网络层，数据链路层和物理层。也就是说要实现计算机之间的通信需要这七方面的工作。
+一到四层被认为是，这些层与数据传输密切相关。五到七层为高层，包含应用程序级的数据，每一层负责一项具体的工作，然后把数据传输到下一层。
+   在通信主机上完成的功能
+   层 介绍     应用层 提供用户接口，特指能够发起网络通信的应用程序，比如客户端程序：QQ等，服务器程序：web服务器、邮件服务器等。   表示层 使用何种编码方式。比如要传输的数据使用ASCII码，Unicode编码还是二进制文件，是否需要加密和压缩。发送端和接收端必须使用相同的编码方式，才能正常显示，否则就会乱码。   会话层 通信的应用程序之间建立、维护和释放面向用户的链接。通信的应用程序之间建立会话。   传输层 负责在通信的两个计算机之间建立连接，实现可靠的或不可靠的数据通信，能够实现发送端和接收端的丢包重传、流量控制      在网络设备间完成的功能
+   层 介绍     网络层 路由器查看数据包目标ip地址，根据路由表为数据包选择路径。路由表中的条目可以人工添加（静态路由），也可以动态生成（动态路由）。   数据链路层 不同的网络类型，发送数据的机制不同，数据链路层就是将数据包封装成能够在不同网络传输的帧。能够进行差错检查，但不纠错，检测出错误丢掉的帧。   物理层 该层规定了网络设备的接口标准、电压标准。尽可能的通过频分复用、时分复用技术在通信链路上更快地传输数据。       实例 1."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b&amp;url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f&amp;title=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f&amp;title=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f&amp;description=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">OSI七层模型</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-23 16:06:36 &#43;0800 CST">
+      June 23, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b&amp;url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f&amp;title=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f&amp;title=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f&amp;description=OSI%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2f%25E5%2585%25B6%25E4%25BB%2596%2f08-osi%25E4%25B8%2583%25E5%25B1%2582%25E6%25A8%25A1%25E5%259E%258B%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="起源">起源</h2>
+<p>当网络刚开始出现的时候，只能在同一制造商的计算机产品之间进行通信。</p>
+<p>20世纪70年代后期，国际标准化组织（ISO）创建<strong>了开放系统互连参考模型</strong>（OSI），从而打破了这一壁垒。</p>
+<p>OSI参考模型将计算机分为七层，通俗一点来说就是七个步骤，并规定了每个步骤实现的功能。</p>
+<p>这样互联网设备的厂家以及软件开发人员就能参照OSI参考模型来设计自己的硬件和软件，不同供应商的网络设备之间就能互相去协同工作。</p>
+<p>OSI网络模型是<strong>面向网络构建的最基本的网络模型</strong>，该模型采用分层的方法来实现数据和网络信息从一台计算机的应用程序——进过网络介质——传送到另一台计算机的应用程序。</p>
+<p>OSI参考模型是一张概念上的蓝图，描述了通信是怎样进行的。它解决了实现有效通信所需要的所有过程。并将这些通信过程划分为逻辑上的层。</p>
+<h2 id="分层">分层</h2>
+<p>国际标准化组织（ISO）把计算机通信分为七层，从上到下依次为：应用层、表示层、会话层、传输层、网络层，数据链路层和物理层。也就是说要实现计算机之间的通信需要这七方面的工作。</p>
+<p>一到四层被认为是，这些层与数据传输密切相关。五到七层为高层，包含应用程序级的数据，每一层负责一项具体的工作，然后把数据传输到下一层。</p>
+<hr>
+<ul>
+<li>
+<p>在通信主机上完成的功能</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td><strong>提供用户接口</strong>，特指能够<strong>发起网络通信</strong>的应用程序，比如<strong>客户端程序</strong>：QQ等，<strong>服务器程序</strong>：web服务器、邮件服务器等。</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td><strong>使用何种编码方式</strong>。比如要传输的数据使用ASCII码，Unicode编码还是二进制文件，是否需要<strong>加密和压缩</strong>。发送端和接收端必须使用相同的编码方式，才能正常显示，否则就会乱码。</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>通信的<strong>应用程序之间</strong>建立、维护和释放面向用户的<strong>链接</strong>。通信的应用程序之间建立会话。</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>负责在通信的<strong>两个计算机</strong>之间<strong>建立连接</strong>，实现可靠的或不可靠的数据通信，能够实现发送端和接收端的<strong>丢包重传</strong>、<strong>流量控制</strong></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>在网络设备间完成的功能</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络层</td>
+<td>路由器查看数据包目标ip地址，根据路由表<strong>为数据包选择路径</strong>。路由表中的条目可以人工添加（静态路由），也可以动态生成（动态路由）。</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>不同的网络类型，发送数据的机制不同，数据链路层就是<strong>将数据包封装成能够在不同网络传输的帧</strong>。能够进行差错检查，但不纠错，检测出错误丢掉的帧。</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td>该层<strong>规定了网络设备的接口标准、电压标准</strong>。尽可能的通过频分复用、时分复用技术在通信链路上更快地传输数据。</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<hr>
+<h2 id="实例">实例</h2>
+<h3 id="1-应用层">1. 应用层</h3>
+<p><em>用户接口，发起请求</em></p>
+<p>应用层发起数据通信请求。</p>
+<p>计算机A打开浏览器，输入网址，访问网站的页面。</p>
+<p>网站的web服务器接收到客户的请求，把网页传送给计算机A的浏览器，<strong>web服务和浏览器</strong>就工作在应用层。</p>
+<p>我们可以这样理解应用层：那些能够发起计算机通信的应用程序都归于应用层。</p>
+<hr>
+<h3 id="2-表示层">2. 表示层</h3>
+<p><em>编码、加密、压缩</em></p>
+<p>网页中的内容和文字要进行传输，必须转换为数字信息，也就是编码。这是表示层要解决的问题。</p>
+<p>这个转换过程需要有<strong>字符集</strong>。</p>
+<p>字符集就是字符的集合，且给每一个字符一个编码，通常一个字符集要用到一个国家或一个民族要用到的全部字符。</p>
+<p>比如ASCII字符集，包含了键盘上的全部字符、数字、符号以及控制字符。对于英文来说这些字符就够用了，但对于中国的汉字，若给每一个汉字一个编码，这就要一个庞大的字符集，同时支持汉字和英文的字符集有UTF-8，GBK等，繁体汉字字符集有BIG5。</p>
+<p>发送端和接收端必须使用相同的编码，否则就会出现<strong>乱码</strong>。</p>
+<p>有些文件内容不是字符，而是图片和程序文件，这些文件就不需要字符集进行编码可以直接以二进制流的方式传输。</p>
+<p>有些应用程序需要考虑应用传输的安全性，比如QQ的聊天内容，这就需要在传输之前进行<strong>加密</strong>，对方QQ收到之后再<strong>解密</strong>，这也属于表示层的功能。</p>
+<p>有些应用程序传输之前为了节省带宽，需要进行<strong>压缩</strong>再传输。比如QQ视频聊天，摄像头补货的视频经过压缩之后传输给对方，对方接到后解压看到视频，这样就减少了视频聊天占用的网络带宽，应用程序实现这个功能也属于表示层。这种压缩不是人为的，而是软件开发者为了软件的性能帮我们已经设置好的。</p>
+<hr>
+<h3 id="3-会话层">3. 会话层</h3>
+<p><em>建立和维持会话功能</em></p>
+<p>计算机A的浏览器访问网站，需要<strong>浏览器</strong>和<strong>web服务器</strong>上的进程建立并维持会话。</p>
+<p>会话层提供包括<strong>访问验证</strong>和<strong>会话管理</strong>在内的建立和维护应用之间通信的机制。</p>
+<hr>
+<h3 id="4-传输层">4. 传输层</h3>
+<p><em>建立连接、可靠传输、流量控制</em></p>
+<p>网站需要通过网络传输到计算机A，网页也需要进行处理依次发送给计算机。计算机收到分段放入缓存，这个过程由传输层完成，传输层能够实现<strong>可靠传输</strong>和<strong>流量控制</strong></p>
+<p>计算机A收到发送过来的分段后，将分段放入缓存，若收到编号连续的第一、第二、第三个数据段，就会给网站发送一个<strong>确认数据包</strong>，告诉网站发送第四个数据片段。这时网站就可以将缓存中的第一、第二、第三个数据段删除，接着发送后面的数据段，将网页内的内容放到缓存准备发送。</p>
+<p>若网站连续发送第一、第二、第三、第四个数据段，但传输过程中丢了第三个数据段，计算机收到第一、第二、第四个数据段，计算机就会给网站发送一个确认数据包，高速网站发送第三个数据段以后的数据段，可见网络虽然不可靠，但传输层能够可靠地传输数据。</p>
+<p>传输层也能实现发送端和接收端的流量控制功能。比如发送端发得快了，接收端缓存满了，就会通知发送端减慢发送数据。</p>
+<h3 id="5-网络层">5. 网络层</h3>
+<p><em>路由器选择转发路径</em></p>
+<p>当然，网站和计算机A之间，发送数据离不开网络。<strong>路由器</strong>是专门负责在不同网络转发数据包的。</p>
+<p>为数据包选择转发路径的功能由网络层来完成，因此路由器工作在网络层。</p>
+<h3 id="6-数据链路层">6. 数据链路层</h3>
+<p><em>将数据包封装成不同的帧，协议不同</em></p>
+<p>数据链路层就是将数据包封装成能够在不同链路传输的帧。数据包在传递过程中要经过不同的网络。比如<strong>集成线路</strong>或<strong>交换机组件</strong>的网络就是<strong>以太网</strong>，以太网通过<strong>载波</strong>侦听<strong>多路网络协议</strong>（CSMA/CD），路由器和路由器之间的连接是点到点的链路，点到点链路可以使用<strong>PPP协议</strong>或<strong>帧中继协议</strong>。数据包要想在不同类型的链路传输需要封装不同的帧格式。比如以太网的帧，要加上目标MAC地址和源MAC地址，而点到点的帧就不用添加MAC地址。</p>
+<h3 id="7-物理层">7. 物理层</h3>
+<p>物理层规定了网络设备的<strong>接口标准</strong>、<strong>电压标准</strong>。要不是定义这些标准，各个厂家生产的网络设备就不能连接在一起，更不可能互相兼容。</p>
+<p>物理层也包括通信技术，那些专门研究通信的人就要想办法让物理线路（铜或光纤）通过频分复用技术或编码技术更快地传输数据。</p>
+<hr>
+<h2 id="每层的岗位职能">每层的岗位职能</h2>
+<h3 id="程序员应用层表示层会话层">程序员：应用层、表示层、会话层</h3>
+<p>开发网络程序，负责解决应用层、表示层、会话层的问题。只关心应用程序之间如何通信，通信是否加密或压缩，避免出现乱码。不关心网络问题。</p>
+<h3 id="网络工程师网络层数据链路层">网络工程师：网络层、数据链路层</h3>
+<p>负责配置网络中的路由器，为数据包选择转发路径，还需要配置交换机。<strong>交换机是数据链路层的设备</strong>。</p>
+<h3 id="通信工程师物理层">通信工程师：物理层</h3>
+<p>如何在线路上更快地无差错地传输信号。</p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/%E5%85%B6%E4%BB%96/07-io%E6%A8%A1%E5%9E%8B/" class="button"><div class="previous"><div>IO模型</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/" class="button"><div class="next"><div>Linux常用命令大全</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/">Linux常用命令大全</a></h1>
+          <time class="published" datetime="">June 23, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">OSI七层模型</a></h1>
+          <time class="published" datetime="">June 23, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E5%85%B6%E4%BB%96/07-io%E6%A8%A1%E5%9E%8B/">IO模型</a></h1>
+          <time class="published" datetime="">June 18, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E6%95%B0%E6%8D%AE%E5%BA%93/redis%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F/">Redis事务管理模式</a></h1>
+          <time class="published" datetime="">June 17, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/">Django&#43;channels&#43;daphen部署websocket</a></h1>
+          <time class="published" datetime="">June 12, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

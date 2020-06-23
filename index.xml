@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 18 Jun 2020 21:22:54 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 23 Jun 2020 21:18:04 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Thu, 18 Jun 2020 21:22:54 +0800</pubDate>
+      <pubDate>Tue, 23 Jun 2020 21:18:04 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -41,10 +41,38 @@
  JavaScript   JS正则表达式
  linux   Linux-supervisor
  Linux常用命令
+ Linux常用命令大全
  sellect_poll_epoll
  pygame   01-pygame初始化
- 02-pygame中的music
- 03-pygame中的color</description>
+ 02-pygame中的music</description>
+    </item>
+    
+    <item>
+      <title>Linux常用命令大全</title>
+      <link>/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/</link>
+      <pubDate>Tue, 23 Jun 2020 20:37:33 +0800</pubDate>
+      
+      <guid>/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/</guid>
+      <description>系统信息 arch 显示机器的处理器架构 uname -m 显示机器的处理器架构 uname -r 显示正在使用的内核版本 dmidecode -q 显示硬件系统部件 - (SMBIOS / DMI) hdparm -i /dev/hda 罗列一个磁盘的架构特性 hdparm -tT /dev/sda 在磁盘上执行测试性读取操作 cat /proc/cpuinfo 显示CPU info的信息 cat /proc/interrupts 显示中断 cat /proc/meminfo 校验内存使用 cat /proc/swaps 显示哪些swap被使用 cat /proc/version 显示内核的版本 cat /proc/net/dev 显示网络适配器及统计 cat /proc/mounts 显示已加载的文件系统 lspci -tv 罗列 PCI 设备 lsusb -tv 显示 USB 设备 date 显示系统日期 cal 2007 显示2007年的日历表 date 041217002007.00 设置日期和时间 - 月日时分年.秒 clock -w 将时间修改保存到 BIOS</description>
+    </item>
+    
+    <item>
+      <title>OSI七层模型</title>
+      <link>/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Tue, 23 Jun 2020 16:06:36 +0800</pubDate>
+      
+      <guid>/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</guid>
+      <description>起源 当网络刚开始出现的时候，只能在同一制造商的计算机产品之间进行通信。
+20世纪70年代后期，国际标准化组织（ISO）创建了开放系统互连参考模型（OSI），从而打破了这一壁垒。
+OSI参考模型将计算机分为七层，通俗一点来说就是七个步骤，并规定了每个步骤实现的功能。
+这样互联网设备的厂家以及软件开发人员就能参照OSI参考模型来设计自己的硬件和软件，不同供应商的网络设备之间就能互相去协同工作。
+OSI网络模型是面向网络构建的最基本的网络模型，该模型采用分层的方法来实现数据和网络信息从一台计算机的应用程序——进过网络介质——传送到另一台计算机的应用程序。
+OSI参考模型是一张概念上的蓝图，描述了通信是怎样进行的。它解决了实现有效通信所需要的所有过程。并将这些通信过程划分为逻辑上的层。
+分层 国际标准化组织（ISO）把计算机通信分为七层，从上到下依次为：应用层、表示层、会话层、传输层、网络层，数据链路层和物理层。也就是说要实现计算机之间的通信需要这七方面的工作。
+一到四层被认为是，这些层与数据传输密切相关。五到七层为高层，包含应用程序级的数据，每一层负责一项具体的工作，然后把数据传输到下一层。
+   在通信主机上完成的功能
+   层 介绍     应用层 提供用户接口，特指能够发起网络通信的应用程序，比如客户端程序：QQ等，服务器程序：web服务器、邮件服务器等。   表示层 使用何种编码方式。比如要传输的数据使用ASCII码，Unicode编码还是二进制文件，是否需要加密和压缩。发送端和接收端必须使用相同的编码方式，才能正常显示，否则就会乱码。   会话层 通信的应用程序之间建立、维护和释放面向用户的链接。通信的应用程序之间建立会话。   传输层 负责在通信的两个计算机之间建立连接，实现可靠的或不可靠的数据通信，能够实现发送端和接收端的丢包重传、流量控制      在网络设备间完成的功能
+   层 介绍     网络层 路由器查看数据包目标ip地址，根据路由表为数据包选择路径。路由表中的条目可以人工添加（静态路由），也可以动态生成（动态路由）。   数据链路层 不同的网络类型，发送数据的机制不同，数据链路层就是将数据包封装成能够在不同网络传输的帧。能够进行差错检查，但不纠错，检测出错误丢掉的帧。   物理层 该层规定了网络设备的接口标准、电压标准。尽可能的通过频分复用、时分复用技术在通信链路上更快地传输数据。       实例 1.</description>
     </item>
     
     <item>
