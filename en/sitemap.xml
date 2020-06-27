@@ -4,12 +4,12 @@
   
   <url>
     <loc>/contents/</loc>
-    <lastmod>2020-06-24T09:01:38+08:00</lastmod>
+    <lastmod>2020-06-27T19:40:39+08:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-06-24T09:01:38+08:00</lastmod>
+    <lastmod>2020-06-27T19:40:39+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
@@ -59,7 +59,17 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2020-06-23T20:37:33+08:00</lastmod>
+    <lastmod>2020-06-27T17:29:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/</loc>
+    <lastmod>2020-06-27T17:29:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/vue/04-md%E5%AF%8C%E6%96%87%E6%9C%AC/</loc>
+    <lastmod>2020-06-26T14:48:03+08:00</lastmod>
   </url>
   
   <url>
@@ -83,7 +93,7 @@
   </url>
   
   <url>
-    <loc>/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</loc>
+    <loc>/blog/django/17-django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</loc>
     <lastmod>2020-06-12T19:17:06+08:00</lastmod>
   </url>
   

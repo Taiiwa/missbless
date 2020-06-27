@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Docker部署Django由浅入深系列上 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Docker部署Django由浅入深系列上">
+<meta itemprop="description" content="原文链接
+基础知识点 在Docker与virtualenv或pipenv的区别  virtualenv或pipenv创建的虚拟环境只是隔离了一个python运行的虚拟环境，允许不同的项目使用不同版本的程序包，从而解决依赖性问题。Docker的每个容器更像是一个小型的Linux系统，可以有自己的IP地址，容器相互之间环境隔离得更彻底。我们不仅可以把Python的第三方依赖包放在一个容器里，我们还可以把数据库，比如MySQL或Redis也放在容器里，这是Python虚拟环境做不到的。因此生产环境使用Docker部署Django时，不再需要使用virtualenv或pipenv创建Python虚拟环境。  在Docker镜像与容器之间的关系  Docker容器是由Docker镜像创建的运行实例。简单来说，镜像是文件，容器是进程。他们之间的关系如同Python的类与实例对象之间的关系。一个镜像可以对应多个容器。  使用Docker技术的基本流程  我们首先要使用docker pull命令或Dockerfile文件构建docker镜像，再使用docker run命令创建容器。最后使用docker exec -it命令进入容器执行其他命令。  宿主机和容器之间的通信  安装Docker的服务器就是宿主机。宿主机有固定的IP地址和完整的操作系统，比如Centos或Ubuntu。前面已经提到过每个容器像一个极简的Linux系统，还可以有自己的IP地址（Docker分配的）。宿主机和容器之间是可以通过docker cp或目录挂在方式通信的。  Docker在阿里云Ubuntu系统上的安装过程 # 以Ubuntu为例 # Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.">
+<meta itemprop="datePublished" content="2020-06-27T17:29:25&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-27T17:29:25&#43;08:00" />
+<meta itemprop="wordCount" content="128">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Docker部署Django由浅入深系列上" />
+<meta property="og:description" content="原文链接
+基础知识点 在Docker与virtualenv或pipenv的区别  virtualenv或pipenv创建的虚拟环境只是隔离了一个python运行的虚拟环境，允许不同的项目使用不同版本的程序包，从而解决依赖性问题。Docker的每个容器更像是一个小型的Linux系统，可以有自己的IP地址，容器相互之间环境隔离得更彻底。我们不仅可以把Python的第三方依赖包放在一个容器里，我们还可以把数据库，比如MySQL或Redis也放在容器里，这是Python虚拟环境做不到的。因此生产环境使用Docker部署Django时，不再需要使用virtualenv或pipenv创建Python虚拟环境。  在Docker镜像与容器之间的关系  Docker容器是由Docker镜像创建的运行实例。简单来说，镜像是文件，容器是进程。他们之间的关系如同Python的类与实例对象之间的关系。一个镜像可以对应多个容器。  使用Docker技术的基本流程  我们首先要使用docker pull命令或Dockerfile文件构建docker镜像，再使用docker run命令创建容器。最后使用docker exec -it命令进入容器执行其他命令。  宿主机和容器之间的通信  安装Docker的服务器就是宿主机。宿主机有固定的IP地址和完整的操作系统，比如Centos或Ubuntu。前面已经提到过每个容器像一个极简的Linux系统，还可以有自己的IP地址（Docker分配的）。宿主机和容器之间是可以通过docker cp或目录挂在方式通信的。  Docker在阿里云Ubuntu系统上的安装过程 # 以Ubuntu为例 # Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/" />
+<meta property="article:published_time" content="2020-06-27T17:29:25+08:00" />
+<meta property="article:modified_time" content="2020-06-27T17:29:25+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Docker部署Django由浅入深系列上"/>
+<meta name="twitter:description" content="原文链接
+基础知识点 在Docker与virtualenv或pipenv的区别  virtualenv或pipenv创建的虚拟环境只是隔离了一个python运行的虚拟环境，允许不同的项目使用不同版本的程序包，从而解决依赖性问题。Docker的每个容器更像是一个小型的Linux系统，可以有自己的IP地址，容器相互之间环境隔离得更彻底。我们不仅可以把Python的第三方依赖包放在一个容器里，我们还可以把数据库，比如MySQL或Redis也放在容器里，这是Python虚拟环境做不到的。因此生产环境使用Docker部署Django时，不再需要使用virtualenv或pipenv创建Python虚拟环境。  在Docker镜像与容器之间的关系  Docker容器是由Docker镜像创建的运行实例。简单来说，镜像是文件，容器是进程。他们之间的关系如同Python的类与实例对象之间的关系。一个镜像可以对应多个容器。  使用Docker技术的基本流程  我们首先要使用docker pull命令或Dockerfile文件构建docker镜像，再使用docker run命令创建容器。最后使用docker exec -it命令进入容器执行其他命令。  宿主机和容器之间的通信  安装Docker的服务器就是宿主机。宿主机有固定的IP地址和完整的操作系统，比如Centos或Ubuntu。前面已经提到过每个容器像一个极简的Linux系统，还可以有自己的IP地址（Docker分配的）。宿主机和容器之间是可以通过docker cp或目录挂在方式通信的。  Docker在阿里云Ubuntu系统上的安装过程 # 以Ubuntu为例 # Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a&amp;url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f&amp;description=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/">Docker部署Django由浅入深系列上</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-27 17:29:25 &#43;0800 CST">
+      June 27, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a&amp;url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f&amp;description=Docker%e9%83%a8%e7%bd%b2Django%e7%94%b1%e6%b5%85%e5%85%a5%e6%b7%b1%e7%b3%bb%e5%88%97%e4%b8%8a" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fdjango%2f18-docker%25E9%2583%25A8%25E7%25BD%25B2django%25E7%2594%25B1%25E6%25B5%2585%25E5%2585%25A5%25E6%25B7%25B1%25E7%25B3%25BB%25E5%2588%2597%25E4%25B8%258A%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MjM5OTMyODA4Nw==&amp;mid=2247484582&amp;idx=1&amp;sn=e5dfbccdf546feaaa07ab1f2d2e09f58&amp;chksm=a73c649e904bed88d4198b446ef2a3ad2b5c339ab772394aa2f8149a5a82dde1b0f877906075&amp;scene=21#wechat_redirect">原文链接</a></p>
+<h1 id="基础知识点">基础知识点</h1>
+<h3 id="在docker与virtualenv或pipenv的区别">在Docker与virtualenv或pipenv的区别</h3>
+<ul>
+<li>virtualenv或pipenv创建的虚拟环境只是隔离了一个python运行的虚拟环境，允许不同的项目使用不同版本的程序包，从而解决依赖性问题。Docker的每个容器更像是一个小型的Linux系统，可以有自己的IP地址，容器相互之间环境隔离得更彻底。我们不仅可以把Python的第三方依赖包放在一个容器里，我们还可以把数据库，比如MySQL或Redis也放在容器里，这是Python虚拟环境做不到的。因此生产环境使用Docker部署Django时，不再需要使用virtualenv或pipenv创建Python虚拟环境。</li>
+</ul>
+<h3 id="在docker镜像与容器之间的关系">在Docker镜像与容器之间的关系</h3>
+<ul>
+<li>Docker容器是由Docker镜像创建的运行实例。简单来说，镜像是文件，容器是进程。他们之间的关系如同Python的类与实例对象之间的关系。一个镜像可以对应多个容器。</li>
+</ul>
+<h3 id="使用docker技术的基本流程">使用Docker技术的基本流程</h3>
+<ul>
+<li>我们首先要使用<code>docker pull</code>命令或Dockerfile文件构建docker镜像，再使用<code>docker run</code>命令创建容器。最后使用<code>docker exec -it</code>命令进入容器执行其他命令。</li>
+</ul>
+<h3 id="宿主机和容器之间的通信">宿主机和容器之间的通信</h3>
+<ul>
+<li>安装Docker的服务器就是宿主机。宿主机有固定的IP地址和完整的操作系统，比如Centos或Ubuntu。前面已经提到过每个容器像一个极简的Linux系统，还可以有自己的IP地址（Docker分配的）。宿主机和容器之间是可以通过<code>docker cp</code>或目录挂在方式通信的。</li>
+</ul>
+<h1 id="docker在阿里云ubuntu系统上的安装过程">Docker在阿里云Ubuntu系统上的安装过程</h1>
+<pre><code># 以Ubuntu为例
+# Step 1: 移除之前docker版本并更新更新 apt 包索引
+sudo apt-get remove docker docker-engine docker.io
+sudo apt-get update
+
+# Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+
+# Step 3: 添加 Docker 的官方 GPG 密钥
+curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+
+# Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库
+sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;
+sudo apt-get update
+
+# Step 5: 安装免费的docker Community版本docker-ce
+sudo apt-get -y install docker-ce
+# sudo apt-get install -y docker-ce=&lt;VERSION&gt; #该命令可以选择docker-ce版本
+
+# Step 6: 查看docker版本及运行状态
+sudo docker -v
+sudo systemctl status docker
+
+# Step 7：本步非必需。使用阿里云设置Docker镜像加速，注意下面链接请使用阿里云给自己的URL
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'
+{  &quot;registry-mirrors&quot;: [&quot;https://ua3456xxx.mirror.aliyuncs.com&quot;] }
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker</code></pre>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/vue/04-md%E5%AF%8C%E6%96%87%E6%9C%AC/" class="button"><div class="previous"><div>MD富文本</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/">Docker部署Django由浅入深系列上</a></h1>
+          <time class="published" datetime="">June 27, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/vue/04-md%E5%AF%8C%E6%96%87%E6%9C%AC/">MD富文本</a></h1>
+          <time class="published" datetime="">June 26, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/">Linux常用命令大全</a></h1>
+          <time class="published" datetime="">June 23, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">OSI七层模型</a></h1>
+          <time class="published" datetime="">June 23, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/%E5%85%B6%E4%BB%96/07-io%E6%A8%A1%E5%9E%8B/">IO模型</a></h1>
+          <time class="published" datetime="">June 18, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

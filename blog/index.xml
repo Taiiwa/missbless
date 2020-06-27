@@ -6,10 +6,30 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 23 Jun 2020 20:37:33 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jun 2020 17:29:25 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Docker部署Django由浅入深系列上</title>
+      <link>/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/</link>
+      <pubDate>Sat, 27 Jun 2020 17:29:25 +0800</pubDate>
+      
+      <guid>/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/</guid>
+      <description>原文链接
+基础知识点 在Docker与virtualenv或pipenv的区别  virtualenv或pipenv创建的虚拟环境只是隔离了一个python运行的虚拟环境，允许不同的项目使用不同版本的程序包，从而解决依赖性问题。Docker的每个容器更像是一个小型的Linux系统，可以有自己的IP地址，容器相互之间环境隔离得更彻底。我们不仅可以把Python的第三方依赖包放在一个容器里，我们还可以把数据库，比如MySQL或Redis也放在容器里，这是Python虚拟环境做不到的。因此生产环境使用Docker部署Django时，不再需要使用virtualenv或pipenv创建Python虚拟环境。  在Docker镜像与容器之间的关系  Docker容器是由Docker镜像创建的运行实例。简单来说，镜像是文件，容器是进程。他们之间的关系如同Python的类与实例对象之间的关系。一个镜像可以对应多个容器。  使用Docker技术的基本流程  我们首先要使用docker pull命令或Dockerfile文件构建docker镜像，再使用docker run命令创建容器。最后使用docker exec -it命令进入容器执行其他命令。  宿主机和容器之间的通信  安装Docker的服务器就是宿主机。宿主机有固定的IP地址和完整的操作系统，比如Centos或Ubuntu。前面已经提到过每个容器像一个极简的Linux系统，还可以有自己的IP地址（Docker分配的）。宿主机和容器之间是可以通过docker cp或目录挂在方式通信的。  Docker在阿里云Ubuntu系统上的安装过程 # 以Ubuntu为例 # Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &amp;quot;deb [arch=amd64] https://mirrors.</description>
+    </item>
+    
+    <item>
+      <title>MD富文本</title>
+      <link>/blog/vue/04-md%E5%AF%8C%E6%96%87%E6%9C%AC/</link>
+      <pubDate>Fri, 26 Jun 2020 14:48:03 +0800</pubDate>
+      
+      <guid>/blog/vue/04-md%E5%AF%8C%E6%96%87%E6%9C%AC/</guid>
+      <description>Vue使用MD富文本 编辑器 安装 npm install mavon-editor
+导入 import {mavonEditor} from &#39;mavon-editor&#39;; import &amp;quot;mavon-editor/dist/css/index.css&amp;quot;;  注册 components:{ mavonEditor, },  渲染 &amp;lt;mavon-editor @save=&amp;quot;saveDoc&amp;quot; @change=&amp;quot;updateDoc&amp;quot; ref=&amp;quot;editor&amp;quot; v-model=&amp;quot;doc2&amp;quot; :toolbars=&amp;quot;toolbars&amp;quot; :toolbarsFlag=&#39;false&#39; :subfield=&#39;false&#39; defaultOpen=&#39;edit&#39; placeholder=&#39;请输入&#39; style=&amp;quot;min-height:100px&amp;quot; &amp;gt; &amp;lt;/mavon-editor&amp;gt;  参数 toolbars: { bold: true, // 粗体 italic: true, // 斜体 header: true, // 标题 underline: true, // 下划线 strikethrough: true, // 中划线 mark: true, // 标记 superscript: true, // 上角标 subscript: true, // 下角标 quote: true, // 引用 ol: true, // 有序列表 ul: true, // 无序列表 link: true, // 链接 imagelink: false, // 图片链接 code: false, // code table: true, // 表格 fullscreen: true, // 全屏编辑 readmodel: true, // 沉浸式阅读 htmlcode: true, // 展示html源码 help: true, // 帮助 /* 1.</description>
+    </item>
     
     <item>
       <title>Linux常用命令大全</title>
@@ -121,10 +141,10 @@ OSI参考模型是一张概念上的蓝图，描述了通信是怎样进行的�
     
     <item>
       <title>Django&#43;channels&#43;daphen部署websocket</title>
-      <link>/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</link>
+      <link>/blog/django/17-django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</link>
       <pubDate>Fri, 12 Jun 2020 19:17:06 +0800</pubDate>
       
-      <guid>/blog/django/17.django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</guid>
+      <guid>/blog/django/17-django&#43;channels&#43;daphen%E9%83%A8%E7%BD%B2websocket/</guid>
       <description>channels+django+nginx+daphne部署websocket项目 ​	当你的django项目中使用channels增加了websocket功能的时候，在使用runserver命令启动时，既可以访问http请求，又可以访问websocket请求。但是当你使用uWSGI+nginx的来启动项目的时候，你会发现http请求可用，但是websocket请求永远是404的错误。这是为什么呢？
 ​	因为在我们的标准生产环境部署中，使用的事WSGI协议来启动的我们的项目，也就是使用的wsgi.py这个文件来对接的uWSGI服务器。但是我们channels使用的ASGI协议，在我们使用uWSGI来启动项目的时候，关于ASGI的一些配置他就找不到了。这就导致了你所有的websocket请求都是404。在查阅了大量的资料和阅读了官方文档以后终于解决了这个问题。
 这个问题的解决有两种方案：  启用uWSGI来处理所有的http请求，另外开启一个daphne服务来处理websocket请求。这样的好处是按照请求类型分流，两种请求方式互不干扰。 另外一种则是启用daphne服务来处理http和websocket这两种请求。在daphne服务内部他会根据请求类型的不同分开处理。让你既可以访问websocket又可以访问http。  安装Daphne
