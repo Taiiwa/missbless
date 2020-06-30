@@ -79,7 +79,7 @@
         </h1>
         <br>
         <h3>
-          常钟宇
+          东方未明
         </h3>
         <font color='#ba1'>
           みか&nbsp;み&nbsp;　あや&nbsp;ち&nbsp;
@@ -97,14 +97,14 @@
         </p>
         <hr>
         <br>
-        <p class="lead mb-5">
+        <!-- <p class="lead mb-5">
             <b>身高：</b>190cm
         </p>
         <p class="lead mb-5">
             <b>家乡：</b>黑龙江省哈尔滨市
         </p>
         <p class="lead mb-5">
-            <b>工作经验：</b>5年
+            <b>工作经验：</b>3年
         </p>
         <p class="lead mb-5">
             <b>毕业院校：</b>东北林业大学
@@ -118,7 +118,7 @@
           </p>
           <p class="lead mb-5">
             <b>求职意向：</b>全栈开发工程师
-          </p>
+          </p> -->
         </div>
       </div>
     </section>
@@ -137,26 +137,16 @@
             <p>
               <div style="padding:0px 30px">
                 <h5>主要项目：HomilyChart</h5>
-                <i>项目简介：由集团倾力开发打造的一款手机版股票分析软件。致力于传播“先大后小，先长后短，做熟不做生“的优良投资理念，帮助投资者用”知识+工具+心态“的科学投资方法从股市中获利。</i>
+                <i>项目简介：由集团倾力开发打造的一款手机版股票分析软件。致力于传播“先大后小，先长后短，做熟不做生“的优良投资理念，帮助投资者用”知识+工具+心态“的科学投资方法从股市中获利。HomilyChart是弘历集团的海外版产品，手机版App发布较早，但颇乏维护。2018年起，公司拟定计划，重点打造手机App，将功能进行大规模翻新，追加诸多特色指标，并增添了各种辅助功能。</i>
                 <ul>
-                  <li>
-                    基于<b class=highlight>Django</b></b>和<b class=highlight>Vue</b>跨域搭建<b class=highlight>no-session</b>系统，用<b class=highlight>axios</b>交互。
-                  </li>
-                  <li>
-                    使用<b class=highlight>MySql</b>存储客户信息、产品信息、反馈意见等。
-                  </li>
-                  <li>
-                    使用<b class=highlight>Redis</b>集群作为缓存介质，充分掌握了客户对每种产品的亲和度，从而与领导确定产品的方向。
-                  </li>
-                  <li>
-                    与某些家投资公司签署合作协议，使用<b class=highlight>Scrapy</b>框架及<b class=highlight>Selenium</b>模块爬取其推送的新闻，存入<b class=highlight>MongoDB</b>，自动进行筛选后，推送到网站和手机app上。比起其他大区之前基于MySql的存储效率明显提高。
-                  </li>
-                  <li>
-                    使用<b class=highlight>Element</b>、<b class=highlight>i18n</b>等模块，基于<b class=highlight>Vue</b>打造在线讲堂，推送讲师的讲课视频。搭建直播平台。与之前的线下授课与发布到YouTube上相比，客户的单日总听课时间提高了<b class=highlight>370%</b>！
-                  </li>
-                  <li>
-                    使用<b class=highlight>Adobe After Effect</b>, <b class=highlight>Adobe Premiere</b>, <b class=highlight>Adobe Photoshop</b>, <b class=highlight>Adobe Illustrator</b>等软件，结合一些板绘，制作片头、广告、Banner等，并自动集成到项目中，定制了公司logo主题的鼠标指针
-                  </li>
+                    <li>使用<b class=highlight>Django</b>框架搭建<b class=highlight>restful</b>风格的接口</li>
+                    <li>设计数据库，使用<b class=highlight>MySql</b>存储用户信息、产品信息、活动信息、股吧评论等，使用RBAC管理用户权限</li>
+                    <li>使用<b class=highlight>jwt</b>实现单点登录</li>
+                    <li>实现股吧的无限极评论，以自关联的数据进行存储，在<b class=highlight>Django</b>后端转化为层级数据，利用递归算法统计每条评论的回复数</li>
+                    <li>与某些家投资公司签署合作协议，使用<b class=highlight>Scrapy</b>框架及<b class=highlight>Selenium</b>模块爬取其推送的新闻，存入<b class=highlight>MongoDB</b>，自动进行筛选后，推送到网站和手机app上。比起之前基于MySql的存储效率明显提高</li>
+                    <li>在活动商品购买功能上使用<b class=highlight>Mysql乐观锁</b></li>
+                    <li>通过<b class=highlight>Facebook Account Kit</b>验证账户实现手机验证码功能</li>
+                    <li>使用<b class=highlight>Photoshop</b>制作Banner和前端需用的图标等</li>
                 </ul>
               </div>
             </p>
@@ -173,19 +163,25 @@
             <p>
                 <div style="padding:0px 30px">
                   <h5>主要项目：客户管理系统</h5>
-                  <i>项目简介：为了维护公司内部客户，我参与构建一个客户管理系统，它能实现自动划分客户亲和等级、自动给业务员分配客户电话号码等功能。是公司网络销售部门的核心。</i>
+                  <i>项目简介：随着互联网时代的到来，传统的地面推广已经远不如网络销售的效率高。鉴于公司市场推广方式的转型，我们需要一个用来实现客户分级、员工客户分配、效率监测等功能，主要面向员工使用。</i>
                   <ul>
-                    <li>
-                      基于<b class=highlight>flask</b>轻量级框架，构建一个用户信息统计系统。从多渠道自动或手动存入用户信息。
+                    
+                    <li>使用<b class=highlight>Django</b>框架搭建后端项目，使用<b class=highlight>vue</b>搭建前端项目
                     </li>
-                    <li>
-                      以<b class=highlight>ajax</b>为桥梁实现前后端分离。
+                    
+                    <li>根据咨询时间、活跃度等信息构建客户分级算法
                     </li>
-                    <li>
-                      数据存入<b class=highlight>MySql</b>。
+                    
+                    <li>实现<b class=highlight>七牛云</b>上传文件、调用百度、高德地图接口进行地理位置分析
                     </li>
-                    <li>
-                      利用<b class=highlight>Python编写多种算法</b>，实现客户筛选、客户分配、员工日工作量统计等功能。
+                    
+                    <li>使用<b class=highlight>celery</b>实现阿里云的异步自动发送短信
+                    </li>
+                    
+                    <li>基于<b class=highlight>WebSocket</b>实现消息单发和群发，向员工高效发送通知。
+                    </li>
+                    
+                    <li>使用<b class=highlight>Nginx+uWSGI</b>在Ubuntu上部署Django项目，利用<b class=highlight>Docker</b>搭建镜像容器
                     </li>
                   </ul>
                 </div>
@@ -195,39 +191,6 @@
             <span class="text-primary">2017-2019</span>
           </div>
         </div>
-
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">实习前端开发</h3>
-            <hr>
-            <div class="subheading mb-3">北京艺龙信息技术有限公司</div>
-            <p>
-              <div style="padding:0px 30px">
-                <h5>主要项目：官方网站页面更新</h5>
-                <i>项目简介：搭建一套前端主题模板，让公司形象焕然一新。</i>
-                <ul>
-                  <li>
-                    本人主要负责<b class=highlight>html</b>和<b class=highlight>css</b>样式的构建。
-                  </li>
-                  <li>
-                    利用<b class=highlight>Adobe Photoshop</b>，定制网页的样式、模块、按钮，打造一个全新的主页形象。
-                  </li>
-                  <li>
-                    结合公司加大推广力度等因素，网站访问量同比增长<b class=highlight>57%</b>，单次浏览滞留时间提升了<b class=highlight>72%</b>。
-                  </li>
-                  <li>
-                    利用<b class=highlight>MarkDown</b>语法维护网站文章。
-                  </li>
-                </ul>
-              </div>
-            </p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">2016-2017</span>
-          </div>
-        </div>
-
 
       </div>
 
@@ -283,7 +246,7 @@
         <ul class="fa-ul mb-0">
           <li>
             <i class="fa-li fa fa-check"></i>
-            编程语言：<b class=highlight>Python</b>,  JavaScript,  Go-lang</li>
+            编程语言：<b class=highlight>Python</b>,  JavaScript</li>
           <li>
             <i class="fa-li fa fa-check"></i>
             框架：<b class=highlight></b>Vue</b>,  <b class=highlight>Django</b>,  <b class=highlight>flask</b>,  <b class=highlight>Scrapy</b>,  orm,  Pygame</li>
@@ -293,6 +256,9 @@
           <li>
             <i class="fa-li fa fa-check"></i>
             标记语言：Html(+CSS),  MarkDown</li>
+          <li>
+            <i class="fa-li fa fa-check"></i>
+            开发工具：Docker,  Git</li>
           <li>
             <i class="fa-li fa fa-check"></i>
             非开发软件：<b class=highlight>PhotoShop</b>,  <b class=highlight>Premiere</b>,  <b class=highlight>InDesign</b>,  After Effect,  AutoCAD,  SketchUp,  C4D,  Illustrator</li>
@@ -342,10 +308,10 @@
         <ul class="fa-ul mb-0">
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            英语：CET 6</li><br>
+            英语：CET 4</li><br>
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
-            参与开发的产品荣获新加坡多项大奖</li><br>
+            在新加坡更新产品后，企业和产品继2015年以来再获4项大奖</li><br>
           <li>
             <i class="fa-li fa fa-trophy text-warning"></i>
             集团诗词大赛一等奖</li><br>
