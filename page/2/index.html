@@ -13,7 +13,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/" />
-<meta property="og:updated_time" content="2020-06-27T19:40:39+08:00" />
+<meta property="og:updated_time" content="2020-06-30T13:57:48+08:00" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Issac Loveless"/>
 <meta name="twitter:description" content=""/>
@@ -218,6 +218,115 @@
 
       <main id="site-main">
         
+        
+          <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/16-django-accountkit/">Django Accountkit</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 16:10:01 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  
+
+  
+  <p><a href="https://developers.facebook.com/products/facebook-login/">facebook开放平台</a></p>
+  <footer>
+    <a href="/blog/django/16-django-accountkit/" class="button big">Read more</a>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+        
+          <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/">Django中的乐观锁与悲观锁</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-12 15:35:59 &#43;0800 CST">
+      June 12, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  
+
+  
+  <pre><code># 使用原生的SQL语句
+update tb_goodsinfo set stock=5 where id=1 and stock=10;
+
+# 使用Django中的语法
+GoodsInfo.objects.filter(id=1, stock=10).update(stock=5)
+
+# GoodsInfo：模型类，  id：商品id，  stock：库存
+</code></pre>
+<h2 id="乐观锁用法">乐观锁用法：</h2>
+<pre><code>from django.http import HttpResponse
+from rest_framework.generics import GenericAPIView
+from app01.models import GoodsInfo
+
+class Goods(GenericAPIView):
+    &quot;&quot;&quot; 购买商品 &quot;&quot;&quot;
+    def post(self, request):
+        # 获取请求头中查询字符串数据
+        goods_id = request.GET.get('goods_id')&hellip;</code></pre>
+  <footer>
+    <a href="/blog/django/15-django%E4%B8%AD%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81/" class="button big">Read more</a>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
         
           <article class="post">
   <header>
@@ -595,98 +704,6 @@ element在template的标签中发起请求，我们无法接受post请求返回�
 </article>
 
         
-          <article class="post">
-  <header>
-  <div class="title">
-    
-      <h2><a href="/blog/python/python%E5%9F%BA%E7%A1%803/">Python基础3</a></h2>
-    
-    
-  </div>
-  <div class="meta">
-    <time class="published" datetime="2020-05-25 00:34:18 &#43;0800 CST">
-      May 25, 2020
-    </time>
-    <span class="author">Issac loveless</span>
-    
-      <p>0 minutes read</p>
-    
-  </div>
-</header>
-
-  
-
-  
-  
-  <footer>
-    <a href="/blog/python/python%E5%9F%BA%E7%A1%803/" class="button big">Read more</a>
-    <ul class="stats">
-  
-    <li class="categories">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-  
-    <li class="tags">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-</ul>
-
-  </footer>
-</article>
-
-        
-          <article class="post">
-  <header>
-  <div class="title">
-    
-      <h2><a href="/blog/python/python%E5%9F%BA%E7%A1%802/">Python基础2</a></h2>
-    
-    
-  </div>
-  <div class="meta">
-    <time class="published" datetime="2020-05-25 00:09:04 &#43;0800 CST">
-      May 25, 2020
-    </time>
-    <span class="author">Issac loveless</span>
-    
-      <p>2 minutes read</p>
-    
-  </div>
-</header>
-
-  
-
-  
-  <p><code>定义my_str为一个字符串</code></p>
-  <footer>
-    <a href="/blog/python/python%E5%9F%BA%E7%A1%802/" class="button big">Read more</a>
-    <ul class="stats">
-  
-    <li class="categories">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-  
-    <li class="tags">
-      <ul>
-        <li>None</li>
-      </ul>
-    </li>
-  
-</ul>
-
-  </footer>
-</article>
-
-        
         
 <div class="pagination">
   
@@ -704,6 +721,28 @@ element在template的标签中发起请求，我们无法接受post请求返回�
       <header>
         <h1>Recent posts</h1>
       </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/">Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis</a></h1>
+          <time class="published" datetime="">June 30, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/docker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8/">Docker删除镜像和容器</a></h1>
+          <time class="published" datetime="">June 28, 2020</time>
+        </header>
+      </article>
       
       <article class="mini-post">
         <section>
@@ -735,28 +774,6 @@ element在template的标签中发起请求，我们无法接受post请求返回�
         <header>
           <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/">Linux常用命令大全</a></h1>
           <time class="published" datetime="">June 23, 2020</time>
-        </header>
-      </article>
-      
-      <article class="mini-post">
-        <section>
-          
-
-        </section>
-        <header>
-          <h1><a href="/blog/%E5%85%B6%E4%BB%96/08-osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">OSI七层模型</a></h1>
-          <time class="published" datetime="">June 23, 2020</time>
-        </header>
-      </article>
-      
-      <article class="mini-post">
-        <section>
-          
-
-        </section>
-        <header>
-          <h1><a href="/blog/%E5%85%B6%E4%BB%96/07-io%E6%A8%A1%E5%9E%8B/">IO模型</a></h1>
-          <time class="published" datetime="">June 18, 2020</time>
         </header>
       </article>
       

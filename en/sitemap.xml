@@ -4,12 +4,12 @@
   
   <url>
     <loc>/contents/</loc>
-    <lastmod>2020-06-27T19:40:39+08:00</lastmod>
+    <lastmod>2020-06-30T13:57:48+08:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-06-27T19:40:39+08:00</lastmod>
+    <lastmod>2020-06-30T13:57:48+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
@@ -59,7 +59,17 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2020-06-27T17:29:25+08:00</lastmod>
+    <lastmod>2020-06-30T13:39:58+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/</loc>
+    <lastmod>2020-06-30T13:39:58+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/linux/docker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8/</loc>
+    <lastmod>2020-06-28T16:00:54+08:00</lastmod>
   </url>
   
   <url>

@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 27 Jun 2020 19:40:39 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jun 2020 13:57:48 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Sat, 27 Jun 2020 19:40:39 +0800</pubDate>
+      <pubDate>Tue, 30 Jun 2020 13:57:48 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -40,11 +40,51 @@
  03-git解决push问题
  04-git多人项目
  JavaScript   JS正则表达式
- linux   Linux-supervisor
+ linux   Docker删除镜像和容器
+ Docker部署Django+uWSGI+Nginx+MySQL+Redis
+ Linux-supervisor
  Linux常用命令
  Linux常用命令大全
  sellect_poll_epoll
  pygame   01-pygame初始化</description>
+    </item>
+    
+    <item>
+      <title>Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis</title>
+      <link>/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/</link>
+      <pubDate>Tue, 30 Jun 2020 13:39:58 +0800</pubDate>
+      
+      <guid>/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/</guid>
+      <description>本攻略基于Ubuntu下的linux 18.04
+docker-compose docker-compose是一个用来定义和运行复杂应用的Docker工具。使用docker-compose后不再需要使用shell脚本来逐一创建和启动容器。我们在一个项目根目录下创建docker-compose.yml文件，用来实现我恩建构建和管理复杂多容器组合。
+Docker 安装
+# Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &amp;quot;deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&amp;quot; sudo apt-get update # Step 5: 安装免费的docker Community版本docker-ce sudo apt-get -y install docker-ce # sudo apt-get install -y docker-ce=&amp;lt;VERSION&amp;gt; #该命令可以选择docker-ce版本 # Step 6: 查看docker版本及运行状态 sudo docker -v sudo systemctl status docker # Step 7：本步非必需。使用阿里云设置Docker镜像加速，注意下面链接请使用阿里云给自己的URL sudo mkdir -p /etc/docker sudo tee /etc/docker/daemon.</description>
+    </item>
+    
+    <item>
+      <title>Docker删除镜像和容器</title>
+      <link>/blog/linux/docker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Sun, 28 Jun 2020 16:00:54 +0800</pubDate>
+      
+      <guid>/blog/linux/docker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8/</guid>
+      <description>当一个host中镜像和容器较多，需要重置时可选择删除其中部分或全部的镜像和容器。那么你就需要下面的操作了。
+1、删除容器
+1）首先需要停止所有的容器
+docker stop $(docker ps -a -q)
+2）删除所有的容器（只删除单个时把后面的变量改为image id即可）
+docker rm $(docker ps -a -q)
+2、删除镜像
+1）查看host中的镜像
+docker images
+2）删除指定id的镜像
+docker rmi 想要删除untagged images，也就是那些id为的image的话可以用
+docker rmi $(docker images | grep &amp;ldquo;^&amp;rdquo; | awk &amp;ldquo;{print $3}&amp;quot;)
+3）删除全部的images
+docker rmi $(docker images -q)
+3、当要删除的iamges和其他的镜像有关联而无法删除时
+可通过 -f 参数强制删除
+docker rmi -f $(docker images -q)
+作者：ggcoder 链接：https://www.jianshu.com/p/2bb5eca8d04c 来源：简书 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</description>
     </item>
     
     <item>

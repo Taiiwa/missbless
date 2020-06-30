@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis">
+<meta itemprop="description" content="本攻略基于Ubuntu下的linux 18.04
+docker-compose docker-compose是一个用来定义和运行复杂应用的Docker工具。使用docker-compose后不再需要使用shell脚本来逐一创建和启动容器。我们在一个项目根目录下创建docker-compose.yml文件，用来实现我恩建构建和管理复杂多容器组合。
+Docker 安装
+# Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot; sudo apt-get update # Step 5: 安装免费的docker Community版本docker-ce sudo apt-get -y install docker-ce # sudo apt-get install -y docker-ce=&lt;VERSION&gt; #该命令可以选择docker-ce版本 # Step 6: 查看docker版本及运行状态 sudo docker -v sudo systemctl status docker # Step 7：本步非必需。使用阿里云设置Docker镜像加速，注意下面链接请使用阿里云给自己的URL sudo mkdir -p /etc/docker sudo tee /etc/docker/daemon.">
+<meta itemprop="datePublished" content="2020-06-30T13:39:58&#43;08:00" />
+<meta itemprop="dateModified" content="2020-06-30T13:39:58&#43;08:00" />
+<meta itemprop="wordCount" content="994">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis" />
+<meta property="og:description" content="本攻略基于Ubuntu下的linux 18.04
+docker-compose docker-compose是一个用来定义和运行复杂应用的Docker工具。使用docker-compose后不再需要使用shell脚本来逐一创建和启动容器。我们在一个项目根目录下创建docker-compose.yml文件，用来实现我恩建构建和管理复杂多容器组合。
+Docker 安装
+# Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot; sudo apt-get update # Step 5: 安装免费的docker Community版本docker-ce sudo apt-get -y install docker-ce # sudo apt-get install -y docker-ce=&lt;VERSION&gt; #该命令可以选择docker-ce版本 # Step 6: 查看docker版本及运行状态 sudo docker -v sudo systemctl status docker # Step 7：本步非必需。使用阿里云设置Docker镜像加速，注意下面链接请使用阿里云给自己的URL sudo mkdir -p /etc/docker sudo tee /etc/docker/daemon." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/" />
+<meta property="article:published_time" content="2020-06-30T13:39:58+08:00" />
+<meta property="article:modified_time" content="2020-06-30T13:39:58+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis"/>
+<meta name="twitter:description" content="本攻略基于Ubuntu下的linux 18.04
+docker-compose docker-compose是一个用来定义和运行复杂应用的Docker工具。使用docker-compose后不再需要使用shell脚本来逐一创建和启动容器。我们在一个项目根目录下创建docker-compose.yml文件，用来实现我恩建构建和管理复杂多容器组合。
+Docker 安装
+# Step 1: 移除之前docker版本并更新更新 apt 包索引 sudo apt-get remove docker docker-engine docker.io sudo apt-get update # Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common # Step 3: 添加 Docker 的官方 GPG 密钥 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - # Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库 sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot; sudo apt-get update # Step 5: 安装免费的docker Community版本docker-ce sudo apt-get -y install docker-ce # sudo apt-get install -y docker-ce=&lt;VERSION&gt; #该命令可以选择docker-ce版本 # Step 6: 查看docker版本及运行状态 sudo docker -v sudo systemctl status docker # Step 7：本步非必需。使用阿里云设置Docker镜像加速，注意下面链接请使用阿里云给自己的URL sudo mkdir -p /etc/docker sudo tee /etc/docker/daemon."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis&amp;url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f&amp;description=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/">Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-30 13:39:58 &#43;0800 CST">
+      June 30, 2020
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>5 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis&amp;url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f&amp;title=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f&amp;description=Docker%e9%83%a8%e7%bd%b2Django%2buWSGI%2bNginx%2bMySQL%2bRedis" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2flinux%2fdocker%25E9%2583%25A8%25E7%25BD%25B2django%2buwsgi%2bnginx%2bmysql%2bredis%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<p>本攻略基于Ubuntu下的linux 18.04</p>
+<h1 id="docker-compose">docker-compose</h1>
+<p>docker-compose是一个用来定义和运行复杂应用的Docker工具。使用docker-compose后不再需要使用shell脚本来逐一创建和启动容器。我们在一个项目根目录下创建docker-compose.yml文件，用来实现我恩建构建和管理复杂多容器组合。</p>
+<p>Docker 安装</p>
+<pre><code># Step 1: 移除之前docker版本并更新更新 apt 包索引
+sudo apt-get remove docker docker-engine docker.io
+sudo apt-get update
+
+# Step 2: 安装 apt 依赖包，用于通过HTTPS来获取仓库
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+
+# Step 3: 添加 Docker 的官方 GPG 密钥
+curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+
+# Step 4: 设置docker稳定版仓库，这里使用了阿里云仓库
+sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;
+sudo apt-get update
+
+# Step 5: 安装免费的docker Community版本docker-ce
+sudo apt-get -y install docker-ce
+# sudo apt-get install -y docker-ce=&lt;VERSION&gt; #该命令可以选择docker-ce版本
+
+# Step 6: 查看docker版本及运行状态
+sudo docker -v
+sudo systemctl status docker
+
+# Step 7：本步非必需。使用阿里云设置Docker镜像加速，注意下面链接请使用阿里云给自己的URL
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'
+{  &quot;registry-mirrors&quot;: [&quot;https://ua3456xxx.mirror.aliyuncs.com&quot;] }
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+</code></pre>
+<p>Docker-compose 安装</p>
+<pre><code># 下载 docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+# 给予docker-compose可执行权限
+sudo chmod +x /usr/local/bin/docker-compose
+
+查看docker-compose版本
+docker-compose --version
+</code></pre>
+<h1 id="django--uwsgi--nginx--mysql--redis组合容器示意图">Django + Uwsgi + Nginx + MySQL + Redis组合容器示意图</h1>
+<p>本例中我们将使用docker-compose编排并启动4个容器，这更接近于实际生成环境下的部署。</p>
+<p>Django + Uwsgi容器：核心应用程序，处理动态请求</p>
+<p>MySQL 容器：数据库服务</p>
+<p>Redis 容器：缓存服务</p>
+<p>Nginx容器：反向代理服务并处理静态资源请求</p>
+<p>这四个容器的依赖关系是：Django+Uwsgi 容器依赖 Redis 容器和 MySQL 容器，Nginx 容器依赖Django+Uwsgi容器。为了方便容器间的相互访问和通信，我们使用docker-compose时可以给每个容器取个别名，这样访问容器时就可以直接使用别名访问，而不使用Docker临时给容器分配的IP了。</p>
+<p><img src="/linux_img/2.png" alt="linux"></p>
+<h1 id="docker-compose部署django项目布局树形图">Docker-compose部署Django项目布局树形图</h1>
+<p>我们新建了一个compose文件夹，专门存放用于构建其它容器镜像的Dockerfile及配置文件。compose文件夹与django项目的根目录myproject同级。这样做的好处是不同的django项目可以共享compose文件夹。</p>
+<pre><code>myproject_docker # 项目根目录
+├── compose # 存放各项容器服务的Dockerfile和配置文件
+│   ├── mysql
+│   │   ├── conf
+│   │   │   └── my.cnf # MySQL配置文件
+│   │   └── init
+│   │       └── init.sql # MySQL启动脚本
+│   ├── nginx
+│   │   ├── Dockerfile # 构建Nginx镜像所的Dockerfile
+│   │   ├── log # 挂载保存nginx容器内nginx日志
+│   │   ├── nginx.conf # Nginx配置文件
+│   │   └── ssl # 如果需要配置https需要用到
+│   ├── redis
+│   │   └── redis.conf # redis配置文件
+│   └── uwsgi # 挂载保存django+uwsgi容器内uwsgi日志
+├── docker-compose.yml # 核心编排文件
+└── myproject # 常规Django项目目录
+    ├── Dockerfile # 构建Django+Uwsgi镜像的Dockerfile
+    ├── apps # 存放Django项目的各个apps
+    ├── manage.py
+    ├── myproject # Django项目配置文件
+    │   ├── asgi.py
+    │   ├── __init__.py
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    ├── pip.conf # 非必需。pypi源设置成国内，加速pip安装
+    ├── requirements.txt # Django项目依赖文件
+    ├── start.sh # 启动Django+Uwsgi容器后要执行的脚本
+    ├── media # 用户上传的媒体资源与静态文件
+    ├── static # 项目所使用到的静态文件
+    └── uwsgi.ini # uwsgi配置文件
+</code></pre>
+<h1 id="正式部署">正式部署</h1>
+<h2 id="第一步编写docker-composeyml文件">第一步：编写docker-compose.yml文件</h2>
+<p>docker-compose.yml的核心内容如下。我们定义了3个数据卷，用于挂载各个容器内动态生成的数据，比如MySQL的存储数据，redis生成的快照和django容器中用户上传的媒体资源与文件。这样即使删除容器，容器内产生的数据也不会丢失。我们还编排了4项容器服务，别名分别为redis, db, nginx和web，接下来我们将依次看看各个容器的Dockerfile和配置文件。</p>
+<p>version: &ldquo;3&rdquo;</p>
+<pre><code>volumes: # 自定义数据卷，位于宿主机/var/lib/docker/volumes内
+    myproject_db_vol: # 定义数据卷同步容器内mysql数据
+    myproject_redis_vol: # 定义数据卷同步redis容器内数据
+    myproject_media_vol: # 定义数据卷同步media文件夹数据
+
+services:
+redis:
+    image: redis:5
+    command: redis-server /etc/redis/redis.conf # 容器启动后启动redis服务器
+    volumes:
+    - myproject_redis_vol:/data # 通过挂载给redis数据备份
+    - ./compose/redis/redis.conf:/etc/redis/redis.conf # 挂载redis配置文件
+    ports:
+    - &quot;6379:6379&quot;
+    restart: always # always表容器运行发生错误时一直重启
+
+db:
+    image: mysql:5.7
+    environment:
+    - MYSQL_ROOT_PASSWORD=123456 # 数据库密码
+    - MYSQL_DATABASE=myproject # 数据库名称
+    - MYSQL_USER=dbuser # 数据库用户名
+    - MYSQL_PASSWORD=password # 用户密码
+
+volumes:
+    - myproject_db_vol:/var/lib/mysql:rw # 挂载数据库数据, 可读可写
+    - ./compose/mysql/conf/my.cnf:/etc/mysql/my.cnf # 挂载配置文件
+    - ./compose/mysql/init:/docker-entrypoint-initdb.d/ # 挂载数据初始化sql脚本
+ports:
+    - &quot;3306:3306&quot; # 与配置文件保持一致
+restart: always
+
+web:
+    build: ./myproject # 使用myproject目录下的Dockerfile
+    expose:
+        - &quot;8000&quot;
+    volumes:
+        - ./myproject:/var/www/html/myproject # 挂载项目代码
+        - myproject_media_vol:/var/www/html/myproject/media # 以数据卷挂载容器内用户上传媒体文件
+        - ./compose/uwsgi:/tmp # 挂载uwsgi日志
+    links:
+        - db
+        - redis
+    depends_on: # 依赖关系
+        - db
+        - redis
+    environment:
+        - DEBUG=False
+    restart: always
+    tty: true
+    stdin_open: true
+
+nginx:
+    build: ./compose/nginx
+    ports:
+        - &quot;80:80&quot;
+        - &quot;443:443&quot;
+    expose:
+        - &quot;80&quot;
+    volumes:
+        - ./myproject/static:/usr/share/nginx/html/static # 挂载静态文件
+        - ./compose/nginx/ssl:/usr/share/nginx/ssl # 挂载ssl证书目录
+        - ./compose/nginx/log:/var/log/nginx # 挂载日志
+        - myproject_media_vol:/usr/share/nginx/html/media # 挂载用户上传媒体文件
+    links:
+        - web
+    depends_on:
+        - web
+    restart: always
+</code></pre>
+<h2 id="第二步编写web-djangouwsgi镜像和容器所需文件">第二步：编写Web (Django+Uwsgi)镜像和容器所需文件</h2>
+<p>构建Web镜像(Django+Uwsgi)的所使用的Dockerfile如下所示:</p>
+<pre><code># myproject/Dockerfile
+# 建立 python3.7 环境
+FROM python:3.7
+
+# 镜像作者大江狗
+MAINTAINER DJG
+
+# 设置 python 环境变量
+ENV PYTHONUNBUFFERED 1
+
+COPY pip.conf /root/.pip/pip.conf
+
+# 创建 myproject 文件夹
+RUN mkdir -p /var/www/html/myproject
+
+# 将 myproject 文件夹为工作目录
+WORKDIR /var/www/html/myproject
+
+# 将当前目录加入到工作目录中（. 表示当前目录）
+ADD . /var/www/html/myproject
+
+# 更新pip版本
+RUN /usr/local/bin/python -m pip install --upgrade pip
+
+# 利用 pip 安装依赖
+RUN pip install -r requirements.txt
+
+# 去除windows系统编辑文件中多余的\r回车空格
+RUN sed -i 's/\r//' ./start.sh
+
+# 给start.sh可执行权限
+RUN chmod +x ./start.sh
+</code></pre>
+<p>本Django项目所依赖的<code>requirements.txt</code>内容如下所示：</p>
+<pre><code># django
+django==3.0.6
+# uwsgi
+uwsgi==2.0.18
+# mysql
+mysqlclient==1.4.6
+# redis
+django-redis==4.11.0
+redis==3.5.0
+# for images
+Pillow==7.1.2
+</code></pre>
+<p>start.sh脚本文件内容如下所示。最重要的是最后一句，使用uwsgi.ini配置文件启动Django服务。</p>
+<pre><code>#!/bin/bash
+# 从第一行到最后一行分别表示：
+# 1. 收集静态文件到根目录，
+# 2. 生成数据库可执行文件，
+# 3. 根据数据库可执行文件来修改数据库
+# 4. 用 uwsgi启动 django 服务
+python manage.py collectstatic --noinput&amp;&amp;
+python manage.py makemigrations&amp;&amp;
+python manage.py migrate&amp;&amp;
+uwsgi --ini /var/www/html/myproject/uwsgi.ini
+</code></pre>
+<p>uwsgi.ini配置文件如下所示：</p>
+<pre><code>[uwsgi]
+
+project=myproject
+uid=www-data
+gid=www-data
+base=/var/www/html
+
+chdir=%(base)/%(project)
+module=%(project).wsgi:application
+master=True
+processes=2
+
+socket=0.0.0.0:8000
+chown-socket=%(uid):www-data
+chmod-socket=664
+
+vacuum=True
+max-requests=5000
+
+pidfile=/tmp/%(project)-master.pid
+daemonize=/tmp/%(project)-uwsgi.log
+
+#设置一个请求的超时时间(秒)，如果一个请求超过了这个时间，则请求被丢弃
+harakiri = 60
+post buffering = 8192
+buffer-size= 65535
+#当一个请求被harakiri杀掉会，会输出一条日志
+harakiri-verbose = true
+
+#开启内存使用情况报告
+memory-report = true
+
+#设置平滑的重启（直到处理完接收到的请求）的长等待时间(秒)
+reload-mercy = 10
+
+#设置工作进程使用虚拟内存超过N MB就回收重启
+reload-on-as= 1024
+python-autoreload=1
+</code></pre>
+<h2 id="第三步编写nginx镜像和容器所需文件">第三步：编写Nginx镜像和容器所需文件</h2>
+<p>构建Nginx镜像所使用的Dockerfile如下所示：</p>
+<pre><code># nginx镜像compose/nginx/Dockerfile
+
+FROM nginx:latest
+
+# 删除原有配置文件，创建静态资源文件夹和ssl证书保存文件夹
+RUN rm /etc/nginx/conf.d/default.conf \
+&amp;&amp; mkdir -p /usr/share/nginx/html/static \
+&amp;&amp; mkdir -p /usr/share/nginx/html/media \
+&amp;&amp; mkdir -p /usr/share/nginx/ssl
+
+# 设置Media文件夹用户和用户组为Linux默认www-data, 并给予可读和可执行权限,
+# 否则用户上传的图片无法正确显示。
+RUN chown -R www-data:www-data /usr/share/nginx/html/media \
+&amp;&amp; chmod -R 775 /usr/share/nginx/html/media
+
+# 添加配置文件
+ADD ./nginx.conf /etc/nginx/conf.d/
+
+# 关闭守护模式
+CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+<p>Nginx的配置文件如下所示</p>
+<pre><code># nginx配置文件
+# compose/nginx/nginx.conf
+
+upstream django {
+ip_hash;
+server web:8000; # Docker-compose web服务端口
+}
+
+server {
+listen 80; # 监听80端口
+server_name localhost; # 可以是nginx容器所在ip地址或127.0.0.1，不能写宿主机外网ip地址
+
+charset utf-8;
+client_max_body_size 10M; # 限制用户上传文件大小
+
+location /static {
+    alias /usr/share/nginx/html/static; # 静态资源路径
+}
+
+location /media {
+    alias /usr/share/nginx/html/media; # 媒体资源，用户上传文件路径
+}
+
+location / {
+    include /etc/nginx/uwsgi_params;
+    uwsgi_pass django;
+    uwsgi_read_timeout 600;
+    uwsgi_connect_timeout 600;
+    uwsgi_send_timeout 600;
+
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_set_header X-Real-IP  $remote_addr;
+    # proxy_pass http://django; # 使用uwsgi通信，而不是http，所以不使用proxy_pass。
+}
+}
+
+access_log /var/log/nginx/access.log main;
+error_log /var/log/nginx/error.log warn;
+
+server_tokens off;
+</code></pre>
+<h2 id="第四步编写db-mysql容器配置文件">第四步：编写Db (MySQL)容器配置文件</h2>
+<p>启动MySQL容器我们直接使用官方镜像即可，不过我们需要给MySQL增加配置文件。</p>
+<pre><code># compose/mysql/conf/my.cnf
+[mysqld]
+user=mysql
+default-storage-engine=INNODB
+character-set-server=utf8
+
+port            = 3306 # 端口与docker-compose里映射端口保持一致
+#bind-address= localhost #一定要注释掉，mysql所在容器和django所在容器不同IP
+
+basedir         = /usr
+datadir         = /var/lib/mysql
+tmpdir          = /tmp
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+skip-name-resolve  # 这个参数是禁止域名解析的，远程访问推荐开启skip_name_resolve。
+
+[client]
+port = 3306
+default-character-set=utf8
+
+[mysql]
+no-auto-rehash
+default-character-set=utf8
+</code></pre>
+<p>我们还需设置MySQL服务启动时需要执行的脚本命令, 注意这里的用户名和password必需和docker-compose.yml里与MySQL相关的环境变量保持一致。</p>
+<pre><code># compose/mysql/init/init.sql
+GRANT ALL PRIVILEGES ON myproject.* TO dbuser@&quot;%&quot; IDENTIFIED BY &quot;password&quot;;
+FLUSH PRIVILEGES;
+</code></pre>
+<h2 id="第五步编写redis-容器配置文件">第五步：编写Redis 容器配置文件</h2>
+<p>启动redis容器我们直接使用官方镜像即可，不过我们需要给redis增加配置文件。大部分情况下采用默认配置就好了，这里我们只做出了如下几条核心改动：</p>
+<pre><code># compose/redis/redis.conf
+# Redis 5配置文件下载地址
+# https://raw.githubusercontent.com/antirez/redis/5.0/redis.conf
+
+# 请注释掉下面一行，变成#bind 127.0.0.1,这样其它机器或容器也可访问
+bind 127.0.0.1
+
+# 取消下行注释，给redis设置登录密码。这个密码django settings.py会用到。
+requirepass yourpassword
+</code></pre>
+<h2 id="第六步修改django项目settingspy">第六步：修改Django项目settings.py</h2>
+<p>在你准备好docker-compose.yml并编排好各容器的Dockerfile及配置文件后，请先不要急于使用Docker-compose命令构建镜像和启动容器。这时还有一件非常重要的事情要做，那就是修改Django的settings.py, 提供mysql和redis服务的配置信息。最重要的几项配置如下所示：</p>
+<pre><code># 生产环境设置 Debug = False
+Debug = False
+
+# 设置ALLOWED HOSTS
+ALLOWED_HOSTS = ['your_server_IP', 'your_domain_name']
+
+# 设置STATIC ROOT 和 STATIC URL
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = &quot;/static/&quot;
+
+# 设置MEDIA ROOT 和 MEDIA URL
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = &quot;/media/&quot;
+
+# 设置数据库。这里用户名和密码必需和docker-compose.yml里mysql环境变量保持一致
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myproject', # 数据库名
+        'USER':'dbuser', # 你设置的用户名 - 非root用户
+        'PASSWORD':'password', # # 换成你自己密码
+        'HOST': 'db', # 注意：这里使用的是db别名，docker会自动解析成ip
+        'PORT':'3306', # 端口
+}
+}
+
+# 设置redis缓存。这里密码为redis.conf里设置的密码
+CACHES = {
+    &quot;default&quot;: {
+        &quot;BACKEND&quot;: &quot;django_redis.cache.RedisCache&quot;,
+        &quot;LOCATION&quot;: &quot;redis://redis:6379/1&quot;, #这里直接使用redis别名作为host ip地址
+        &quot;OPTIONS&quot;: {
+            &quot;CLIENT_CLASS&quot;: &quot;django_redis.client.DefaultClient&quot;,
+            &quot;PASSWORD&quot;: &quot;yourpassword&quot;, # 换成你自己密码
+        },
+    }
+}
+</code></pre>
+<h2 id="第七步使用docker-compose-构建镜像并启动容器组服务">第七步：使用docker-compose 构建镜像并启动容器组服务</h2>
+<p>现在我们可以使用docker-compose命名构建镜像并启动容器组了。</p>
+<pre><code># 进入docker-compose.yml所在文件夹，输入以下命令构建镜像
+sudo docker-compose build
+# 查看已生成的镜像
+sudo docker images
+# 启动容器组服务
+sudo docker-compose up
+# 查看运行中的容器
+sudo docker ps
+</code></pre>
+<p>如果一切顺利，此时你应该可以看到四个容器都已经成功运行了。</p>
+<p><img src="/linux_img/3.webp" alt="linux"></p>
+<h2 id="第八步进入web容器内执行django命令并启动uwsgi服务器">第八步：进入web容器内执行Django命令并启动uwsgi服务器</h2>
+<p>虽然我们四个容器都已启动运行，但我们还没有执行Django相关命令并启动uwsgi服务器。现在我们只需进入web容器执行我们先前编写的脚本文件start.sh即可。</p>
+<pre><code>sudo docker exec -it myprojectdocker_web_1 /bin/bash start.sh
+</code></pre>
+<p>此时打开你的浏览器，输入你服务器的ip地址或域名指向地址，你就应该可以看到网站已经上线啦。</p>
+<p>本文详细地介绍了如何使用docker-compose工具分八步在生成环境下部署Django + Uwsgi + Nginx + MySQL + Redis。过程看似很复杂，但很多Dockerfile，项目布局及docker-compose.yml都是可以复用的。花时间学习并练习本章内容是非常值得的，一但你学会了，基本上可以10分钟内完成一个正式Django项目的部署，而且可以保证在任何一台Linux机器上顺利地运行。</p>
+<p>注意：整个部署过程如果遇到问题，可以给我们留言或发信息，可以节省你的时间。</p>
+<hr>
+<p>原文作者：大江狗</p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/linux/docker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8/" class="button"><div class="previous"><div>Docker删除镜像和容器</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/docker%E9%83%A8%E7%BD%B2django&#43;uwsgi&#43;nginx&#43;mysql&#43;redis/">Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis</a></h1>
+          <time class="published" datetime="">June 30, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/docker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8/">Docker删除镜像和容器</a></h1>
+          <time class="published" datetime="">June 28, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/django/18-docker%E9%83%A8%E7%BD%B2django%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1%E7%B3%BB%E5%88%97%E4%B8%8A/">Docker部署Django由浅入深系列上</a></h1>
+          <time class="published" datetime="">June 27, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/vue/04-md%E5%AF%8C%E6%96%87%E6%9C%AC/">MD富文本</a></h1>
+          <time class="published" datetime="">June 26, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/">Linux常用命令大全</a></h1>
+          <time class="published" datetime="">June 23, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
