@@ -6,10 +6,27 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 30 Jun 2020 13:39:58 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2020 08:39:29 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Vue修饰符</title>
+      <link>/blog/vue/05-vue%E4%BF%AE%E9%A5%B0%E7%AC%A6/</link>
+      <pubDate>Wed, 01 Jul 2020 08:39:29 +0800</pubDate>
+      
+      <guid>/blog/vue/05-vue%E4%BF%AE%E9%A5%B0%E7%AC%A6/</guid>
+      <description>表单修饰符 .lazy 当我们输入完所有东西，光标离开，才更新视图。
+&amp;lt;input type=&#39;text&#39; v-model.lazy=&#39;value&#39;&amp;gt; {{ value }}   .trim 过滤掉首尾的空格
+&amp;lt;input type=&#39;text&#39; v-model.trim=&#39;value&#39;&amp;gt;   .number 如果先输入数字，那它就会限制输入的只能是数字
+如果先输入字符串，就没有任何影响
+&amp;lt;input type=&#39;text&#39; v-model.number=&#39;value&#39;&amp;gt;   事件修饰符 .stop 阻止事件冒泡，不触发父级点击事件
+&amp;lt;div @click=&#39;print(2)&#39;&amp;gt; &amp;lt;button @click.stop=&#39;print(1)&#39;&amp;gt;ok&amp;lt;/button&amp;gt; &amp;lt;/div&amp;gt; print(e){ console.log(e) } //1   .prevent 用于阻止事件的默认行为
+&amp;lt;form v-on:submit.prevent=&amp;quot;onSubmit&amp;quot;&amp;gt;&amp;lt;/form&amp;gt;   .self 相当于反向限制的.stop
+&amp;lt;div class=&#39;large&#39; @click.self=&#39;print(2)&#39;&amp;gt; // 大的div &amp;lt;button @click=&#39;print(1)&#39;&amp;gt;ok&amp;lt;/button&amp;gt; // 小的按钮 &amp;lt;/div&amp;gt; print(e){ console.log(e) } //2   .once 绑定事件只能触发一次
+&amp;lt;button @click.once=&amp;quot;print(1)&amp;quot;&amp;gt;ok&amp;lt;/button&amp;gt;   .</description>
+    </item>
     
     <item>
       <title>Docker部署Django&#43;uWSGI&#43;Nginx&#43;MySQL&#43;Redis</title>
