@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 01 Jul 2020 09:43:13 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 03 Jul 2020 13:23:03 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Wed, 01 Jul 2020 09:43:13 +0800</pubDate>
+      <pubDate>Fri, 03 Jul 2020 13:23:03 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -47,6 +47,15 @@
  Linux常用命令大全
  sellect_poll_epoll
  pygame   01-pygame初始化</description>
+    </item>
+    
+    <item>
+      <title>模拟单向链表 栈 树</title>
+      <link>/blog/python/%E6%A8%A1%E6%8B%9F%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8-%E6%A0%88-%E6%A0%91/</link>
+      <pubDate>Fri, 03 Jul 2020 13:21:37 +0800</pubDate>
+      
+      <guid>/blog/python/%E6%A8%A1%E6%8B%9F%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8-%E6%A0%88-%E6%A0%91/</guid>
+      <description>单向链表 class error(Exception): def __init__(self,msg): super(error,self).__init__() self.msg=msg def __str__(self): return self.msg class Node: def __init__(self,ele): self.ele=ele self.next=None class mylist: def __init__(self,ele=None): self.index=0 self.pos=0 if ele: self._head=Node(ele) else: self._head = None def __iter__(self): return self def __next__(self): if self.pos &amp;lt; self.length(): self.pos += 1 cursor = self._head current=cursor num = 0 while cursor != None: current = cursor cursor = cursor.next num += 1 if num == self.pos: return current.ele else: raise StopIteration def empty(self): return self.</description>
     </item>
     
     <item>
