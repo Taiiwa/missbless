@@ -6,10 +6,25 @@
     <description>Recent content in Blog on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 03 Jul 2020 13:21:37 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 04 Jul 2020 19:19:10 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Deque模块</title>
+      <link>/blog/python/deque%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Sat, 04 Jul 2020 19:19:10 +0800</pubDate>
+      
+      <guid>/blog/python/deque%E6%A8%A1%E5%9D%97/</guid>
+      <description>创建deque序列： from collections import deque d=deque()  deque提供了类似list的操作方法： d=deque() d.append(3) d.append(8) d.append(1)  那么此时d=deque([3,8,1]),len(d)=3,d[0]=3,d[-1]=1
+两端都使用pop: d=deque(‘12345’)  那么d=deque([&amp;lsquo;1&amp;rsquo;, &amp;lsquo;2&amp;rsquo;, &amp;lsquo;3&amp;rsquo;, &amp;lsquo;4&amp;rsquo;, &amp;lsquo;5&amp;rsquo;])
+d.pop()抛出的是’5’,d.leftpop()抛出的是’1’，可见默认pop()抛出的是最后一个元素。
+限制deque的长度 d=deque(maxlen=20) for i in range(30): d.append(str(i))  此时d的值为d=deque([&amp;lsquo;10&amp;rsquo;, &amp;lsquo;11&amp;rsquo;, &amp;lsquo;12&amp;rsquo;, &amp;lsquo;13&amp;rsquo;, &amp;lsquo;14&amp;rsquo;, &amp;lsquo;15&amp;rsquo;, &amp;lsquo;16&amp;rsquo;, &amp;lsquo;17&amp;rsquo;, &amp;lsquo;18&amp;rsquo;, &amp;lsquo;19&amp;rsquo;, &amp;lsquo;20&amp;rsquo;, &amp;lsquo;21&amp;rsquo;, &amp;lsquo;22&amp;rsquo;, &amp;lsquo;23&amp;rsquo;, &amp;lsquo;24&amp;rsquo;, &amp;lsquo;25&amp;rsquo;, &amp;lsquo;26&amp;rsquo;, &amp;lsquo;27&amp;rsquo;, &amp;lsquo;28&amp;rsquo;, &amp;lsquo;29&amp;rsquo;], maxlen=20),可见当限制长度的deque增加超过限制数的项时，另一边的项会自动删除。
+添加list各项到deque中： d=deque([1,2,3,4,5]) d.extend([0])  那么此时d=deque([1,2,3,4,5,0])
+d.extendleft([6,7,8])  此时d=deque([8, 7, 6, 1, 2, 3, 4, 5, 0])
+通过以上的一些操作，我们大致可以了解deque()的性质了。</description>
+    </item>
     
     <item>
       <title>模拟单向链表 栈 树</title>

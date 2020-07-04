@@ -4,45 +4,45 @@
 
   
   <meta charset="utf-8">
-<title>Pygame中的key - Issac Loveless</title>
+<title>Deque模块 - Issac Loveless</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Pygame中的key">
-<meta itemprop="description" content="是否显示正在接收来自系统的键盘输入pygame.key.get_focused
-获得所有键盘按钮的状态pygame.key.get_pressed
-确定哪些修饰符被持有pygame.key.get_mods
-临时设置哪些修饰符键被按下pygame.key.set_mods
-控件如何重复控制键pygame.key.set_repeat
-查看持有的键是如何重复的pygame.key.get_repeat
-得到一个键标识符的名称r(63, 63, 63, 0)pygame.key.name">
-<meta itemprop="datePublished" content="2020-04-09T01:26:24&#43;08:00" />
-<meta itemprop="dateModified" content="2020-04-09T01:26:24&#43;08:00" />
-<meta itemprop="wordCount" content="10">
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="Deque模块">
+<meta itemprop="description" content="创建deque序列： from collections import deque d=deque()  deque提供了类似list的操作方法： d=deque() d.append(3) d.append(8) d.append(1)  那么此时d=deque([3,8,1]),len(d)=3,d[0]=3,d[-1]=1
+两端都使用pop: d=deque(‘12345’)  那么d=deque([&lsquo;1&rsquo;, &lsquo;2&rsquo;, &lsquo;3&rsquo;, &lsquo;4&rsquo;, &lsquo;5&rsquo;])
+d.pop()抛出的是’5’,d.leftpop()抛出的是’1’，可见默认pop()抛出的是最后一个元素。
+限制deque的长度 d=deque(maxlen=20) for i in range(30): d.append(str(i))  此时d的值为d=deque([&lsquo;10&rsquo;, &lsquo;11&rsquo;, &lsquo;12&rsquo;, &lsquo;13&rsquo;, &lsquo;14&rsquo;, &lsquo;15&rsquo;, &lsquo;16&rsquo;, &lsquo;17&rsquo;, &lsquo;18&rsquo;, &lsquo;19&rsquo;, &lsquo;20&rsquo;, &lsquo;21&rsquo;, &lsquo;22&rsquo;, &lsquo;23&rsquo;, &lsquo;24&rsquo;, &lsquo;25&rsquo;, &lsquo;26&rsquo;, &lsquo;27&rsquo;, &lsquo;28&rsquo;, &lsquo;29&rsquo;], maxlen=20),可见当限制长度的deque增加超过限制数的项时，另一边的项会自动删除。
+添加list各项到deque中： d=deque([1,2,3,4,5]) d.extend([0])  那么此时d=deque([1,2,3,4,5,0])
+d.extendleft([6,7,8])  此时d=deque([8, 7, 6, 1, 2, 3, 4, 5, 0])
+通过以上的一些操作，我们大致可以了解deque()的性质了。">
+<meta itemprop="datePublished" content="2020-07-04T19:19:10&#43;08:00" />
+<meta itemprop="dateModified" content="2020-07-04T19:19:10&#43;08:00" />
+<meta itemprop="wordCount" content="68">
 
 
 
-<meta itemprop="keywords" content="" /><meta property="og:title" content="Pygame中的key" />
-<meta property="og:description" content="是否显示正在接收来自系统的键盘输入pygame.key.get_focused
-获得所有键盘按钮的状态pygame.key.get_pressed
-确定哪些修饰符被持有pygame.key.get_mods
-临时设置哪些修饰符键被按下pygame.key.set_mods
-控件如何重复控制键pygame.key.set_repeat
-查看持有的键是如何重复的pygame.key.get_repeat
-得到一个键标识符的名称r(63, 63, 63, 0)pygame.key.name" />
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Deque模块" />
+<meta property="og:description" content="创建deque序列： from collections import deque d=deque()  deque提供了类似list的操作方法： d=deque() d.append(3) d.append(8) d.append(1)  那么此时d=deque([3,8,1]),len(d)=3,d[0]=3,d[-1]=1
+两端都使用pop: d=deque(‘12345’)  那么d=deque([&lsquo;1&rsquo;, &lsquo;2&rsquo;, &lsquo;3&rsquo;, &lsquo;4&rsquo;, &lsquo;5&rsquo;])
+d.pop()抛出的是’5’,d.leftpop()抛出的是’1’，可见默认pop()抛出的是最后一个元素。
+限制deque的长度 d=deque(maxlen=20) for i in range(30): d.append(str(i))  此时d的值为d=deque([&lsquo;10&rsquo;, &lsquo;11&rsquo;, &lsquo;12&rsquo;, &lsquo;13&rsquo;, &lsquo;14&rsquo;, &lsquo;15&rsquo;, &lsquo;16&rsquo;, &lsquo;17&rsquo;, &lsquo;18&rsquo;, &lsquo;19&rsquo;, &lsquo;20&rsquo;, &lsquo;21&rsquo;, &lsquo;22&rsquo;, &lsquo;23&rsquo;, &lsquo;24&rsquo;, &lsquo;25&rsquo;, &lsquo;26&rsquo;, &lsquo;27&rsquo;, &lsquo;28&rsquo;, &lsquo;29&rsquo;], maxlen=20),可见当限制长度的deque增加超过限制数的项时，另一边的项会自动删除。
+添加list各项到deque中： d=deque([1,2,3,4,5]) d.extend([0])  那么此时d=deque([1,2,3,4,5,0])
+d.extendleft([6,7,8])  此时d=deque([8, 7, 6, 1, 2, 3, 4, 5, 0])
+通过以上的一些操作，我们大致可以了解deque()的性质了。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/" />
-<meta property="article:published_time" content="2020-04-09T01:26:24+08:00" />
-<meta property="article:modified_time" content="2020-04-09T01:26:24+08:00" />
+<meta property="og:url" content="/blog/python/deque%E6%A8%A1%E5%9D%97/" />
+<meta property="article:published_time" content="2020-07-04T19:19:10+08:00" />
+<meta property="article:modified_time" content="2020-07-04T19:19:10+08:00" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Pygame中的key"/>
-<meta name="twitter:description" content="是否显示正在接收来自系统的键盘输入pygame.key.get_focused
-获得所有键盘按钮的状态pygame.key.get_pressed
-确定哪些修饰符被持有pygame.key.get_mods
-临时设置哪些修饰符键被按下pygame.key.set_mods
-控件如何重复控制键pygame.key.set_repeat
-查看持有的键是如何重复的pygame.key.get_repeat
-得到一个键标识符的名称r(63, 63, 63, 0)pygame.key.name"/>
+<meta name="twitter:title" content="Deque模块"/>
+<meta name="twitter:description" content="创建deque序列： from collections import deque d=deque()  deque提供了类似list的操作方法： d=deque() d.append(3) d.append(8) d.append(1)  那么此时d=deque([3,8,1]),len(d)=3,d[0]=3,d[-1]=1
+两端都使用pop: d=deque(‘12345’)  那么d=deque([&lsquo;1&rsquo;, &lsquo;2&rsquo;, &lsquo;3&rsquo;, &lsquo;4&rsquo;, &lsquo;5&rsquo;])
+d.pop()抛出的是’5’,d.leftpop()抛出的是’1’，可见默认pop()抛出的是最后一个元素。
+限制deque的长度 d=deque(maxlen=20) for i in range(30): d.append(str(i))  此时d的值为d=deque([&lsquo;10&rsquo;, &lsquo;11&rsquo;, &lsquo;12&rsquo;, &lsquo;13&rsquo;, &lsquo;14&rsquo;, &lsquo;15&rsquo;, &lsquo;16&rsquo;, &lsquo;17&rsquo;, &lsquo;18&rsquo;, &lsquo;19&rsquo;, &lsquo;20&rsquo;, &lsquo;21&rsquo;, &lsquo;22&rsquo;, &lsquo;23&rsquo;, &lsquo;24&rsquo;, &lsquo;25&rsquo;, &lsquo;26&rsquo;, &lsquo;27&rsquo;, &lsquo;28&rsquo;, &lsquo;29&rsquo;], maxlen=20),可见当限制长度的deque增加超过限制数的项时，另一边的项会自动删除。
+添加list各项到deque中： d=deque([1,2,3,4,5]) d.extend([0])  那么此时d=deque([1,2,3,4,5,0])
+d.extendleft([6,7,8])  此时d=deque([8, 7, 6, 1, 2, 3, 4, 5, 0])
+通过以上的一些操作，我们大致可以了解deque()的性质了。"/>
 <link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
         <link rel="stylesheet" href="/css/add-on.css">
 
@@ -161,37 +161,37 @@
 
   
     
-    <a href="//twitter.com/share?text=Pygame%e4%b8%ad%e7%9a%84key&amp;url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f" target="_blank" rel="noopener" class="share-btn twitter">
+    <a href="//twitter.com/share?text=Deque%e6%a8%a1%e5%9d%97&amp;url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f" target="_blank" rel="noopener" class="share-btn twitter">
         <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
       </a>
   
 
   
-      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f" target="_blank" rel="noopener" class="share-btn facebook">
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f" target="_blank" rel="noopener" class="share-btn facebook">
         <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
         </a>
   
 
   
-    <a href="//www.reddit.com/submit?url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84key" target="_blank" rel="noopener" class="share-btn reddit">
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f&amp;title=Deque%e6%a8%a1%e5%9d%97" target="_blank" rel="noopener" class="share-btn reddit">
           <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
         </a>
   
 
   
-        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84key" target="_blank" rel="noopener" class="share-btn linkedin">
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f&amp;title=Deque%e6%a8%a1%e5%9d%97" target="_blank" rel="noopener" class="share-btn linkedin">
             <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
           </a>
   
 
   
-        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f&amp;description=Pygame%e4%b8%ad%e7%9a%84key" target="_blank" rel="noopener" class="share-btn pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f&amp;description=Deque%e6%a8%a1%e5%9d%97" target="_blank" rel="noopener" class="share-btn pinterest">
           <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
         </a>
   
 
   
-        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f" target="_blank" class="share-btn email" data-proofer-ignore>
           <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
         </a>
   
@@ -266,13 +266,13 @@
   <header>
   <div class="title">
     
-      <h2><a href="/blog/pygame/09-pygame%E4%B8%AD%E7%9A%84key/">Pygame中的key</a></h2>
+      <h2><a href="/blog/python/deque%E6%A8%A1%E5%9D%97/">Deque模块</a></h2>
     
     
   </div>
   <div class="meta">
-    <time class="published" datetime="2020-04-09 01:26:24 &#43;0800 CST">
-      April 9, 2020
+    <time class="published" datetime="2020-07-04 19:19:10 &#43;0800 CST">
+      July 4, 2020
     </time>
     <span class="author">Issac loveless</span>
     
@@ -289,37 +289,37 @@
 
   
     
-    <a href="//twitter.com/share?text=Pygame%e4%b8%ad%e7%9a%84key&amp;url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f" target="_blank" rel="noopener" class="share-btn twitter">
+    <a href="//twitter.com/share?text=Deque%e6%a8%a1%e5%9d%97&amp;url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f" target="_blank" rel="noopener" class="share-btn twitter">
         <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
       </a>
   
 
   
-      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f" target="_blank" rel="noopener" class="share-btn facebook">
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f" target="_blank" rel="noopener" class="share-btn facebook">
         <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
         </a>
   
 
   
-    <a href="//www.reddit.com/submit?url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84key" target="_blank" rel="noopener" class="share-btn reddit">
+    <a href="//www.reddit.com/submit?url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f&amp;title=Deque%e6%a8%a1%e5%9d%97" target="_blank" rel="noopener" class="share-btn reddit">
           <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
         </a>
   
 
   
-        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f&amp;title=Pygame%e4%b8%ad%e7%9a%84key" target="_blank" rel="noopener" class="share-btn linkedin">
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f&amp;title=Deque%e6%a8%a1%e5%9d%97" target="_blank" rel="noopener" class="share-btn linkedin">
             <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
           </a>
   
 
   
-        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f&amp;description=Pygame%e4%b8%ad%e7%9a%84key" target="_blank" rel="noopener" class="share-btn pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f&amp;description=Deque%e6%a8%a1%e5%9d%97" target="_blank" rel="noopener" class="share-btn pinterest">
           <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
         </a>
   
 
   
-        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpygame%2f09-pygame%25E4%25B8%25AD%25E7%259A%2584key%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fpython%2fdeque%25E6%25A8%25A1%25E5%259D%2597%2f" target="_blank" class="share-btn email" data-proofer-ignore>
           <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
         </a>
   
@@ -330,13 +330,47 @@
 
   <div class="content">
     <hr>
-<p>是否显示正在接收来自系统的键盘输入<code>pygame.key.get_focused</code></p>
-<p>获得所有键盘按钮的状态<code>pygame.key.get_pressed</code></p>
-<p>确定哪些修饰符被持有<code>pygame.key.get_mods</code></p>
-<p>临时设置哪些修饰符键被按下<code>pygame.key.set_mods</code></p>
-<p>控件如何重复控制键<code>pygame.key.set_repeat</code></p>
-<p>查看持有的键是如何重复的<code>pygame.key.get_repeat</code></p>
-<p>得到一个键标识符的名称r(63, 63, 63, 0)<code>pygame.key.name</code></p>
+<h2 id="创建deque序列">创建deque序列：</h2>
+<pre><code>from collections import deque
+
+d=deque()
+</code></pre>
+<h2 id="deque提供了类似list的操作方法">deque提供了类似list的操作方法：</h2>
+<pre><code>d=deque()
+
+d.append(3)
+
+d.append(8)
+
+d.append(1)
+</code></pre>
+<p>那么此时d=deque([3,8,1]),len(d)=3,d[0]=3,d[-1]=1</p>
+<h2 id="两端都使用pop">两端都使用pop:</h2>
+<pre><code>d=deque(‘12345’)
+</code></pre>
+<p>那么d=deque([&lsquo;1&rsquo;, &lsquo;2&rsquo;, &lsquo;3&rsquo;, &lsquo;4&rsquo;, &lsquo;5&rsquo;])</p>
+<p>d.pop()抛出的是’5’,d.leftpop()抛出的是’1’，可见默认pop()抛出的是最后一个元素。</p>
+<h2 id="限制deque的长度">限制deque的长度</h2>
+<pre><code>d=deque(maxlen=20)
+
+for i in range(30):
+
+    d.append(str(i))
+</code></pre>
+<p>此时d的值为d=deque([&lsquo;10&rsquo;, &lsquo;11&rsquo;, &lsquo;12&rsquo;, &lsquo;13&rsquo;, &lsquo;14&rsquo;, &lsquo;15&rsquo;, &lsquo;16&rsquo;, &lsquo;17&rsquo;, &lsquo;18&rsquo;, &lsquo;19&rsquo;, &lsquo;20&rsquo;, &lsquo;21&rsquo;, &lsquo;22&rsquo;, &lsquo;23&rsquo;, &lsquo;24&rsquo;, &lsquo;25&rsquo;, &lsquo;26&rsquo;, &lsquo;27&rsquo;, &lsquo;28&rsquo;, &lsquo;29&rsquo;], maxlen=20),可见当限制长度的deque增加超过限制数的项时，另一边的项会自动删除。</p>
+<h2 id="添加list各项到deque中">添加list各项到deque中：</h2>
+<pre><code>d=deque([1,2,3,4,5])
+
+d.extend([0])
+</code></pre>
+<p>那么此时d=deque([1,2,3,4,5,0])</p>
+<pre><code>d.extendleft([6,7,8])
+</code></pre>
+<p>此时d=deque([8, 7, 6, 1, 2, 3, 4, 5, 0])</p>
+<p>通过以上的一些操作，我们大致可以了解deque()的性质了。</p>
+<p>————————————————
+版权声明：本文为CSDN博主「Qinscoder」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qins_superlover/article/details/44338415</p>
 
   </div>
   <footer>
@@ -363,14 +397,12 @@
 
 <div class="pagination">
   
-    <a href="/blog/pygame/05-pygame%E4%B8%AD%E7%9A%84draw/" class="button"><div class="previous"><div>Pygame中的draw</div></div></a>
+    <a href="/blog/python/%E6%A8%A1%E6%8B%9F%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8-%E6%A0%88-%E6%A0%91/" class="button"><div class="previous"><div>模拟单向链表 栈 树</div></div></a>
   
   
   <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
 
   
-  
-    <a href="/blog/pygame/07-pygame%E4%B8%AD%E7%9A%84font/" class="button"><div class="next"><div>Pygame中的font</div></div></a>
   
 </div>
 
