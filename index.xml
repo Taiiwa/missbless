@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 04 Jul 2020 19:20:56 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jul 2020 14:08:31 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Sat, 04 Jul 2020 19:20:56 +0800</pubDate>
+      <pubDate>Thu, 09 Jul 2020 14:08:31 +0800</pubDate>
       
       <guid>/contents/</guid>
       <description>Django   01-Django介绍
@@ -692,7 +692,8 @@ function isValid(str) { return /^\w+$/.test(str); } # 返回布尔值
       <pubDate>Sun, 12 Apr 2020 23:20:21 +0800</pubDate>
       
       <guid>/blog/linux/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
-      <description>系统命令 runlevel # 查看当前的运行级别 systemctl status firewalld # 开启网络服务功能 stop # 关闭 restart # 重启 reload # 重载 reboot # 重启 halt # 关机 poweroff # 关机  查看文件常用指令 cat # 在命令提示符下查看文件内容 more # 在命令提示符中分页查看文件内容 less # 命令行中查看文件可以上下翻页反复浏览 head # 命令行中查看文件头几行 tail # 命令行中查看文件尾几行 wc # 统计文件的单词数 行数等信息  目录管理常用指令 pwd # 查看你当前所在的目录 cd # 切换目录 ls # 查看显示目录的内容 du # 统计目录和文件空间的占用情况 mkdir # 创建新目录 rmdir # 删除空目录 touch # 创建文件 rm # 删除文件 ln # 创建硬链接 ln -s # 创建软链接 cp # 复制文件或目录 mv # 移动文件或目录 which # 查看linux命令所在的目录  账号与权限 &#39;&#39;&#39;1.</description>
+      <description>@Linux命令大全
+系统命令 runlevel # 查看当前的运行级别 systemctl status firewalld # 开启网络服务功能 stop # 关闭 restart # 重启 reload # 重载 reboot # 重启 halt # 关机 poweroff # 关机  查看文件常用指令 cat # 在命令提示符下查看文件内容 more # 在命令提示符中分页查看文件内容 less # 命令行中查看文件可以上下翻页反复浏览 head # 命令行中查看文件头几行 tail # 命令行中查看文件尾几行 wc # 统计文件的单词数 行数等信息  目录管理常用指令 pwd # 查看你当前所在的目录 cd # 切换目录 ls # 查看显示目录的内容 du # 统计目录和文件空间的占用情况 mkdir # 创建新目录 rmdir # 删除空目录 touch # 创建文件 rm # 删除文件 ln # 创建硬链接 ln -s # 创建软链接 cp # 复制文件或目录 mv # 移动文件或目录 which # 查看linux命令所在的目录  账号与权限 &#39;&#39;&#39;1.</description>
     </item>
     
     <item>

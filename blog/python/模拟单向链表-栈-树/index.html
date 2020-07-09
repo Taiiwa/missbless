@@ -12,7 +12,7 @@
 <meta itemprop="description" content="单向链表 class error(Exception): def __init__(self,msg): super(error,self).__init__() self.msg=msg def __str__(self): return self.msg class Node: def __init__(self,ele): self.ele=ele self.next=None class mylist: def __init__(self,ele=None): self.index=0 self.pos=0 if ele: self._head=Node(ele) else: self._head = None def __iter__(self): return self def __next__(self): if self.pos &lt; self.length(): self.pos &#43;= 1 cursor = self._head current=cursor num = 0 while cursor != None: current = cursor cursor = cursor.next num &#43;= 1 if num == self.pos: return current.ele else: raise StopIteration def empty(self): return self.">
 <meta itemprop="datePublished" content="2020-07-03T13:21:37&#43;08:00" />
 <meta itemprop="dateModified" content="2020-07-03T13:21:37&#43;08:00" />
-<meta itemprop="wordCount" content="351">
+<meta itemprop="wordCount" content="430">
 
 
 
@@ -258,7 +258,7 @@
     </time>
     <span class="author">Issac loveless</span>
     
-      <p>2 minutes read</p>
+      <p>3 minutes read</p>
     
   </div>
 </header>
@@ -463,63 +463,88 @@ class mylist:
 </code></pre>
 <h1 id="树">树</h1>
 <pre><code>class Node:
-    def __init__(self,ele=None,left=None,right=None):
+    def __init__(self, ele):
         self.ele = ele
         self.left = None
         self.right = None
+
+from collections import deque
+
 class Tree:
-    def __init__(self,node=None):
-        self.root = node
-    def append(self,item):
-        node = Node(item)
-        if self.root is None:
-            self.root = node
-        else:
-            queue = [self.root]
-            while queue:
-                current=queue.pop(0)
-                if current.left is None:
-                    current.left = node
-                    return
-                elif current.right is None:
-                    current.right = node
-                    return
-                else:
-                    queue.append(current.left)
-                    queue.append(current.right)
-    def loop(self):
-        if self.root is None:
+    def __init__(self):
+        self.root = None
+
+    def genTree(self, values):
+        if not values:
             return
-        queue=[self.root]#广度优先
+        self.root = Node(values[0])
+        queue = deque([self.root])
+        num = 1
+        while num &lt; len(values):
+            node = deque.popleft(queue)
+            if node:
+                node.left = Node(values[num]) if values[num] else None
+                queue.append(node.left)
+                if num + 1 &lt; len(values):
+                    node.right = Node(values[num + 1]) if values[num + 1] else None
+                    queue.append(node.right)
+                    num += 1
+                num += 1
+
+    def displayTree(self):
+        ret = []
+        queue = deque([self.root])
         while queue:
-            current=queue.pop(0)
-            print(current.ele)
-            if current.left!=None:
-                queue.append(current.left) 
-            elif current.right!=None:
-                queue.append(current.right) 
+            node = deque.popleft(queue)
+            if node:
+                ret.append(node.ele)
+                queue.append(node.left)
+                queue.append(node.right)
+        return ret
 
-    def deep_loop_top(self,node):
-        if node==None:
-            return
-        print(node.ele)
-        self.deep_loop_top(node.left)
-        self.deep_loop_top(node.right)
+    def preTraversal(self):
+        ret = []
+        def traversal(head):
+            if not head:
+                return
+            ret.append(head.ele)
+            traversal(head.left)
+            traversal(head.right)
+        traversal(self.root)
+        return ret
+    def inTraversal(self):
+        ret = []
+        def traversal(head):
+            if not head:
+                return
+            traversal(head.left)
+            ret.append(head.ele)
+            traversal(head.right)
+        traversal(self.root)
+        return ret
+    def afterTraversal(self):
+        ret = []
+        def traversal(head):
+            if not head:
+                return
+            traversal(head.left)
+            traversal(head.right)
+            ret.append(head.ele)
+        traversal(self.root)
+        return ret
 
-    def deep_loop_left(self,node):
-        if node==None:
-            return
-        self.deep_loop_left(node.left)
-        print(node.ele)
-        self.deep_loop_left(node.right)
 
-    def deep_loop_last(self,node):
-        if node==None:
-            return
-        self.deep_loop_last(node.left)
-        self.deep_loop_last(node.right)
-        print(node.ele)
-</code></pre>
+
+
+if __name__ == '__main__':
+
+    list = ['D', 'B', 'E', 'A', 'C', None, 'G', None, None, None, None, 'F']
+    t = Tree()
+    t.genTree(list)
+    print(t.displayTree())
+    print(t.preTraversal())
+    print(t.inTraversal())
+    print(t.afterTraversal())</code></pre>
 
   </div>
   <footer>
