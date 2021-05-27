@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>CCNode节点 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="CCNode节点">
+<meta itemprop="description" content="属性    属性名 描述 范例     children 获得指定节点所有子节点的数组    active 打开/关闭节点 this.node.active = false   parent 更改节点的父节点 this.node.parent = parentNode等价于代码: this.node.removeFromParent(false)parentNode.addChild(this.node)   x/y 更改节点位置 this.node.x = 100   rotation 更改节点旋转 this.node.rotation = 90   scaleX/scaleY 更改节点缩放 this.node.scaleX = 2   width/height 更改节点尺寸 this.node.width = 100   color 更改节点颜色 this.node.color = cc.Color.RED   opacity 更改节点不透明度 0 ~ 255 this.">
+<meta itemprop="datePublished" content="2021-05-26T17:25:09&#43;08:00" />
+<meta itemprop="dateModified" content="2021-05-26T17:25:09&#43;08:00" />
+<meta itemprop="wordCount" content="249">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="CCNode节点" />
+<meta property="og:description" content="属性    属性名 描述 范例     children 获得指定节点所有子节点的数组    active 打开/关闭节点 this.node.active = false   parent 更改节点的父节点 this.node.parent = parentNode等价于代码: this.node.removeFromParent(false)parentNode.addChild(this.node)   x/y 更改节点位置 this.node.x = 100   rotation 更改节点旋转 this.node.rotation = 90   scaleX/scaleY 更改节点缩放 this.node.scaleX = 2   width/height 更改节点尺寸 this.node.width = 100   color 更改节点颜色 this.node.color = cc.Color.RED   opacity 更改节点不透明度 0 ~ 255 this." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/cocos/03-ccnode/" />
+<meta property="article:published_time" content="2021-05-26T17:25:09+08:00" />
+<meta property="article:modified_time" content="2021-05-26T17:25:09+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="CCNode节点"/>
+<meta name="twitter:description" content="属性    属性名 描述 范例     children 获得指定节点所有子节点的数组    active 打开/关闭节点 this.node.active = false   parent 更改节点的父节点 this.node.parent = parentNode等价于代码: this.node.removeFromParent(false)parentNode.addChild(this.node)   x/y 更改节点位置 this.node.x = 100   rotation 更改节点旋转 this.node.rotation = 90   scaleX/scaleY 更改节点缩放 this.node.scaleX = 2   width/height 更改节点尺寸 this.node.width = 100   color 更改节点颜色 this.node.color = cc.Color.RED   opacity 更改节点不透明度 0 ~ 255 this."/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=CCNode%e8%8a%82%e7%82%b9&amp;url=%2fblog%2fcocos%2f03-ccnode%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fcocos%2f03-ccnode%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fcocos%2f03-ccnode%2f&amp;title=CCNode%e8%8a%82%e7%82%b9" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fcocos%2f03-ccnode%2f&amp;title=CCNode%e8%8a%82%e7%82%b9" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fcocos%2f03-ccnode%2f&amp;description=CCNode%e8%8a%82%e7%82%b9" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fcocos%2f03-ccnode%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/cocos/03-ccnode/">CCNode节点</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2021-05-26 17:25:09 &#43;0800 CST">
+      May 26, 2021
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>2 minutes read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=CCNode%e8%8a%82%e7%82%b9&amp;url=%2fblog%2fcocos%2f03-ccnode%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fcocos%2f03-ccnode%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fcocos%2f03-ccnode%2f&amp;title=CCNode%e8%8a%82%e7%82%b9" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fcocos%2f03-ccnode%2f&amp;title=CCNode%e8%8a%82%e7%82%b9" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fcocos%2f03-ccnode%2f&amp;description=CCNode%e8%8a%82%e7%82%b9" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fcocos%2f03-ccnode%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="属性">属性</h2>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>描述</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>children</td>
+<td>获得指定节点所有子节点的数组</td>
+<td></td>
+</tr>
+<tr>
+<td>active</td>
+<td>打开/关闭节点</td>
+<td>this.node.active = false</td>
+</tr>
+<tr>
+<td>parent</td>
+<td>更改节点的父节点</td>
+<td>this.node.parent = parentNode<!-- raw HTML omitted -->等价于代码: <!-- raw HTML omitted -->this.node.removeFromParent(false)<!-- raw HTML omitted -->parentNode.addChild(this.node)</td>
+</tr>
+<tr>
+<td>x/y</td>
+<td>更改节点位置</td>
+<td>this.node.x = 100</td>
+</tr>
+<tr>
+<td>rotation</td>
+<td>更改节点旋转</td>
+<td>this.node.rotation = 90</td>
+</tr>
+<tr>
+<td>scaleX/scaleY</td>
+<td>更改节点缩放</td>
+<td>this.node.scaleX = 2</td>
+</tr>
+<tr>
+<td>width/height</td>
+<td>更改节点尺寸</td>
+<td>this.node.width = 100</td>
+</tr>
+<tr>
+<td>color</td>
+<td>更改节点颜色</td>
+<td>this.node.color = cc.Color.RED</td>
+</tr>
+<tr>
+<td>opacity</td>
+<td>更改节点不透明度 0 ~ 255</td>
+<td>this.node.opacity = 128</td>
+</tr>
+<tr>
+<td>enable</td>
+<td>组件开关, 是否执行update方法, 是否渲染(draw方法)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="方法">方法</h2>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>getComponent()</td>
+<td>获取节点上的组件</td>
+<td>this.node.getComponent(cc.Label).string<!-- raw HTML omitted -->this.nodeA.getComponent(&ldquo;ScriptA&rdquo;).func()</td>
+</tr>
+<tr>
+<td>getChildByName()</td>
+<td>获得指定名字子节点</td>
+<td>this.node.getChildrenByName(&ldquo;Child1&rdquo;)</td>
+</tr>
+<tr>
+<td>setPosition(x, y)</td>
+<td>设置节点位置</td>
+<td>this.node.setPosition(100, 50)    |     this.node.setPosition(cc.v2(100, 50))</td>
+</tr>
+<tr>
+<td>setRotation(r)</td>
+<td>设置节点旋转</td>
+<td>this.node.setRotation(90)</td>
+</tr>
+<tr>
+<td>setScale(scaleX, scaleY)</td>
+<td>设置节点缩放</td>
+<td>this.node.setScale(2, 2)    | this.node.setScale(2)</td>
+</tr>
+<tr>
+<td>setContentSize(w, h)</td>
+<td>设置宽高</td>
+<td>this.node.setContentSize(100, 100)    | this.node.setContentSize(cc.v2(100, 100))</td>
+</tr>
+<tr>
+<td>addComponent()</td>
+<td>为节点添加组件</td>
+<td>this.addComponent(cc.Sprite)</td>
+</tr>
+<tr>
+<td>destroy()</td>
+<td>销毁节点</td>
+<td>见下文</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="查找节点">查找节点</h3>
+<p>根据路径查找节点: <code>cc.find(&quot;Canvas/Menu/Back&quot;) </code></p>
+<pre><code>cc.Class({
+	extends: cc.Component,
+	
+	properties: {
+		target: cc.Node,
+	},
+	
+    onLoad(){
+        this.target = cc.find('Canvas/nodeB')
+    },
+})
+</code></pre><hr>
+<h3 id="创建新节点">创建新节点</h3>
+<p>用脚本动态创建节点: <code>new cc.Node</code></p>
+<pre><code>cc.Class({
+	extends: cc.Component,
+	
+	properties: {
+		sprite: cc.SpriteFrame,
+	},
+	
+	start: function(){
+		var node = new cc.Node(&quot;NewSprite&quot;);    // 节点名字
+		var sp = node.addComponent(cc.Sprite);
+		sp.spriteFrame = this.sprite;
+		node.parent = this.node    // 指定父节点, 没有父节点的节点不会渲染, 并会在此帧结束后自动释放
+	}
+})
+</code></pre><hr>
+<h3 id="复制已有节点">复制已有节点</h3>
+<p>复制场景中已有节点: <code>cc.instantiate</code></p>
+<pre><code>cc.Class({
+	extends: cc.Component,
+	
+	properties: {
+		target: cc.Node,
+	},
+	
+	start: function(){
+		var node = cc.instantiate(this.target);
+		node.parent = this.node;
+		node.setPosition(0, 0)
+	}
+})
+</code></pre><hr>
+<h3 id="创建预制节点">创建预制节点</h3>
+<p>cc建议开发者更多地使用创建与直接点方法动态创建节点</p>
+<pre><code>cc.Class({
+	extends: cc.Component,
+	
+	properties: {
+		target: {
+			default: null,
+			type: cc.Prefab,
+		}
+	},
+	
+	start () {
+		var scene = cc.director.getScene();
+		var node = cc.instantiate(this.target)    // 将预制作为第一个参数传入, 然后设置父节点与坐标
+		node.parent = scene;
+		node.setPosition(0, 0)
+	}
+})
+</code></pre><hr>
+<h3 id="销毁节点">销毁节点</h3>
+<p>销毁节点不会立刻从内存中移除, 而是在当前帧逻辑更新结束后统一执行, 当一个节点销毁后, 该节点就处于无效状态, 为防止某些未及时停止的异步回调, 可以通过<code>cc.isValid</code>判断当前节点是否已经被销毁.</p>
+<pre><code>cc.Class({
+	extends: cc.Component,
+	
+	properties: {
+		target: cc.Node,
+	},
+	
+	start () {
+		setTimeout(function () {
+			this.target.destroy();
+		}.bind(this), 5000)
+	},
+	update(dt){
+		if (cc.isValid(this.target)){    // 安全写法, 确保this.target的有效性
+			this.target.rotation += dt * 10.0
+		}
+	}
+})
+</code></pre>
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/cocos/02-ccclass/" class="button"><div class="previous"><div>CCClasss</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+    <a href="/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="button"><div class="next"><div>CC组件生命周期</div></div></a>
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">CC组件生命周期</a></h1>
+          <time class="published" datetime="">May 27, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/03-ccnode/">CCNode节点</a></h1>
+          <time class="published" datetime="">May 26, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/02-ccclass/">CCClasss</a></h1>
+          <time class="published" datetime="">May 26, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/01-cc%E8%84%9A%E6%9C%AC%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/">CC脚本开发基础</a></h1>
+          <time class="published" datetime="">May 26, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/deque%E6%A8%A1%E5%9D%97/">Deque模块</a></h1>
+          <time class="published" datetime="">July 4, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2021
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

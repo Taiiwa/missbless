@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+  <meta charset="utf-8">
+<title>CC组件生命周期 - Issac Loveless</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.68.3" /><meta itemprop="name" content="CC组件生命周期">
+<meta itemprop="description" content="组件生命周期 onLoad 组件构造完成后最早被调用的回调, 所属节点被激活时, 节点上所有组件脚本会被由上至下依次激活
+通常在onLoad中做一些初始化工作
+ccClasss({ extends: cc.Component, properties: { target: cc.Node, }, onLoad: function(){ this.target = cc.find(&quot;Convas/hero&quot;); }, }) 节点上在属性检查器中修改的值(serializable==true)将会在onLoad之前生效, 如果在onLoad中重新赋值, 将以onLoad为准.
+ start 适合承接自己的组件或其他组件的onLoad中的代码, 或者为update中的代码做准备
+ update 组件在激活的状态下, 每帧调用一次, 在该节点组建渲染(draw)前调用. 游戏中有过程的行为都可以通过这个函数完成
+update用的是CC中的计时器, 但是不同于其他版本的Cocos, 不需要任何注册计时器或其他任何代码, update就会被调用
+cc.Class({ extends: cc.Component, update: function(dt){ this.node.setPosition(0.0, 40.0 * dt) } }) // dt是本次update调用上次update的时间间隔, 单位是秒, 如果设置默认值为每秒60帧, 那么这个时间应该是接近1/60的值 update中的代码尽量保持简洁高效, 不要在update中使用wait或者sleep, 否则会导致整个游戏帧率下降
+ lateUpdate 在有update之后执行, 并且在渲染(draw)之后每帧执行, 使用方式和参数都同update
+ onDestroy 当组件或者所在节点调用了destroy方法, 则会调用onDestroy回调. onDestroy方法与析构函数类似, 在销毁前仍可以调用所有内容, 完成善后工作. 并在当前帧结束时统一回收组件">
+<meta itemprop="datePublished" content="2021-05-27T09:31:19&#43;08:00" />
+<meta itemprop="dateModified" content="2021-05-27T09:31:19&#43;08:00" />
+<meta itemprop="wordCount" content="93">
+
+
+
+<meta itemprop="keywords" content="" /><meta property="og:title" content="CC组件生命周期" />
+<meta property="og:description" content="组件生命周期 onLoad 组件构造完成后最早被调用的回调, 所属节点被激活时, 节点上所有组件脚本会被由上至下依次激活
+通常在onLoad中做一些初始化工作
+ccClasss({ extends: cc.Component, properties: { target: cc.Node, }, onLoad: function(){ this.target = cc.find(&quot;Convas/hero&quot;); }, }) 节点上在属性检查器中修改的值(serializable==true)将会在onLoad之前生效, 如果在onLoad中重新赋值, 将以onLoad为准.
+ start 适合承接自己的组件或其他组件的onLoad中的代码, 或者为update中的代码做准备
+ update 组件在激活的状态下, 每帧调用一次, 在该节点组建渲染(draw)前调用. 游戏中有过程的行为都可以通过这个函数完成
+update用的是CC中的计时器, 但是不同于其他版本的Cocos, 不需要任何注册计时器或其他任何代码, update就会被调用
+cc.Class({ extends: cc.Component, update: function(dt){ this.node.setPosition(0.0, 40.0 * dt) } }) // dt是本次update调用上次update的时间间隔, 单位是秒, 如果设置默认值为每秒60帧, 那么这个时间应该是接近1/60的值 update中的代码尽量保持简洁高效, 不要在update中使用wait或者sleep, 否则会导致整个游戏帧率下降
+ lateUpdate 在有update之后执行, 并且在渲染(draw)之后每帧执行, 使用方式和参数都同update
+ onDestroy 当组件或者所在节点调用了destroy方法, 则会调用onDestroy回调. onDestroy方法与析构函数类似, 在销毁前仍可以调用所有内容, 完成善后工作. 并在当前帧结束时统一回收组件" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" />
+<meta property="article:published_time" content="2021-05-27T09:31:19+08:00" />
+<meta property="article:modified_time" content="2021-05-27T09:31:19+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="CC组件生命周期"/>
+<meta name="twitter:description" content="组件生命周期 onLoad 组件构造完成后最早被调用的回调, 所属节点被激活时, 节点上所有组件脚本会被由上至下依次激活
+通常在onLoad中做一些初始化工作
+ccClasss({ extends: cc.Component, properties: { target: cc.Node, }, onLoad: function(){ this.target = cc.find(&quot;Convas/hero&quot;); }, }) 节点上在属性检查器中修改的值(serializable==true)将会在onLoad之前生效, 如果在onLoad中重新赋值, 将以onLoad为准.
+ start 适合承接自己的组件或其他组件的onLoad中的代码, 或者为update中的代码做准备
+ update 组件在激活的状态下, 每帧调用一次, 在该节点组建渲染(draw)前调用. 游戏中有过程的行为都可以通过这个函数完成
+update用的是CC中的计时器, 但是不同于其他版本的Cocos, 不需要任何注册计时器或其他任何代码, update就会被调用
+cc.Class({ extends: cc.Component, update: function(dt){ this.node.setPosition(0.0, 40.0 * dt) } }) // dt是本次update调用上次update的时间间隔, 单位是秒, 如果设置默认值为每秒60帧, 那么这个时间应该是接近1/60的值 update中的代码尽量保持简洁高效, 不要在update中使用wait或者sleep, 否则会导致整个游戏帧率下降
+ lateUpdate 在有update之后执行, 并且在渲染(draw)之后每帧执行, 使用方式和参数都同update
+ onDestroy 当组件或者所在节点调用了destroy方法, 则会调用onDestroy回调. onDestroy方法与析构函数类似, 在销毁前仍可以调用所有内容, 完成善后工作. 并在当前帧结束时统一回收组件"/>
+<link rel="stylesheet" href="/css/bundle.min.890f30b8b199a3d390afae9cf9f69d7a932a6a7d91fc3a3b9e5b9d780c334432.css" integrity="sha256-iQ8wuLGZo9OQr66c&#43;fadepMqan2R/Do7nludeAwzRDI=">
+        <link rel="stylesheet" href="/css/add-on.css">
+
+
+    
+</head>
+
+  <body>
+    
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu">
+      
+        
+          
+          
+            <a href="/" class="link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/resume/" class="link"><i class='far fa-id-card'></i> Resume</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contents/" class="link"><i class='far fa-newspaper'></i> Contents</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      
+
+    </menu>
+    
+
+    <a href="#share-menu" class="share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    
+    <a href="#site-nav" class="nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="lang-menu" class="flyout-menu">
+  <a href="#" lang="en" class="link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/fr" lang="fr" class="no-lang link">Français (fr)</a>
+      
+    
+      
+        <a href="/pl" lang="pl" class="no-lang link">Polski (pl)</a>
+      
+    
+      
+        <a href="/pt" lang="pt" class="no-lang link">Português (pt)</a>
+      
+    
+      
+        <a href="/de" lang="de" class="no-lang link">Deutsche (de)</a>
+      
+    
+      
+        <a href="/es" lang="es" class="no-lang link">Española (es)</a>
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="no-lang link">中文 (zh-cn)</a>
+      
+    
+      
+        <a href="/zh-tw" lang="zh-tw" class="no-lang link">中文 (zh-tw)</a>
+      
+    
+      
+        <a href="/ja" lang="ja" class="no-lang link">日本語 (ja)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f&amp;url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f&amp;title=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f&amp;title=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f&amp;description=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="/img/main/msty.png" class="circle" width="" alt="Issac Loveless" /></a>
+  <header>
+    <h1>Issac Loveless</h1>
+  </header>
+  <main>
+    <p>君思见月芳心尽，君见月兮复何求？</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        <article class="post">
+  <header>
+  <div class="title">
+    
+      <h2><a href="/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">CC组件生命周期</a></h2>
+    
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2021-05-27 09:31:19 &#43;0800 CST">
+      May 27, 2021
+    </time>
+    <span class="author">Issac loveless</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+  <section id="socnet-share">
+    
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f&amp;url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f" target="_blank" rel="noopener" class="share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f" target="_blank" rel="noopener" class="share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f&amp;title=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" target="_blank" rel="noopener" class="share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f&amp;title=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" target="_blank" rel="noopener" class="share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f&amp;description=CC%e7%bb%84%e4%bb%b6%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" target="_blank" rel="noopener" class="share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by Issac%20loveless&amp;body=%2fblog%2fcocos%2f04-cc%25E7%25BB%2584%25E4%25BB%25B6%25E7%2594%259F%25E5%2591%25BD%25E5%2591%25A8%25E6%259C%259F%2f" target="_blank" class="share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+  </section>
+  
+
+  <div class="content">
+    <hr>
+<h2 id="组件生命周期">组件生命周期</h2>
+<h3 id="onload">onLoad</h3>
+<p>组件构造完成后最早被调用的回调, 所属节点被激活时, 节点上所有组件脚本会被由上至下依次激活</p>
+<p>通常在<code>onLoad</code>中做一些初始化工作</p>
+<pre><code>ccClasss({
+	extends: cc.Component,
+	properties: {
+		target: cc.Node,
+	},
+	
+	onLoad: function(){
+		this.target = cc.find(&quot;Convas/hero&quot;);
+	},
+})
+</code></pre><p><em>节点上在属性检查器中修改的值(<code>serializable==true</code>)将会在<code>onLoad</code>之前生效, 如果在<code>onLoad</code>中重新赋值, 将以<code>onLoad</code>为准.</em></p>
+<hr>
+<h3 id="start">start</h3>
+<p>适合承接自己的组件或其他组件的<code>onLoad</code>中的代码, 或者为<code>update</code>中的代码做准备</p>
+<hr>
+<h3 id="update">update</h3>
+<p>组件在激活的状态下, 每帧调用一次, 在该节点组建渲染(<code>draw</code>)前调用. 游戏中有过程的行为都可以通过这个函数完成</p>
+<p>update用的是CC中的计时器, 但是不同于其他版本的Cocos, 不需要任何注册计时器或其他任何代码, <code>update</code>就会被调用</p>
+<pre><code>cc.Class({
+	extends: cc.Component,
+	
+	update: function(dt){
+		this.node.setPosition(0.0, 40.0 * dt)
+	}
+})
+// dt是本次update调用上次update的时间间隔, 单位是秒, 如果设置默认值为每秒60帧, 那么这个时间应该是接近1/60的值
+</code></pre><p><em><code>update</code>中的代码尽量保持简洁高效, 不要在<code>update</code>中使用<code>wait</code>或者<code>sleep</code>, 否则会导致整个游戏帧率下降</em></p>
+<hr>
+<h3 id="lateupdate">lateUpdate</h3>
+<p>在有<code>update</code>之后执行, 并且在渲染(<code>draw</code>)之后每帧执行, 使用方式和参数都同<code>update</code></p>
+<hr>
+<h3 id="ondestroy">onDestroy</h3>
+<p>当组件或者所在节点调用了<code>destroy</code>方法, 则会调用<code>onDestroy</code>回调. <code>onDestroy</code>方法与析构函数类似, 在销毁前仍可以调用所有内容, 完成善后工作. 并在当前帧结束时统一回收组件</p>
+<hr>
+<h3 id="onenable">onEnable</h3>
+<p>当组件的<code>enabled</code>属性从<code>false</code>变为<code>true</code>时, 或者所在节点的<code>active</code>属性从<code>false</code>变为<code>true</code>并且组件处于<code>enable</code>状态时, 会激活<code>onEnable</code>回调. 倘若节点第一次被创建并且<code>enable</code>为<code>true</code>时, 则会在<code>onLoad</code>之后, <code>start</code>之前调用</p>
+<hr>
+<h3 id="ondisable">onDisable</h3>
+<p>与<code>onEnable</code>相反, 当组件的<code>enabled</code>属性从<code>true</code>变为<code>false</code>时, 或者所在节点的<code>active</code>属性从<code>true</code>变为<code>false</code>并且组件处于<code>enable</code>状态, 会激活<code>onDisable</code>回调</p>
+<hr>
+<h3 id="脚本执行顺序">脚本执行顺序</h3>
+<p>每个组件会按照<code>onLoad → onEnable → start → update → lateUpdate</code>的顺序依次进行, 而同时激活的节点上面的组件, 每一个环节都要完全做完才会进入下一环节, 在同一节点上的所有组件, 靠上的组件会更早地进入下一环节, 不同节点上的组件同一环节执行顺序不可靠</p>
+
+  </div>
+  <footer>
+    <ul class="stats">
+  
+    <li class="categories">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+  
+    <li class="tags">
+      <ul>
+        <li>None</li>
+      </ul>
+    </li>
+  
+</ul>
+
+  </footer>
+</article>
+
+
+<div class="pagination">
+  
+    <a href="/blog/cocos/03-ccnode/" class="button"><div class="previous"><div>CCNode节点</div></div></a>
+  
+  
+  <a href="/contents" class="button"><div class=""><div>返回目录</div></div></a>
+
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">CC组件生命周期</a></h1>
+          <time class="published" datetime="">May 27, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/03-ccnode/">CCNode节点</a></h1>
+          <time class="published" datetime="">May 26, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/02-ccclass/">CCClasss</a></h1>
+          <time class="published" datetime="">May 26, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/cocos/01-cc%E8%84%9A%E6%9C%AC%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/">CC脚本开发基础</a></h1>
+          <time class="published" datetime="">May 26, 2021</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h1><a href="/blog/python/deque%E6%A8%A1%E5%9D%97/">Deque模块</a></h1>
+          <time class="published" datetime="">July 4, 2020</time>
+        </header>
+      </article>
+      
+      
+        <footer>
+          <a href="/contents/" class="button">See more</a>
+        </footer>
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>test</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//wpa.qq.com/msgrd?v=3&amp;uin=1992522722&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener" title="QQ" class="fab fa-qq"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:issacloveless@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2021
+      
+        Issac Loveless
+      
+    . <br>
+    attribution
+  </p>
+
+  
+
+
+  <head>
+    <meta charset="utf-8">
+    <title>Live2D！把可爱的看板娘扑捉到你的博客去吧！</title>
+    <link rel="stylesheet" href="/css/live2d.css">
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  </head>
+  <body>
+    
+    <div id="landlord" style="left: -13px; bottom: 94px; display: block;">
+      <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+      <div class="live_talk_input_body" style='display:none'>
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字">
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？">
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="3" type="hidden">
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn" style="display: none;"></div>
+        
+        <div class="live_ico_item type_music" id="musicButton" style="display: none;"></div>
+        <div class="live_ico_item type_youdu" id="youduButton" data-type=""></div>
+        
+        
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden">
+        
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+      </div>
+    </div>
+    <div id="open_live2d" style="display: none;">召唤伊斯特瓦尔</div>
+    <script type="text/javascript">
+      var message_Path = '../';
+      
+      var model_Path = '/model/';
+      var model_textures = ["texture_00.png","texture_01.png","texture_02.png"]; 
+      var home_Path = '//www.missbless.cn';  
+      var talkAPI = "";
+    </script>
+    <script src="/js/live2d.js"></script>
+    <script src="/js/message.js"></script>
+  </body>
+
+
+
+
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.e0c399b948d3cf5c3a5e3badb94023d0b064a19ac39fd8cd79fb9f57fa4d1091.js" integrity="sha256-4MOZuUjTz1w6XjutuUAj0LBkoZrDn9jNefufV/pNEJE="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>

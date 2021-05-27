@@ -6,7 +6,7 @@
     <description>Recent content on Issac Loveless</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 26 May 2021 16:59:51 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 27 May 2021 11:29:50 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,10 +14,14 @@
     <item>
       <title>Contents</title>
       <link>/contents/</link>
-      <pubDate>Wed, 26 May 2021 16:59:51 +0800</pubDate>
+      <pubDate>Thu, 27 May 2021 11:29:50 +0800</pubDate>
       
       <guid>/contents/</guid>
-      <description>Django   01-Django介绍
+      <description>cocos   01-CC脚本开发基础
+ 02-CCClass
+ 03-CCNode
+ 04-CC组件生命周期
+ Django   01-Django介绍
  02-Django创建工程
  03-Django的配置
  04-Django的请求与响应
@@ -40,13 +44,59 @@
  03-git解决push问题
  04-git多人项目
  JavaScript   JS正则表达式
- linux   Docker删除镜像和容器
- Docker部署Django+uWSGI+Nginx+MySQL+Redis
- Linux-supervisor
- Linux常用命令
- Linux常用命令大全
- sellect_poll_epoll
- pygame   01-pygame初始化</description>
+ linux   Docker删除镜像和容器</description>
+    </item>
+    
+    <item>
+      <title>CC组件生命周期</title>
+      <link>/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
+      <pubDate>Thu, 27 May 2021 09:31:19 +0800</pubDate>
+      
+      <guid>/blog/cocos/04-cc%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
+      <description>组件生命周期 onLoad 组件构造完成后最早被调用的回调, 所属节点被激活时, 节点上所有组件脚本会被由上至下依次激活
+通常在onLoad中做一些初始化工作
+ccClasss({ extends: cc.Component, properties: { target: cc.Node, }, onLoad: function(){ this.target = cc.find(&amp;quot;Convas/hero&amp;quot;); }, }) 节点上在属性检查器中修改的值(serializable==true)将会在onLoad之前生效, 如果在onLoad中重新赋值, 将以onLoad为准.
+ start 适合承接自己的组件或其他组件的onLoad中的代码, 或者为update中的代码做准备
+ update 组件在激活的状态下, 每帧调用一次, 在该节点组建渲染(draw)前调用. 游戏中有过程的行为都可以通过这个函数完成
+update用的是CC中的计时器, 但是不同于其他版本的Cocos, 不需要任何注册计时器或其他任何代码, update就会被调用
+cc.Class({ extends: cc.Component, update: function(dt){ this.node.setPosition(0.0, 40.0 * dt) } }) // dt是本次update调用上次update的时间间隔, 单位是秒, 如果设置默认值为每秒60帧, 那么这个时间应该是接近1/60的值 update中的代码尽量保持简洁高效, 不要在update中使用wait或者sleep, 否则会导致整个游戏帧率下降
+ lateUpdate 在有update之后执行, 并且在渲染(draw)之后每帧执行, 使用方式和参数都同update
+ onDestroy 当组件或者所在节点调用了destroy方法, 则会调用onDestroy回调. onDestroy方法与析构函数类似, 在销毁前仍可以调用所有内容, 完成善后工作. 并在当前帧结束时统一回收组件</description>
+    </item>
+    
+    <item>
+      <title>CCNode节点</title>
+      <link>/blog/cocos/03-ccnode/</link>
+      <pubDate>Wed, 26 May 2021 17:25:09 +0800</pubDate>
+      
+      <guid>/blog/cocos/03-ccnode/</guid>
+      <description>属性    属性名 描述 范例     children 获得指定节点所有子节点的数组    active 打开/关闭节点 this.node.active = false   parent 更改节点的父节点 this.node.parent = parentNode等价于代码: this.node.removeFromParent(false)parentNode.addChild(this.node)   x/y 更改节点位置 this.node.x = 100   rotation 更改节点旋转 this.node.rotation = 90   scaleX/scaleY 更改节点缩放 this.node.scaleX = 2   width/height 更改节点尺寸 this.node.width = 100   color 更改节点颜色 this.node.color = cc.Color.RED   opacity 更改节点不透明度 0 ~ 255 this.</description>
+    </item>
+    
+    <item>
+      <title>CCClasss</title>
+      <link>/blog/cocos/02-ccclass/</link>
+      <pubDate>Wed, 26 May 2021 17:15:37 +0800</pubDate>
+      
+      <guid>/blog/cocos/02-ccclass/</guid>
+      <description> cc.Class 继承: extend: cc.Component,  属性简单声明 properties: {	// 类型简单声明 userId: 10005, userName: &amp;quot;Arissa&amp;quot;, target: cc.Node, pos: cc.Vec2 // 实例简单声明 color: new cc.Color(100, 150, 200, 255) // 数组简单声明 any: [], bools: [cc.Boolean], strings: [cc.Strings], floats: [cc.Float], ints: [cc.Integer], values: [cc.Vec2], nodes: [cc.Node], frames: [cc.SpriteFrame] } 属性完整声明 properties: {	score: { default: 0, // 默认值, 必要, 仅在组件第一次添加到节点时才会用到 displayName: &amp;quot;Score(Player)&amp;quot;, // 展示的属性名 tooltip: &amp;quot;The score of player&amp;quot;, } } </description>
+    </item>
+    
+    <item>
+      <title>CC脚本开发基础</title>
+      <link>/blog/cocos/01-cc%E8%84%9A%E6%9C%AC%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Wed, 26 May 2021 17:01:43 +0800</pubDate>
+      
+      <guid>/blog/cocos/01-cc%E8%84%9A%E6%9C%AC%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/</guid>
+      <description>脚本开发任务配置和基础操作
+智能提示数据 开发者 → vsCode工作流 → vsCode智能提示数据
+ vsCode激活脚本编译 开发者 → vsCode工作流 → 添加编译任务
+command + p 激活&amp;quot;快速打开&amp;rdquo;
+输入 task compile
+ 添加编译快捷键 首选项 → 键盘快捷方式 → keybinding.json
+添加条目
+[ { &amp;#34;key&amp;#34;: &amp;#34;ctrl+b&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;workbench.action.tasks.runTask&amp;#34;, &amp;#34;args&amp;#34;: &amp;#34;compile&amp;#34; } ]  组件添加 创建Script组件
+选中节点 → 添加组件 → 添加用户脚本组件</description>
     </item>
     
     <item>
